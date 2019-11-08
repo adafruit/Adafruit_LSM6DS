@@ -21,24 +21,40 @@
 #include <Wire.h>
 #include <Adafruit_I2CDevice.h>
 #include <Adafruit_BusIO_Register.h>
+#include <Adafruit_Sensor.h>
 
 
 #define LSM6DSOX_I2CADDR_DEFAULT 0x6a ///< LSM6DSOX default i2c address
 #define LSM6DSOX_CHIP_ID 0x6C ///< LSM6DSOX default device id from WHOAMI
 
 
-#define LSM6DSOX_CTRL1_XL           0x10 ///< Acceleration configuration register
+#define LSM6DSOX_CTRL1_XL 0x10 ///< Main accelerometer config register
+#define LSM6DSOX_CTRL2_G 0x11 ///< Main gyro config register
 #define LSM6DSOX_WHOAMI              0xF ///< Chip ID register
+#define LSM6DSOX_OUTX_L_G  0x22 ///< First data register (gyro x low)
+#define LSM6DSOX_OUTX_L_A  0x28 ///< First accel data register
+
+
 
 /**
  * @brief Example enum values
  *
  * Allowed values for `setProximityLEDCurrent`.
  */
-typedef enum led_current {
-  LSM6DSOX_EXAMPLE_50MA,
-  LSM6DSOX_EXAMPLE_75MA,
-} LSM6DSOX_example_t;
+typedef enum data_rate {
+  LSM6DSOX_RATE_SHUTDOWN,
+  LSM6DSOX_RATE_12_5_HZ,
+  LSM6DSOX_RATE_26_HZ,
+  LSM6DSOX_RATE_52_HZ,
+  LSM6DSOX_RATE_104_HZ,
+  LSM6DSOX_RATE_208_HZ,
+  LSM6DSOX_RATE_416_HZ,
+  LSM6DSOX_RATE_833_HZ,
+  LSM6DSOX_RATE_1_66K_HZ,
+  LSM6DSOX_RATE_3_33K_HZ,
+  LSM6DSOX_RATE_6_66K_HZ,
+  LSM6DSOX_RATE_1_6_HZ_LP // Only works for the accelerometer in low power mode
+} LSM6DSOX_data_rate_t;
 
 
 /*!
@@ -49,16 +65,25 @@ class Adafruit_LSM6DSOX {
 public:
 
   Adafruit_LSM6DSOX();  
-  bool begin(uint8_t i2c_address=LSM6DSOX_I2CADDR_DEFAULT, TwoWire *wire = &Wire);
+  bool begin(uint8_t i2c_addr = LSM6DSOX_I2CADDR_DEFAULT,
+                TwoWire *wire = &Wire,
+                int32_t sensorID = 0);
+  bool getEvent(sensors_event_t *accel);
+  // bool getEvent(sensors_event_t *accel, sensors_event_t *gyro,
+  //               sensors_event_t *temp);
+  // void getSensor(sensor_t *accel, sensor_t *gyro, sensor_t *temp);
 
-  LSM6DSOX_example_t getEXAMPLE(void);
-  void setEXAMPLE(LSM6DSOX_example_t example_value);
+  LSM6DSOX_data_rate_t getAccelDataRate(void);
+  void setAccelDataRate(LSM6DSOX_data_rate_t data_rate);
 
 private:
   bool _init(void);
+  void _read(void);
 
+  float temperature, accX, accY, accZ, gyroX, gyroY, gyroZ;
+  int16_t rawAccX, rawAccY, rawAccZ, rawTemp, rawGyroX, rawGyroY, rawGyroZ;
+  uint8_t _sensorid_accel;
   Adafruit_I2CDevice *i2c_dev;
 };
 
 #endif
-

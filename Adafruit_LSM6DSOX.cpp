@@ -49,81 +49,118 @@ Adafruit_LSM6DSOX::Adafruit_LSM6DSOX(void) {}
  *            The I2C address to be used.
  *    @param  wire
  *            The Wire object to be used for I2C connections.
+ *    @param  sensor_id
+ *            The user-defined ID to differentiate different sensors
  *    @return True if initialization was successful, otherwise false.
  */
-boolean Adafruit_LSM6DSOX::begin(uint8_t i2c_address, TwoWire *wire) {
+boolean Adafruit_LSM6DSOX::begin(uint8_t i2c_address, TwoWire *wire, int32_t sensor_id) {
   i2c_dev = new Adafruit_I2CDevice(i2c_address, wire);
 
   if (!i2c_dev->begin()) {
     return false;
   }
+  _sensorid_accel = sensor_id;
 
   return _init();
 }
 
 boolean Adafruit_LSM6DSOX::_init(void) {
   Adafruit_BusIO_Register chip_id = 
-    Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_WHOAMI, 2);
+    Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_WHOAMI);
 
   // make sure we're talking to the right chip
   if (chip_id.read() != LSM6DSOX_CHIP_ID) {
     return false;
   }
-/*
-        self._bdu = True
-        sleep(0.010)
-        self._data_rate = 3
-        sleep(0.010)
-        self._gyro_data_rate = 3
-        sleep(0.10)
-        self._cached_accel_range = AccelRange.RANGE_4G
-        self._gyro_range = GyroRange.RANGE_250_DPS                                                    #set range also
-        sleep(0.010)
-        self._cached_gyro_range = GyroRange.RANGE_250_DPS
-        self._gyro_range = GyroRange.RANGE_250_DPS
-        sleep(0.010)
-        self._if_inc = True
-        sleep(0.20)
-*/
-  // set accel data rate == enable
+  // self._bdu = True
+  // self._gyro_data_rate = 3
+  // self._if_inc = True
+
+  // enable accelerometer by setting the data rate to non-zero (disabled)
+  setAccelDataRate(LSM6DSOX_RATE_104_HZ);
 
   return true;
 }
 
-/*********** typdef enum getter with bitfield *********************/
 
 /**************************************************************************/
 /*!
-    @brief Gets EXAMPLE VALUE.
-    @returns The EXAMPLE VALUE.
+    @brief  Gets the most recent sensor event, Adafruit Unified Sensor format
+    @param  accel
+            Pointer to an Adafruit Unified sensor_event_t object to be filled
+            with acceleration event data.
+
+    @return True on successful read
 */
-LSM6DSOX_example_t Adafruit_LSM6DSOX::getEXAMPLE(void){
-    
-    Adafruit_BusIO_Register example_register =
-      // Adafruit_I2CDevice pointer, address, number of bytes
-      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL1_XL, 2); 
-    Adafruit_BusIO_RegisterBits example_bitfield =
-      // register pointer, number of bits, shift
-      Adafruit_BusIO_RegisterBits(&example_register, 3, 1);
-    return (LSM6DSOX_example_t)example_bitfield.read();
+/**************************************************************************/
+ bool Adafruit_LSM6DSOX::getEvent(sensors_event_t *accel) {
+  uint32_t t = millis();
+  _read();
+
+  memset(accel, 0, sizeof(sensors_event_t));
+  accel->version = 1;
+  accel->sensor_id = _sensorid_accel;
+  accel->type = SENSOR_TYPE_ACCELEROMETER;
+  accel->timestamp = t;
+  accel->acceleration.x = accX * 0.061 * SENSORS_GRAVITY_STANDARD/1000;
+  accel->acceleration.y = accY * 0.061 * SENSORS_GRAVITY_STANDARD/1000;
+  accel->acceleration.z = accZ * 0.061 * SENSORS_GRAVITY_STANDARD/1000;
+
+  return true;
 }
 
-/*********** typdef enum setter with bitfield  *********************/
+/**************************************************************************/
+/*!
+    @brief Gets the accelerometer data rate.
+    @returns The the accelerometer data rate.
+*/
+LSM6DSOX_data_rate_t Adafruit_LSM6DSOX::getAccelDataRate(void){
+
+    Adafruit_BusIO_Register ctrl1 =
+      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL1_XL);
+
+    Adafruit_BusIO_RegisterBits accel_data_rate =
+      Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
+    return (LSM6DSOX_data_rate_t)accel_data_rate.read();
+}
 
 /**************************************************************************/
 /*!
-    @brief Sets EXAMPLE VALUE.
-    @param  example_value
-            The EXAMPLE used to EXAMPLE. Must be a
-            `LSM6DSOX_example_t`.
+    @brief Sets the accelerometer data rate.
+    @param  data_rate
+            The the accelerometer data rate. Must be a
+            `LSM6DSOX_data_rate_t`.
 */
-void Adafruit_LSM6DSOX::setEXAMPLE(LSM6DSOX_example_t example_value){
-    
-    Adafruit_BusIO_Register example_register =
-      // Adafruit_I2CDevice pointer, address, number of bytes
-      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL1_XL, 2); 
-    Adafruit_BusIO_RegisterBits example_bitfield =
-      // register pointer, number of bits, shift
-      Adafruit_BusIO_RegisterBits(&example_register, 3, 1);
-    example_bitfield.write(example_value);
+void Adafruit_LSM6DSOX::setAccelDataRate(LSM6DSOX_data_rate_t data_rate){
+
+    Adafruit_BusIO_Register ctrl1 =
+      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL1_XL);
+
+    Adafruit_BusIO_RegisterBits accel_data_rate =
+      Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
+
+    accel_data_rate.write(data_rate);
+}
+
+/******************* Adafruit_Sensor functions *****************/
+/*!
+ *     @brief  Updates the measurement data for all sensors simultaneously
+ */
+/**************************************************************************/
+void Adafruit_LSM6DSOX::_read(void) {
+  // get raw readings
+  Adafruit_BusIO_Register data_reg =
+      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_OUTX_L_A, 6);
+
+  uint8_t buffer[6];
+  data_reg.read(buffer, 6);
+
+  rawAccX = buffer[1] << 8 | buffer[0];
+  rawAccY = buffer[3] << 8 | buffer[2];
+  rawAccZ = buffer[5] << 8 | buffer[4];
+
+  accX = rawAccX;
+  accY = rawAccY;
+  accZ = rawAccZ;
+
 }
