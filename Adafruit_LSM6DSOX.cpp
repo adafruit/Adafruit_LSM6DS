@@ -59,19 +59,21 @@ boolean Adafruit_LSM6DSOX::begin(uint8_t i2c_address, TwoWire *wire, int32_t sen
   if (!i2c_dev->begin()) {
     return false;
   }
-  _sensorid_accel = sensor_id;
 
-  return _init();
-}
-
-boolean Adafruit_LSM6DSOX::_init(void) {
-  Adafruit_BusIO_Register chip_id = 
+  Adafruit_BusIO_Register chip_id =
     Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_WHOAMI);
 
   // make sure we're talking to the right chip
   if (chip_id.read() != LSM6DSOX_CHIP_ID) {
     return false;
   }
+  _sensorid_accel = sensor_id;
+
+  return _init();
+}
+
+boolean Adafruit_LSM6DSOX::_init(void) {
+
   // self._bdu = True
   // self._gyro_data_rate = 3
   // self._if_inc = True
@@ -120,8 +122,9 @@ LSM6DSOX_data_rate_t Adafruit_LSM6DSOX::getAccelDataRate(void){
       Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL1_XL);
 
     Adafruit_BusIO_RegisterBits accel_data_rate =
-      Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
-    return (LSM6DSOX_data_rate_t)accel_data_rate.read();
+      Adafruit_BusIO_RegisterBits(&ctrl1, 4, 4);
+    // return (LSM6DSOX_data_rate_t)accel_data_rate.read();
+    return accel_data_rate.read();
 }
 
 /**************************************************************************/
@@ -137,7 +140,7 @@ void Adafruit_LSM6DSOX::setAccelDataRate(LSM6DSOX_data_rate_t data_rate){
       Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL1_XL);
 
     Adafruit_BusIO_RegisterBits accel_data_rate =
-      Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
+      Adafruit_BusIO_RegisterBits(&ctrl1, 4, 4);
 
     accel_data_rate.write(data_rate);
 }
