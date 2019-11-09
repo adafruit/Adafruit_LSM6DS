@@ -28,7 +28,7 @@ void setup(void) {
     case LSM6DSOX_ACCEL_RANGE_16_G: Serial.println("+-16G"); break;
   }
 
-  //sox.setGyroRange(LSM6DSOX_ACCEL_RANGE_2_G);
+  sox.setGyroRange(LSM6DSOX_GYRO_RANGE_250_DPS);
   Serial.print("Gyro range set to: ");
   switch (sox.getGyroRange()) {
     case LSM6DSOX_GYRO_RANGE_250_DPS: Serial.println("250 degrees/s"); break;
@@ -54,7 +54,6 @@ void setup(void) {
     case LSM6DSOX_RATE_1_6_HZ_LP: Serial.println("1.6 Hz"); break;
   }
 
-  sox.setGyroDataRate(LSM6DSOX_RATE_833_HZ);
   //sox.setGyroDataRate(LSM6DSOX_RATE_12_5_HZ);
   Serial.print("Gyro data rate set to: ");
   switch (sox.getGyroDataRate()) {
@@ -109,7 +108,8 @@ void loop() {
 //  Serial.print(","); Serial.print(accel.acceleration.y);
 //  Serial.print(","); Serial.print(accel.acceleration.z);
 //
-  Serial.print(","); Serial.print(gyro.gyro.x);
+//  Serial.print(",");
+  Serial.print(gyro.gyro.x);
   Serial.print(","); Serial.print(gyro.gyro.y);
   Serial.print(","); Serial.print(gyro.gyro.z);
   Serial.println();

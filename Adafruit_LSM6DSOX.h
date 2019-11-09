@@ -91,6 +91,7 @@ public:
   void setGyroDataRate(lsm6dsox_data_rate_t data_rate);
 
   lsm6dsox_gyro_range_t getGyroRange(void);
+  void setGyroRange(lsm6dsox_gyro_range_t new_range);
 
   void reset(void);
 

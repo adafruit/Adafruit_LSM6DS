@@ -216,7 +216,7 @@ lsm6dsox_accel_range_t Adafruit_LSM6DSOX::getAccelRange(void){
 /**************************************************************************/
 /*!
     @brief Sets the accelerometer measurement range.
-    @param The `lsm6dsox_accel_range_t` range to set.
+    @param new_range The `lsm6dsox_accel_range_t` range to set.
 */
 void Adafruit_LSM6DSOX::setAccelRange(lsm6dsox_accel_range_t new_range){
 
@@ -278,6 +278,21 @@ lsm6dsox_gyro_range_t Adafruit_LSM6DSOX::getGyroRange(void){
     return gyro_range.read();
 }
 
+/**************************************************************************/
+/*!
+    @brief Sets the gyro range.
+    @param new_range The `lsm6dsox_gyro_range_t` to set.
+*/
+void Adafruit_LSM6DSOX::setGyroRange(lsm6dsox_gyro_range_t new_range){
+
+    Adafruit_BusIO_Register ctrl2 =
+      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL2_G);
+
+    Adafruit_BusIO_RegisterBits gyro_range =
+      Adafruit_BusIO_RegisterBits(&ctrl2, 2, 2);
+
+    gyro_range.write(new_range);
+}
 /******************* Adafruit_Sensor functions *****************/
 /*!
  *     @brief  Updates the measurement data for all sensors simultaneously
