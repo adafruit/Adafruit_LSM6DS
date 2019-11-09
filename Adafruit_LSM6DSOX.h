@@ -31,9 +31,9 @@
 #define LSM6DSOX_CTRL1_XL 0x10 ///< Main accelerometer config register
 #define LSM6DSOX_CTRL2_G 0x11 ///< Main gyro config register
 #define LSM6DSOX_CTRL3_C 0x12 ///< Main configuration register
-
-#define LSM6DSOX_WHOAMI              0xF ///< Chip ID register
-#define LSM6DSOX_OUTX_L_G  0x22 ///< First data register (gyro x low)
+#define LSM6DSOX_WHOAMI  0xF ///< Chip ID register
+#define LSM6DSOX_OUT_TEMP_L  0x20 ///< First data register (temperature low)
+#define LSM6DSOX_OUTX_L_G  0x22 ///< First gyro data register
 #define LSM6DSOX_OUTX_L_A  0x28 ///< First accel data register
 
 /** The accelerometer data rate */
@@ -60,6 +60,14 @@ typedef enum accel_range {
   LSM6DSOX_ACCEL_RANGE_8_G
 } lsm6dsox_accel_range_t;
 
+/** The gyro data range */
+typedef enum gyro_range {
+  LSM6DSOX_GYRO_RANGE_250_DPS,
+  LSM6DSOX_GYRO_RANGE_500_DPS,
+  LSM6DSOX_GYRO_RANGE_1000_DPS,
+  LSM6DSOX_GYRO_RANGE_2000_DPS
+} lsm6dsox_gyro_range_t;
+
 /*!
  *    @brief  Class that stores state and functions for interacting with
  *            the LSM6DSOX I2C Digital Potentiometer
@@ -71,7 +79,7 @@ public:
   bool begin(uint8_t i2c_addr = LSM6DSOX_I2CADDR_DEFAULT,
                 TwoWire *wire = &Wire,
                 int32_t sensorID = 0);
-  bool getEvent(sensors_event_t *accel);
+  bool getEvent(sensors_event_t *accel, sensors_event_t *gyro, sensors_event_t *temp);
 
   lsm6dsox_data_rate_t getAccelDataRate(void);
   void setAccelDataRate(lsm6dsox_data_rate_t data_rate);
@@ -82,6 +90,7 @@ public:
   lsm6dsox_data_rate_t getGyroDataRate(void);
   void setGyroDataRate(lsm6dsox_data_rate_t data_rate);
 
+  lsm6dsox_gyro_range_t getGyroRange(void);
 
   void reset(void);
 
@@ -90,7 +99,9 @@ private:
 
   float temperature, accX, accY, accZ, gyroX, gyroY, gyroZ;
   int16_t rawAccX, rawAccY, rawAccZ, rawTemp, rawGyroX, rawGyroY, rawGyroZ;
-  uint8_t _sensorid_accel;
+
+  uint8_t _sensorid_accel, _sensorid_gyro, _sensorid_temp;
+  
   Adafruit_I2CDevice *i2c_dev;
 };
 

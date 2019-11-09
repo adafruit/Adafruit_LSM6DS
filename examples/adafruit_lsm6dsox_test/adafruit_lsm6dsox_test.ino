@@ -20,12 +20,21 @@ void setup(void) {
   Serial.println("LSM6DSOX Found!");
 
   //sox.setAccelRange(LSM6DSOX_ACCEL_RANGE_2_G);
-  Serial.print("Range set to: ");
+  Serial.print("Accelerometer range set to: ");
   switch (sox.getAccelRange()) {
     case LSM6DSOX_ACCEL_RANGE_2_G: Serial.println("+-2G"); break;
     case LSM6DSOX_ACCEL_RANGE_4_G: Serial.println("+-4G"); break;
     case LSM6DSOX_ACCEL_RANGE_8_G: Serial.println("+-8G"); break;
     case LSM6DSOX_ACCEL_RANGE_16_G: Serial.println("+-16G"); break;
+  }
+
+  //sox.setGyroRange(LSM6DSOX_ACCEL_RANGE_2_G);
+  Serial.print("Gyro range set to: ");
+  switch (sox.getGyroRange()) {
+    case LSM6DSOX_GYRO_RANGE_250_DPS: Serial.println("250 degrees/s"); break;
+    case LSM6DSOX_GYRO_RANGE_500_DPS: Serial.println("500 degrees/s"); break;
+    case LSM6DSOX_GYRO_RANGE_1000_DPS: Serial.println("1000 degrees/s"); break;
+    case LSM6DSOX_GYRO_RANGE_2000_DPS: Serial.println("2000 degrees/s"); break;
   }
 
   //sox.setAccelDataRate(LSM6DSOX_RATE_12_5_HZ);
@@ -71,22 +80,38 @@ void loop() {
 //  delay(100); 
 //  
 //  /* Or....get a new sensor event, normalized */ 
-    sensors_event_t accel; 
-    sox.getEvent(&accel);
+    sensors_event_t accel;
+    sensors_event_t gyro;
+    sensors_event_t temp;
+    sox.getEvent(&accel, &gyro, &temp);
+    
+    Serial.print("\t\tTemperature "); Serial.print(temp.temperature);
+    Serial.println(" deg C");
+
+    /* Display the results (acceleration is measured in m/s^2) */
+    Serial.print("\t\tAccel X: "); Serial.print(accel.acceleration.x);
+    Serial.print(" \tY: "); Serial.print(accel.acceleration.y);
+    Serial.print(" \tZ: "); Serial.print(accel.acceleration.z);
+    Serial.println(" m/s^2 ");
+    
+    /* Display the results (acceleration is measured in m/s^2) */
+    Serial.print("\t\tGyro X: "); Serial.print(gyro.gyro.x);
+    Serial.print(" \tY: "); Serial.print(gyro.gyro.y);
+    Serial.print(" \tZ: "); Serial.print(gyro.gyro.z);
+    Serial.println(" degrees/s ");
+    Serial.println();
+   
+    delay(100);
+//  Serial.print(temp.temperature);
 //  
-//  /* Display the results (acceleration is measured in m/s^2) */
-//  Serial.print("\t\tX: "); Serial.print(accel.acceleration.x);
-//  Serial.print(" \tY: "); Serial.print(accel.acceleration.y);
-//  Serial.print(" \tZ: "); Serial.print(accel.acceleration.z);
-//  Serial.println(" m/s^2 ");
+//  Serial.print(","); Serial.print(accel.acceleration.x);
+//  Serial.print(","); Serial.print(accel.acceleration.y);
+//  Serial.print(","); Serial.print(accel.acceleration.z);
 //
+//  Serial.print(","); Serial.print(gyro.gyro.x);
+//  Serial.print(","); Serial.print(gyro.gyro.y);
+//  Serial.print(","); Serial.print(gyro.gyro.z);
 //  Serial.println();
-// 
-//  delay(100);
-  Serial.print(accel.acceleration.x);
-  Serial.print(","); Serial.print(accel.acceleration.y);
-  Serial.print(","); Serial.print(accel.acceleration.z);
-  Serial.println();
-  delay(10);
+//  delay(10);
 
 }

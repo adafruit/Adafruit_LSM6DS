@@ -68,6 +68,8 @@ boolean Adafruit_LSM6DSOX::begin(uint8_t i2c_address, TwoWire *wire, int32_t sen
     return false;
   }
   _sensorid_accel = sensor_id;
+  _sensorid_gyro = sensor_id + 1;
+  _sensorid_temp = sensor_id + 1;
 
   reset();
   Adafruit_BusIO_Register ctrl3 =
@@ -83,7 +85,6 @@ boolean Adafruit_LSM6DSOX::begin(uint8_t i2c_address, TwoWire *wire, int32_t sen
 
   return true;
 }
-
 
 /**************************************************************************/
 /*!
@@ -119,10 +120,18 @@ void Adafruit_LSM6DSOX::reset(void) {
             Pointer to an Adafruit Unified sensor_event_t object to be filled
             with acceleration event data.
 
+    @param  gyro
+            Pointer to an Adafruit Unified sensor_event_t object to be filled
+            with gyro event data.
+
+    @param  temp
+            Pointer to an Adafruit Unified sensor_event_t object to be filled
+            with temperature event data.
+
     @return True on successful read
 */
 /**************************************************************************/
- bool Adafruit_LSM6DSOX::getEvent(sensors_event_t *accel) {
+ bool Adafruit_LSM6DSOX::getEvent(sensors_event_t *accel, sensors_event_t *gyro, sensors_event_t *temp){
   uint32_t t = millis();
   _read();
 
@@ -134,6 +143,24 @@ void Adafruit_LSM6DSOX::reset(void) {
   accel->acceleration.x = accX * SENSORS_GRAVITY_STANDARD/1000;
   accel->acceleration.y = accY * SENSORS_GRAVITY_STANDARD/1000;
   accel->acceleration.z = accZ * SENSORS_GRAVITY_STANDARD/1000;
+
+
+  memset(gyro, 0, sizeof(sensors_event_t));
+  gyro->version = 1;
+  gyro->sensor_id = _sensorid_gyro;
+  gyro->type = SENSOR_TYPE_GYROSCOPE;
+  gyro->timestamp = t;
+  gyro->gyro.x = gyroX;
+  gyro->gyro.y = gyroY;
+  gyro->gyro.z = gyroZ;
+
+  memset(temp, 0, sizeof(sensors_event_t));
+  temp->version = sizeof(sensors_event_t);
+  temp->sensor_id = _sensorid_temp;
+  temp->type = SENSOR_TYPE_AMBIENT_TEMPERATURE;
+  temp->timestamp = t;
+  temp->temperature = temperature;
+
 
   return true;
 }
@@ -235,6 +262,22 @@ void Adafruit_LSM6DSOX::setGyroDataRate(lsm6dsox_data_rate_t data_rate){
     gyro_data_rate.write(data_rate);
 }
 
+/**************************************************************************/
+/*!
+    @brief Gets the gyro range.
+    @returns The the gyro range.
+*/
+lsm6dsox_gyro_range_t Adafruit_LSM6DSOX::getGyroRange(void){
+
+    Adafruit_BusIO_Register ctrl2 =
+      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL2_G);
+
+    Adafruit_BusIO_RegisterBits gyro_range =
+      Adafruit_BusIO_RegisterBits(&ctrl2, 2, 2);
+
+    return gyro_range.read();
+}
+
 /******************* Adafruit_Sensor functions *****************/
 /*!
  *     @brief  Updates the measurement data for all sensors simultaneously
@@ -243,28 +286,49 @@ void Adafruit_LSM6DSOX::setGyroDataRate(lsm6dsox_data_rate_t data_rate){
 void Adafruit_LSM6DSOX::_read(void) {
   // get raw readings
   Adafruit_BusIO_Register data_reg =
-      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_OUTX_L_A, 6);
+      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_OUT_TEMP_L, 14);
 
-  uint8_t buffer[6];
-  data_reg.read(buffer, 6);
+  uint8_t buffer[14];
+  data_reg.read(buffer, 14);
 
-  rawAccX = buffer[1] << 8 | buffer[0];
-  rawAccY = buffer[3] << 8 | buffer[2];
-  rawAccZ = buffer[5] << 8 | buffer[4];
+  temperature = buffer[1] << 8 | buffer[0];
 
-  lsm6dsox_accel_range_t range = getAccelRange();
-  float scale = 1;
-  if (range == LSM6DSOX_ACCEL_RANGE_16_G)
-    scale = 0.488;
-  if (range == LSM6DSOX_ACCEL_RANGE_8_G)
-    scale = 0.244;
-  if (range == LSM6DSOX_ACCEL_RANGE_4_G)
-    scale = 0.122;
-  if (range == LSM6DSOX_ACCEL_RANGE_2_G)
-    scale = 0.061;
+  rawGyroY = buffer[3] << 8 | buffer[2];
+  rawGyroZ = buffer[5] << 8 | buffer[4];
+  rawGyroX = buffer[7] << 8 | buffer[6];
 
-  accX = rawAccX * scale;
-  accY = rawAccY * scale;
-  accZ = rawAccZ * scale;
+  rawAccY = buffer[9] << 8 | buffer[8];
+  rawAccZ = buffer[11] << 8 | buffer[10];
+  rawAccZ = buffer[13] << 8 | buffer[10];
+
+  lsm6dsox_gyro_range_t gyro_range = getGyroRange();
+  float gyro_scale = 1;
+  if (gyro_range == LSM6DSOX_GYRO_RANGE_2000_DPS)
+    gyro_scale = 70.0;
+  if (gyro_range == LSM6DSOX_GYRO_RANGE_1000_DPS)
+    gyro_scale = 35.0;
+  if (gyro_range == LSM6DSOX_GYRO_RANGE_500_DPS)
+    gyro_scale = 17.50;
+  if (gyro_range == LSM6DSOX_GYRO_RANGE_250_DPS)
+    gyro_scale =  8.75;
+
+  gyroX = rawGyroX * gyro_scale;
+  gyroY = rawGyroY * gyro_scale;
+  gyroZ = rawGyroZ * gyro_scale;
+  
+  lsm6dsox_accel_range_t accel_range = getAccelRange();
+  float accel_scale = 1;
+  if (accel_range == LSM6DSOX_ACCEL_RANGE_16_G)
+    accel_scale = 0.488;
+  if (accel_range == LSM6DSOX_ACCEL_RANGE_8_G)
+    accel_scale = 0.244;
+  if (accel_range == LSM6DSOX_ACCEL_RANGE_4_G)
+    accel_scale = 0.122;
+  if (accel_range == LSM6DSOX_ACCEL_RANGE_2_G)
+    accel_scale = 0.061;
+
+  accX = rawAccX * accel_scale;
+  accY = rawAccY * accel_scale;
+  accZ = rawAccZ * accel_scale;
 
 }
