@@ -30,6 +30,8 @@
 
 #define LSM6DSOX_CTRL1_XL 0x10 ///< Main accelerometer config register
 #define LSM6DSOX_CTRL2_G 0x11 ///< Main gyro config register
+#define LSM6DSOX_CTRL3_C 0x12 ///< Main configuration register
+
 #define LSM6DSOX_WHOAMI              0xF ///< Chip ID register
 #define LSM6DSOX_OUTX_L_G  0x22 ///< First data register (gyro x low)
 #define LSM6DSOX_OUTX_L_A  0x28 ///< First accel data register
@@ -75,9 +77,9 @@ public:
 
   LSM6DSOX_data_rate_t getAccelDataRate(void);
   void setAccelDataRate(LSM6DSOX_data_rate_t data_rate);
+  bool reset(void);
 
 private:
-  bool _init(void);
   void _read(void);
 
   float temperature, accX, accY, accZ, gyroX, gyroY, gyroZ;

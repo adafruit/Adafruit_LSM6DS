@@ -69,18 +69,50 @@ boolean Adafruit_LSM6DSOX::begin(uint8_t i2c_address, TwoWire *wire, int32_t sen
   }
   _sensorid_accel = sensor_id;
 
-  return _init();
-}
-
-boolean Adafruit_LSM6DSOX::_init(void) {
-
-  // self._bdu = True
+  return reset();
+    // self._bdu = True
   // self._gyro_data_rate = 3
-  // self._if_inc = True
-
+  // self._if_inc = True  
+    //   _if_inc = RWBit(_LSM6DSOX_CTRL3_C, 2)
+    // _sim = RWBit(_LSM6DSOX_CTRL3_C, 3)
+    // _pp_od = RWBit(_LSM6DSOX_CTRL3_C, 4)
+    // _h_lactive = RWBit(_LSM6DSOX_CTRL3_C, 5)
+    // _bdu = RWBit(_LSM6DSOX_CTRL3_C, 6)
   // enable accelerometer by setting the data rate to non-zero (disabled)
   setAccelDataRate(LSM6DSOX_RATE_104_HZ);
+}
 
+boolean Adafruit_LSM6DSOX::reset(void) {
+
+    Adafruit_BusIO_Register ctrl3 =
+      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL3_C);
+
+    Adafruit_BusIO_RegisterBits boot =
+      Adafruit_BusIO_RegisterBits(&ctrl3, 1, 7);
+
+    Adafruit_BusIO_RegisterBits sw_reset =
+      Adafruit_BusIO_RegisterBits(&ctrl3, 1, 0);
+
+    boot.write(true);
+    while (boot.read()){
+      delay(1);
+    }
+
+    sw_reset.write(true);
+    while (sw_reset.read()){
+      delay(1);
+    }
+
+
+    // _sw_reset = RWBit(_LSM6DSOX_CTRL3_C, 0)
+
+    // _boot = RWBit(_LSM6DSOX_CTRL3_C, 7)
+    //     self._sw_reset = True
+    //     while self._sw_reset:
+    //         sleep(0.001)
+    //     self._boot = True
+    //     while self._boot:
+    //         sleep(0.001)
   return true;
 }
 
@@ -123,7 +155,6 @@ LSM6DSOX_data_rate_t Adafruit_LSM6DSOX::getAccelDataRate(void){
 
     Adafruit_BusIO_RegisterBits accel_data_rate =
       Adafruit_BusIO_RegisterBits(&ctrl1, 4, 4);
-    // return (LSM6DSOX_data_rate_t)accel_data_rate.read();
     return accel_data_rate.read();
 }
 
