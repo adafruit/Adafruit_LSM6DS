@@ -36,13 +36,7 @@
 #define LSM6DSOX_OUTX_L_G  0x22 ///< First data register (gyro x low)
 #define LSM6DSOX_OUTX_L_A  0x28 ///< First accel data register
 
-
-
-/**
- * @brief Example enum values
- *
- * Allowed values for `setProximityLEDCurrent`.
- */
+/** The accelerometer data rate */
 typedef enum data_rate {
   LSM6DSOX_RATE_SHUTDOWN,
   LSM6DSOX_RATE_12_5_HZ,
@@ -56,8 +50,15 @@ typedef enum data_rate {
   LSM6DSOX_RATE_3_33K_HZ,
   LSM6DSOX_RATE_6_66K_HZ,
   LSM6DSOX_RATE_1_6_HZ_LP // Only works for the accelerometer in low power mode
-} LSM6DSOX_data_rate_t;
+} lsm6dsox_data_rate_t;
 
+/** The accelerometer data range */
+typedef enum accel_range {
+  LSM6DSOX_ACCEL_RANGE_2_G,
+  LSM6DSOX_ACCEL_RANGE_16_G,
+  LSM6DSOX_ACCEL_RANGE_4_G,
+  LSM6DSOX_ACCEL_RANGE_8_G
+} lsm6dsox_accel_range_t;
 
 /*!
  *    @brief  Class that stores state and functions for interacting with
@@ -71,12 +72,12 @@ public:
                 TwoWire *wire = &Wire,
                 int32_t sensorID = 0);
   bool getEvent(sensors_event_t *accel);
-  // bool getEvent(sensors_event_t *accel, sensors_event_t *gyro,
-  //               sensors_event_t *temp);
-  // void getSensor(sensor_t *accel, sensor_t *gyro, sensor_t *temp);
 
-  LSM6DSOX_data_rate_t getAccelDataRate(void);
-  void setAccelDataRate(LSM6DSOX_data_rate_t data_rate);
+  lsm6dsox_data_rate_t getAccelDataRate(void);
+  void setAccelDataRate(lsm6dsox_data_rate_t data_rate);
+
+  lsm6dsox_accel_range_t getAccelRange(void);
+
   void reset(void);
 
 private:

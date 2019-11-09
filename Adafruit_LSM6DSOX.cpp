@@ -81,6 +81,11 @@ boolean Adafruit_LSM6DSOX::begin(uint8_t i2c_address, TwoWire *wire, int32_t sen
   return true;
 }
 
+
+/**************************************************************************/
+/*!
+    @brief Resets the sensor to its power-on state, clearing all registers and memory
+*/
 void Adafruit_LSM6DSOX::reset(void) {
 
     Adafruit_BusIO_Register ctrl3 =
@@ -137,7 +142,7 @@ void Adafruit_LSM6DSOX::reset(void) {
     @brief Gets the accelerometer data rate.
     @returns The the accelerometer data rate.
 */
-LSM6DSOX_data_rate_t Adafruit_LSM6DSOX::getAccelDataRate(void){
+lsm6dsox_data_rate_t Adafruit_LSM6DSOX::getAccelDataRate(void){
 
     Adafruit_BusIO_Register ctrl1 =
       Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL1_XL);
@@ -152,9 +157,9 @@ LSM6DSOX_data_rate_t Adafruit_LSM6DSOX::getAccelDataRate(void){
     @brief Sets the accelerometer data rate.
     @param  data_rate
             The the accelerometer data rate. Must be a
-            `LSM6DSOX_data_rate_t`.
+            `lsm6dsox_data_rate_t`.
 */
-void Adafruit_LSM6DSOX::setAccelDataRate(LSM6DSOX_data_rate_t data_rate){
+void Adafruit_LSM6DSOX::setAccelDataRate(lsm6dsox_data_rate_t data_rate){
 
     Adafruit_BusIO_Register ctrl1 =
       Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL1_XL);
@@ -163,6 +168,21 @@ void Adafruit_LSM6DSOX::setAccelDataRate(LSM6DSOX_data_rate_t data_rate){
       Adafruit_BusIO_RegisterBits(&ctrl1, 4, 4);
 
     accel_data_rate.write(data_rate);
+}
+
+/**************************************************************************/
+/*!
+    @brief Gets the accelerometer measurement range.
+    @returns The the accelerometer measurement range.
+*/
+lsm6dsox_accel_range_t Adafruit_LSM6DSOX::getAccelRange(void){
+
+    Adafruit_BusIO_Register ctrl1 =
+      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL1_XL);
+
+    Adafruit_BusIO_RegisterBits accel_range =
+      Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
+    return accel_range.read();
 }
 
 /******************* Adafruit_Sensor functions *****************/
