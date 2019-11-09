@@ -77,7 +77,7 @@ public:
 
   LSM6DSOX_data_rate_t getAccelDataRate(void);
   void setAccelDataRate(LSM6DSOX_data_rate_t data_rate);
-  bool reset(void);
+  void reset(void);
 
 private:
   void _read(void);
