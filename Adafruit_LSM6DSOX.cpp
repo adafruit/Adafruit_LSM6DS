@@ -150,9 +150,9 @@ void Adafruit_LSM6DSOX::reset(void) {
   gyro->sensor_id = _sensorid_gyro;
   gyro->type = SENSOR_TYPE_GYROSCOPE;
   gyro->timestamp = t;
-  gyro->gyro.x = gyroX;
-  gyro->gyro.y = gyroY;
-  gyro->gyro.z = gyroZ;
+  gyro->gyro.x = gyroX / 1000;
+  gyro->gyro.y = gyroY / 1000;
+  gyro->gyro.z = gyroZ / 1000;
 
   memset(temp, 0, sizeof(sensors_event_t));
   temp->version = sizeof(sensors_event_t);
