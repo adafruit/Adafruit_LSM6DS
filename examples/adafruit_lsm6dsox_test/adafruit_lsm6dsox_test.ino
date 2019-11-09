@@ -19,6 +19,15 @@ void setup(void) {
   }
   Serial.println("LSM6DSOX Found!");
 
+  //sox.setAccelRange(LSM6DSOX_ACCEL_RANGE_2_G);
+  Serial.print("Range set to: ");
+  switch (sox.getAccelRange()) {
+    case LSM6DSOX_ACCEL_RANGE_2_G: Serial.println("+-2G"); break;
+    case LSM6DSOX_ACCEL_RANGE_4_G: Serial.println("+-4G"); break;
+    case LSM6DSOX_ACCEL_RANGE_8_G: Serial.println("+-8G"); break;
+    case LSM6DSOX_ACCEL_RANGE_16_G: Serial.println("+-16G"); break;
+  }
+
   //sox.setAccelDataRate(LSM6DSOX_RATE_12_5_HZ);
   Serial.print("Accelerometer data rate set to: ");
   switch (sox.getAccelDataRate()) {
@@ -36,17 +45,21 @@ void setup(void) {
     case LSM6DSOX_RATE_1_6_HZ_LP: Serial.println("1.6 Hz"); break;
   }
 
-
-
-  //sox.setAccelRange(LSM6DSOX_ACCEL_RANGE_2_G);
-  Serial.print("Range set to: ");
-  switch (sox.getAccelRange()) {
-    case LSM6DSOX_ACCEL_RANGE_2_G: Serial.println("+-2G"); break;
-    case LSM6DSOX_ACCEL_RANGE_4_G: Serial.println("+-4G"); break;
-    case LSM6DSOX_ACCEL_RANGE_8_G: Serial.println("+-8G"); break;
-    case LSM6DSOX_ACCEL_RANGE_16_G: Serial.println("+-16G"); break;
+  //sox.setGyrolDataRate(LSM6DSOX_RATE_12_5_HZ);
+  Serial.print("Gyro data rate set to: ");
+  switch (sox.getGyrolDataRate()) {
+    case LSM6DSOX_RATE_SHUTDOWN: Serial.println("0 Hz"); break;
+    case LSM6DSOX_RATE_12_5_HZ: Serial.println("12.5 Hz"); break;
+    case LSM6DSOX_RATE_26_HZ: Serial.println("26 Hz"); break;
+    case LSM6DSOX_RATE_52_HZ: Serial.println("52 Hz"); break;
+    case LSM6DSOX_RATE_104_HZ: Serial.println("104 Hz"); break;
+    case LSM6DSOX_RATE_208_HZ: Serial.println("208 Hz"); break;
+    case LSM6DSOX_RATE_416_HZ: Serial.println("416 Hz"); break;
+    case LSM6DSOX_RATE_833_HZ: Serial.println("833 Hz"); break;
+    case LSM6DSOX_RATE_1_66K_HZ: Serial.println("1.66 KHz"); break;
+    case LSM6DSOX_RATE_3_33K_HZ: Serial.println("3.33 KHz"); break;
+    case LSM6DSOX_RATE_6_66K_HZ: Serial.println("6.66 KHz"); break;
   }
-
 }
 
 void loop() {

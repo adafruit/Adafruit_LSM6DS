@@ -109,7 +109,6 @@ void Adafruit_LSM6DSOX::reset(void) {
 
 }
 
-
 /**************************************************************************/
 /*!
     @brief  Gets the most recent sensor event, Adafruit Unified Sensor format
@@ -199,6 +198,20 @@ void Adafruit_LSM6DSOX::setAccelRange(lsm6dsox_accel_range_t new_range){
     accel_range.write(new_range);
 }
 
+/**************************************************************************/
+/*!
+    @brief Gets the gyro data rate.
+    @returns The the gyro data rate.
+*/
+lsm6dsox_data_rate_t Adafruit_LSM6DSOX::getGyrolDataRate(void){
+
+    Adafruit_BusIO_Register ctrl2 =
+      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL2_G);
+
+    Adafruit_BusIO_RegisterBits gyro_data_rate =
+      Adafruit_BusIO_RegisterBits(&ctrl2, 4, 4);
+    return gyro_data_rate.read();
+}
 /******************* Adafruit_Sensor functions *****************/
 /*!
  *     @brief  Updates the measurement data for all sensors simultaneously
