@@ -45,9 +45,9 @@ void setup(void) {
     case LSM6DSOX_RATE_1_6_HZ_LP: Serial.println("1.6 Hz"); break;
   }
 
-  //sox.setGyrolDataRate(LSM6DSOX_RATE_12_5_HZ);
+  //sox.setGyroDataRate(LSM6DSOX_RATE_12_5_HZ);
   Serial.print("Gyro data rate set to: ");
-  switch (sox.getGyrolDataRate()) {
+  switch (sox.getGyroDataRate()) {
     case LSM6DSOX_RATE_SHUTDOWN: Serial.println("0 Hz"); break;
     case LSM6DSOX_RATE_12_5_HZ: Serial.println("12.5 Hz"); break;
     case LSM6DSOX_RATE_26_HZ: Serial.println("26 Hz"); break;

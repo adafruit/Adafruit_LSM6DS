@@ -79,7 +79,9 @@ public:
   lsm6dsox_accel_range_t getAccelRange(void);
   void setAccelRange(lsm6dsox_accel_range_t new_range);
 
-  lsm6dsox_data_rate_t getGyrolDataRate(void);
+  lsm6dsox_data_rate_t getGyroDataRate(void);
+  void setGyroDataRate(lsm6dsox_data_rate_t data_rate);
+
 
   void reset(void);
 

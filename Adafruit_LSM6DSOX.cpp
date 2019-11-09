@@ -72,12 +72,15 @@ boolean Adafruit_LSM6DSOX::begin(uint8_t i2c_address, TwoWire *wire, int32_t sen
   reset();
   Adafruit_BusIO_Register ctrl3 =
     Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL3_C);
-  // enable accelerometer by setting the data rate to non-zero (disabled)
   Adafruit_BusIO_RegisterBits bdu =
       Adafruit_BusIO_RegisterBits(&ctrl3, 1, 6);
 
   bdu.write(true);
+
+  // enable accelerometer and gyro by setting the data rate to non-zero (disabled)
   setAccelDataRate(LSM6DSOX_RATE_104_HZ);
+  setGyroDataRate(LSM6DSOX_RATE_104_HZ);
+
   return true;
 }
 
@@ -147,6 +150,7 @@ lsm6dsox_data_rate_t Adafruit_LSM6DSOX::getAccelDataRate(void){
 
     Adafruit_BusIO_RegisterBits accel_data_rate =
       Adafruit_BusIO_RegisterBits(&ctrl1, 4, 4);
+
     return accel_data_rate.read();
 }
 
@@ -154,8 +158,7 @@ lsm6dsox_data_rate_t Adafruit_LSM6DSOX::getAccelDataRate(void){
 /*!
     @brief Sets the accelerometer data rate.
     @param  data_rate
-            The the accelerometer data rate. Must be a
-            `lsm6dsox_data_rate_t`.
+            The the accelerometer data rate. Must be a `lsm6dsox_data_rate_t`.
 */
 void Adafruit_LSM6DSOX::setAccelDataRate(lsm6dsox_data_rate_t data_rate){
 
@@ -180,6 +183,7 @@ lsm6dsox_accel_range_t Adafruit_LSM6DSOX::getAccelRange(void){
 
     Adafruit_BusIO_RegisterBits accel_range =
       Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
+
     return accel_range.read();
 }
 /**************************************************************************/
@@ -203,15 +207,34 @@ void Adafruit_LSM6DSOX::setAccelRange(lsm6dsox_accel_range_t new_range){
     @brief Gets the gyro data rate.
     @returns The the gyro data rate.
 */
-lsm6dsox_data_rate_t Adafruit_LSM6DSOX::getGyrolDataRate(void){
+lsm6dsox_data_rate_t Adafruit_LSM6DSOX::getGyroDataRate(void){
 
     Adafruit_BusIO_Register ctrl2 =
       Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL2_G);
 
     Adafruit_BusIO_RegisterBits gyro_data_rate =
       Adafruit_BusIO_RegisterBits(&ctrl2, 4, 4);
+
     return gyro_data_rate.read();
 }
+
+/**************************************************************************/
+/*!
+    @brief Sets the gyro data rate.
+    @param  data_rate
+            The the gyro data rate. Must be a `lsm6dsox_data_rate_t`.
+*/
+void Adafruit_LSM6DSOX::setGyroDataRate(lsm6dsox_data_rate_t data_rate){
+
+    Adafruit_BusIO_Register ctrl2 =
+      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL2_G);
+
+    Adafruit_BusIO_RegisterBits gyro_data_rate =
+      Adafruit_BusIO_RegisterBits(&ctrl2, 4, 4);
+
+    gyro_data_rate.write(data_rate);
+}
+
 /******************* Adafruit_Sensor functions *****************/
 /*!
  *     @brief  Updates the measurement data for all sensors simultaneously
