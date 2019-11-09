@@ -107,7 +107,6 @@ void Adafruit_LSM6DSOX::reset(void) {
       delay(1);
     }
 
-
 }
 
 
@@ -130,9 +129,9 @@ void Adafruit_LSM6DSOX::reset(void) {
   accel->sensor_id = _sensorid_accel;
   accel->type = SENSOR_TYPE_ACCELEROMETER;
   accel->timestamp = t;
-  accel->acceleration.x = accX * 0.061 * SENSORS_GRAVITY_STANDARD/1000;
-  accel->acceleration.y = accY * 0.061 * SENSORS_GRAVITY_STANDARD/1000;
-  accel->acceleration.z = accZ * 0.061 * SENSORS_GRAVITY_STANDARD/1000;
+  accel->acceleration.x = accX * SENSORS_GRAVITY_STANDARD/1000;
+  accel->acceleration.y = accY * SENSORS_GRAVITY_STANDARD/1000;
+  accel->acceleration.z = accZ * SENSORS_GRAVITY_STANDARD/1000;
 
   return true;
 }
@@ -184,6 +183,21 @@ lsm6dsox_accel_range_t Adafruit_LSM6DSOX::getAccelRange(void){
       Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
     return accel_range.read();
 }
+/**************************************************************************/
+/*!
+    @brief Sets the accelerometer measurement range.
+    @param The `lsm6dsox_accel_range_t` range to set.
+*/
+void Adafruit_LSM6DSOX::setAccelRange(lsm6dsox_accel_range_t new_range){
+
+    Adafruit_BusIO_Register ctrl1 =
+      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL1_XL);
+
+    Adafruit_BusIO_RegisterBits accel_range =
+      Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
+
+    accel_range.write(new_range);
+}
 
 /******************* Adafruit_Sensor functions *****************/
 /*!
@@ -202,8 +216,19 @@ void Adafruit_LSM6DSOX::_read(void) {
   rawAccY = buffer[3] << 8 | buffer[2];
   rawAccZ = buffer[5] << 8 | buffer[4];
 
-  accX = rawAccX;
-  accY = rawAccY;
-  accZ = rawAccZ;
+  lsm6dsox_accel_range_t range = getAccelRange();
+  float scale = 1;
+  if (range == LSM6DSOX_ACCEL_RANGE_16_G)
+    scale = 0.488;
+  if (range == LSM6DSOX_ACCEL_RANGE_8_G)
+    scale = 0.244;
+  if (range == LSM6DSOX_ACCEL_RANGE_4_G)
+    scale = 0.122;
+  if (range == LSM6DSOX_ACCEL_RANGE_2_G)
+    scale = 0.061;
+
+  accX = rawAccX * scale;
+  accY = rawAccY * scale;
+  accZ = rawAccZ * scale;
 
 }

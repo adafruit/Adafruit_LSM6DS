@@ -19,7 +19,7 @@ void setup(void) {
   }
   Serial.println("LSM6DSOX Found!");
 
-  sox.setAccelDataRate(LSM6DSOX_RATE_208_HZ);
+  //sox.setAccelDataRate(LSM6DSOX_RATE_12_5_HZ);
   Serial.print("Accelerometer data rate set to: ");
   switch (sox.getAccelDataRate()) {
     case LSM6DSOX_RATE_SHUTDOWN: Serial.println("0 Hz"); break;
@@ -38,7 +38,7 @@ void setup(void) {
 
 
 
-//  sox.setAccelRange(LSM6DSOX_ACCEL_RANGE_2_G);
+  //sox.setAccelRange(LSM6DSOX_ACCEL_RANGE_2_G);
   Serial.print("Range set to: ");
   switch (sox.getAccelRange()) {
     case LSM6DSOX_ACCEL_RANGE_2_G: Serial.println("+-2G"); break;
@@ -62,30 +62,18 @@ void loop() {
     sox.getEvent(&accel);
 //  
 //  /* Display the results (acceleration is measured in m/s^2) */
-  Serial.print("\t\tX: "); Serial.print(accel.acceleration.x);
-  Serial.print(" \tY: "); Serial.print(accel.acceleration.y); 
-  Serial.print(" \tZ: "); Serial.print(accel.acceleration.z); 
-  Serial.println(" m/s^2 ");
-
-  Serial.println();
+//  Serial.print("\t\tX: "); Serial.print(accel.acceleration.x);
+//  Serial.print(" \tY: "); Serial.print(accel.acceleration.y);
+//  Serial.print(" \tZ: "); Serial.print(accel.acceleration.z);
+//  Serial.println(" m/s^2 ");
+//
+//  Serial.println();
 // 
-  delay(100); 
+//  delay(100);
+  Serial.print(accel.acceleration.x);
+  Serial.print(","); Serial.print(accel.acceleration.y);
+  Serial.print(","); Serial.print(accel.acceleration.z);
+  Serial.println();
+  delay(10);
+
 }
-
-
-
-//
-//void Adafruit_LSM6DSOX::setAccelDataRate(LSM6DSOX_data_rate_t data_rate){
-//    
-//    Adafruit_BusIO_Register ctrl1 =
-//      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL1_XL); 
-//
-//    // ctrl1.write(0b10000);
-//
-//    Adafruit_BusIO_RegisterBits accel_data_rate =
-//      Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
-//
-//    accel_data_rate.write(data_rate);
-//    
-//    delay(200);
-//}

@@ -77,6 +77,7 @@ public:
   void setAccelDataRate(lsm6dsox_data_rate_t data_rate);
 
   lsm6dsox_accel_range_t getAccelRange(void);
+  void setAccelRange(lsm6dsox_accel_range_t new_range);
 
   void reset(void);
 
