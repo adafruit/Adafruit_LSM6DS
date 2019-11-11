@@ -72,12 +72,7 @@ boolean Adafruit_LSM6DSOX::begin(uint8_t i2c_address, TwoWire *wire, int32_t sen
   _sensorid_temp = sensor_id + 1;
 
   reset();
-  Adafruit_BusIO_Register ctrl3 =
-    Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL3_C);
-  Adafruit_BusIO_RegisterBits bdu =
-      Adafruit_BusIO_RegisterBits(&ctrl3, 1, 6);
 
-  bdu.write(true);
 
   // enable accelerometer and gyro by setting the data rate to non-zero (disabled)
   setAccelDataRate(LSM6DSOX_RATE_104_HZ);
@@ -111,6 +106,11 @@ void Adafruit_LSM6DSOX::reset(void) {
       delay(1);
     }
 
+  Adafruit_BusIO_RegisterBits bdu =
+      Adafruit_BusIO_RegisterBits(&ctrl3, 1, 6);
+
+  bdu.write(true);
+
 }
 
 /**************************************************************************/
@@ -140,9 +140,9 @@ void Adafruit_LSM6DSOX::reset(void) {
   accel->sensor_id = _sensorid_accel;
   accel->type = SENSOR_TYPE_ACCELEROMETER;
   accel->timestamp = t;
-  accel->acceleration.x = accX * SENSORS_GRAVITY_STANDARD/1000;
-  accel->acceleration.y = accY * SENSORS_GRAVITY_STANDARD/1000;
-  accel->acceleration.z = accZ * SENSORS_GRAVITY_STANDARD/1000;
+  accel->acceleration.x = accX * SENSORS_GRAVITY_STANDARD / 1000;
+  accel->acceleration.y = accY * SENSORS_GRAVITY_STANDARD / 1000;
+  accel->acceleration.z = accZ * SENSORS_GRAVITY_STANDARD / 1000;
 
 
   memset(gyro, 0, sizeof(sensors_event_t));
@@ -159,8 +159,7 @@ void Adafruit_LSM6DSOX::reset(void) {
   temp->sensor_id = _sensorid_temp;
   temp->type = SENSOR_TYPE_AMBIENT_TEMPERATURE;
   temp->timestamp = t;
-  temp->temperature = temperature;
-
+  temp->temperature = (temperature / 256.0)+25.0;
 
   return true;
 }
@@ -227,6 +226,8 @@ void Adafruit_LSM6DSOX::setAccelRange(lsm6dsox_accel_range_t new_range){
       Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
 
     accel_range.write(new_range);
+    delay(20);
+
 }
 
 /**************************************************************************/
@@ -292,6 +293,7 @@ void Adafruit_LSM6DSOX::setGyroRange(lsm6dsox_gyro_range_t new_range){
       Adafruit_BusIO_RegisterBits(&ctrl2, 2, 2);
 
     gyro_range.write(new_range);
+    delay(20);
 }
 /******************* Adafruit_Sensor functions *****************/
 /*!
@@ -308,13 +310,13 @@ void Adafruit_LSM6DSOX::_read(void) {
 
   temperature = buffer[1] << 8 | buffer[0];
 
-  rawGyroY = buffer[3] << 8 | buffer[2];
-  rawGyroZ = buffer[5] << 8 | buffer[4];
-  rawGyroX = buffer[7] << 8 | buffer[6];
+  rawGyroX = buffer[3] << 8 | buffer[2];
+  rawGyroY = buffer[5] << 8 | buffer[4];
+  rawGyroZ = buffer[7] << 8 | buffer[6];
 
-  rawAccY = buffer[9] << 8 | buffer[8];
-  rawAccZ = buffer[11] << 8 | buffer[10];
-  rawAccZ = buffer[13] << 8 | buffer[10];
+  rawAccX= buffer[9] << 8 | buffer[8];
+  rawAccY = buffer[11] << 8 | buffer[10];
+  rawAccZ = buffer[13] << 8 | buffer[12];
 
   lsm6dsox_gyro_range_t gyro_range = getGyroRange();
   float gyro_scale = 1;
