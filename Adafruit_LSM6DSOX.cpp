@@ -61,7 +61,7 @@ boolean Adafruit_LSM6DSOX::begin_I2C(uint8_t i2c_address, TwoWire *wire, int32_t
   }
 
   Adafruit_BusIO_Register chip_id =
-    Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_WHOAMI);
+    Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_WHOAMI);
 
   // make sure we're talking to the right chip
   if (chip_id.read() != LSM6DSOX_CHIP_ID) {
@@ -143,7 +143,7 @@ bool Adafruit_LSM6DSOX::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin
 void Adafruit_LSM6DSOX::reset(void) {
 
     Adafruit_BusIO_Register ctrl3 =
-      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL3_C);
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL3_C);
 
     Adafruit_BusIO_RegisterBits sw_reset =
       Adafruit_BusIO_RegisterBits(&ctrl3, 1, 0);
@@ -236,7 +236,7 @@ void Adafruit_LSM6DSOX::reset(void) {
 lsm6dsox_data_rate_t Adafruit_LSM6DSOX::getAccelDataRate(void){
 
     Adafruit_BusIO_Register ctrl1 =
-      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL1_XL);
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL1_XL);
 
     Adafruit_BusIO_RegisterBits accel_data_rate =
       Adafruit_BusIO_RegisterBits(&ctrl1, 4, 4);
@@ -253,7 +253,7 @@ lsm6dsox_data_rate_t Adafruit_LSM6DSOX::getAccelDataRate(void){
 void Adafruit_LSM6DSOX::setAccelDataRate(lsm6dsox_data_rate_t data_rate){
 
     Adafruit_BusIO_Register ctrl1 =
-      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL1_XL);
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL1_XL);
 
     Adafruit_BusIO_RegisterBits accel_data_rate =
       Adafruit_BusIO_RegisterBits(&ctrl1, 4, 4);
@@ -269,7 +269,7 @@ void Adafruit_LSM6DSOX::setAccelDataRate(lsm6dsox_data_rate_t data_rate){
 lsm6dsox_accel_range_t Adafruit_LSM6DSOX::getAccelRange(void){
 
     Adafruit_BusIO_Register ctrl1 =
-      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL1_XL);
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL1_XL);
 
     Adafruit_BusIO_RegisterBits accel_range =
       Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
@@ -284,7 +284,7 @@ lsm6dsox_accel_range_t Adafruit_LSM6DSOX::getAccelRange(void){
 void Adafruit_LSM6DSOX::setAccelRange(lsm6dsox_accel_range_t new_range){
 
     Adafruit_BusIO_Register ctrl1 =
-      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL1_XL);
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL1_XL);
 
     Adafruit_BusIO_RegisterBits accel_range =
       Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
@@ -302,7 +302,7 @@ void Adafruit_LSM6DSOX::setAccelRange(lsm6dsox_accel_range_t new_range){
 lsm6dsox_data_rate_t Adafruit_LSM6DSOX::getGyroDataRate(void){
 
     Adafruit_BusIO_Register ctrl2 =
-      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL2_G);
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL2_G);
 
     Adafruit_BusIO_RegisterBits gyro_data_rate =
       Adafruit_BusIO_RegisterBits(&ctrl2, 4, 4);
@@ -319,7 +319,7 @@ lsm6dsox_data_rate_t Adafruit_LSM6DSOX::getGyroDataRate(void){
 void Adafruit_LSM6DSOX::setGyroDataRate(lsm6dsox_data_rate_t data_rate){
 
     Adafruit_BusIO_Register ctrl2 =
-      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL2_G);
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL2_G);
 
     Adafruit_BusIO_RegisterBits gyro_data_rate =
       Adafruit_BusIO_RegisterBits(&ctrl2, 4, 4);
@@ -335,7 +335,7 @@ void Adafruit_LSM6DSOX::setGyroDataRate(lsm6dsox_data_rate_t data_rate){
 lsm6dsox_gyro_range_t Adafruit_LSM6DSOX::getGyroRange(void){
 
     Adafruit_BusIO_Register ctrl2 =
-      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL2_G);
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL2_G);
 
     Adafruit_BusIO_RegisterBits gyro_range =
       Adafruit_BusIO_RegisterBits(&ctrl2, 2, 2);
@@ -351,7 +351,7 @@ lsm6dsox_gyro_range_t Adafruit_LSM6DSOX::getGyroRange(void){
 void Adafruit_LSM6DSOX::setGyroRange(lsm6dsox_gyro_range_t new_range){
 
     Adafruit_BusIO_Register ctrl2 =
-      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_CTRL2_G);
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL2_G);
 
     Adafruit_BusIO_RegisterBits gyro_range =
       Adafruit_BusIO_RegisterBits(&ctrl2, 2, 2);
@@ -367,7 +367,7 @@ void Adafruit_LSM6DSOX::setGyroRange(lsm6dsox_gyro_range_t new_range){
 void Adafruit_LSM6DSOX::_read(void) {
   // get raw readings
   Adafruit_BusIO_Register data_reg =
-      Adafruit_BusIO_Register(i2c_dev, LSM6DSOX_OUT_TEMP_L, 14);
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_OUT_TEMP_L, 14);
 
   uint8_t buffer[14];
   data_reg.read(buffer, 14);
