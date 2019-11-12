@@ -91,7 +91,7 @@ bool Adafruit_LSM6DSOX::begin_SPI(uint8_t cs_pin, SPIClass *theSPI) {
   Serial.println("Making SPI device");
 
   spi_dev = new Adafruit_SPIDevice(cs_pin, 
-				   1000000,   // frequency
+				   10000000,   // frequency
 				   SPI_BITORDER_MSBFIRST,  // bit order
 				   SPI_MODE0, // data mode
 				   theSPI);
@@ -121,7 +121,7 @@ bool Adafruit_LSM6DSOX::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin
   Serial.println("Making SPI device");
 
   spi_dev = new Adafruit_SPIDevice(cs_pin, sck_pin, miso_pin, mosi_pin,
-				   1000000,   // frequency
+				   10000000,   // frequency
 				   SPI_BITORDER_MSBFIRST,  // bit order
 				   SPI_MODE0); // data mode
   Serial.println("made spi device, beginning");
@@ -174,6 +174,8 @@ void Adafruit_LSM6DSOX::reset(void) {
     // enable accelerometer and gyro by setting the data rate to non-zero (disabled)
   setAccelDataRate(LSM6DSOX_RATE_104_HZ);
   setGyroDataRate(LSM6DSOX_RATE_104_HZ);
+  
+  delay(10);
 
 }
 
@@ -412,4 +414,29 @@ void Adafruit_LSM6DSOX::_read(void) {
   accY = rawAccY * accel_scale;
   accZ = rawAccZ * accel_scale;
 
+}
+
+void Adafruit_LSM6DSOX::setInt2ActiveLow(bool active_low){
+
+    Adafruit_BusIO_Register ctrl3 =
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL3_C);
+
+    Adafruit_BusIO_RegisterBits h_lactive =
+      Adafruit_BusIO_RegisterBits(&ctrl3, 1, 5);
+    
+    h_lactive.write(active_low);
+    
+}
+
+void Adafruit_LSM6DSOX::setInt2PPOD(bool ppod){
+
+
+    Adafruit_BusIO_Register ctrl3 =
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL3_C);
+
+    Adafruit_BusIO_RegisterBits ppod_bit =
+      Adafruit_BusIO_RegisterBits(&ctrl3, 1, 4);
+    
+    ppod_bit.write(ppod);
+    
 }

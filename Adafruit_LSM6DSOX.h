@@ -27,7 +27,7 @@
 #define LSM6DSOX_I2CADDR_DEFAULT 0x6a ///< LSM6DSOX default i2c address
 #define LSM6DSOX_CHIP_ID 0x6C ///< LSM6DSOX default device id from WHOAMI
 
-
+#define LSM6DSOX_PIN_CTRL 0x2 ///< Pin control register
 #define LSM6DSOX_CTRL1_XL 0x10 ///< Main accelerometer config register
 #define LSM6DSOX_CTRL2_G 0x11 ///< Main gyro config register
 #define LSM6DSOX_CTRL3_C 0x12 ///< Main configuration register
@@ -100,6 +100,8 @@ public:
   void setGyroRange(lsm6dsox_gyro_range_t new_range);
 
   void reset(void);
+  void setInt2ActiveLow(bool active_low);
+  void setInt2PPOD(bool ppod);
 
 private:
   void _read(void);
