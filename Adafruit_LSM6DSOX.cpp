@@ -53,7 +53,7 @@ Adafruit_LSM6DSOX::Adafruit_LSM6DSOX(void) {}
  *            The user-defined ID to differentiate different sensors
  *    @return True if initialization was successful, otherwise false.
  */
-boolean Adafruit_LSM6DSOX::begin(uint8_t i2c_address, TwoWire *wire, int32_t sensor_id) {
+boolean Adafruit_LSM6DSOX::begin_I2C(uint8_t i2c_address, TwoWire *wire, int32_t sensor_id) {
   i2c_dev = new Adafruit_I2CDevice(i2c_address, wire);
 
   if (!i2c_dev->begin()) {
@@ -74,9 +74,64 @@ boolean Adafruit_LSM6DSOX::begin(uint8_t i2c_address, TwoWire *wire, int32_t sen
   reset();
 
 
-  // enable accelerometer and gyro by setting the data rate to non-zero (disabled)
-  setAccelDataRate(LSM6DSOX_RATE_104_HZ);
-  setGyroDataRate(LSM6DSOX_RATE_104_HZ);
+
+
+  return true;
+}
+
+
+/*!
+ *    @brief  Sets up the hardware and initializes hardware SPI
+ *    @param  cs_pin The arduino pin # connected to chip select
+ *    @param  theSPI The SPI object to be used for SPI connections.
+ *    @return True if initialization was successful, otherwise false.
+ */
+bool Adafruit_LSM6DSOX::begin_SPI(uint8_t cs_pin, SPIClass *theSPI) {
+  i2c_dev = NULL;  
+  Serial.println("Making SPI device");
+
+  spi_dev = new Adafruit_SPIDevice(cs_pin, 
+				   1000000,   // frequency
+				   SPI_BITORDER_MSBFIRST,  // bit order
+				   SPI_MODE0, // data mode
+				   theSPI);
+  Serial.println("made spi device, beginning");
+
+  if (!spi_dev->begin()) {
+    return false;
+  }
+  Serial.println("began");
+
+  reset();
+  Serial.println("resat");
+
+  return true;
+}
+
+/*!
+ *    @brief  Sets up the hardware and initializes software SPI
+ *    @param  cs_pin The arduino pin # connected to chip select
+ *    @param  sck_pin The arduino pin # connected to SPI clock
+ *    @param  miso_pin The arduino pin # connected to SPI MISO
+ *    @param  mosi_pin The arduino pin # connected to SPI MOSI
+ *    @return True if initialization was successful, otherwise false.
+ */
+bool Adafruit_LSM6DSOX::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin, int8_t mosi_pin) {
+  i2c_dev = NULL;
+  Serial.println("Making SPI device");
+
+  spi_dev = new Adafruit_SPIDevice(cs_pin, sck_pin, miso_pin, mosi_pin,
+				   1000000,   // frequency
+				   SPI_BITORDER_MSBFIRST,  // bit order
+				   SPI_MODE0); // data mode
+  Serial.println("made spi device, beginning");
+
+  if (!spi_dev->begin()) {
+    return false;
+  }
+  Serial.println("began");
+
+  reset();
 
   return true;
 }
@@ -96,10 +151,15 @@ void Adafruit_LSM6DSOX::reset(void) {
     Adafruit_BusIO_RegisterBits boot =
       Adafruit_BusIO_RegisterBits(&ctrl3, 1, 7);
 
+    Serial.println("Sending reset");
+
     sw_reset.write(true);
+    Serial.println("Sent reset");
+
     while (sw_reset.read()){
       delay(1);
     }
+    Serial.println("reset done");
 
     boot.write(true);
     while (boot.read()){
@@ -110,6 +170,10 @@ void Adafruit_LSM6DSOX::reset(void) {
       Adafruit_BusIO_RegisterBits(&ctrl3, 1, 6);
 
   bdu.write(true);
+
+    // enable accelerometer and gyro by setting the data rate to non-zero (disabled)
+  setAccelDataRate(LSM6DSOX_RATE_104_HZ);
+  setGyroDataRate(LSM6DSOX_RATE_104_HZ);
 
 }
 
@@ -177,7 +241,7 @@ lsm6dsox_data_rate_t Adafruit_LSM6DSOX::getAccelDataRate(void){
     Adafruit_BusIO_RegisterBits accel_data_rate =
       Adafruit_BusIO_RegisterBits(&ctrl1, 4, 4);
 
-    return accel_data_rate.read();
+    return (lsm6dsox_data_rate_t)accel_data_rate.read();
 }
 
 /**************************************************************************/
@@ -210,7 +274,7 @@ lsm6dsox_accel_range_t Adafruit_LSM6DSOX::getAccelRange(void){
     Adafruit_BusIO_RegisterBits accel_range =
       Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
 
-    return accel_range.read();
+    return (lsm6dsox_accel_range_t)accel_range.read();
 }
 /**************************************************************************/
 /*!
@@ -243,7 +307,7 @@ lsm6dsox_data_rate_t Adafruit_LSM6DSOX::getGyroDataRate(void){
     Adafruit_BusIO_RegisterBits gyro_data_rate =
       Adafruit_BusIO_RegisterBits(&ctrl2, 4, 4);
 
-    return gyro_data_rate.read();
+    return (lsm6dsox_data_rate_t)gyro_data_rate.read();
 }
 
 /**************************************************************************/
@@ -276,7 +340,7 @@ lsm6dsox_gyro_range_t Adafruit_LSM6DSOX::getGyroRange(void){
     Adafruit_BusIO_RegisterBits gyro_range =
       Adafruit_BusIO_RegisterBits(&ctrl2, 2, 2);
 
-    return gyro_range.read();
+    return (lsm6dsox_gyro_range_t)gyro_range.read();
 }
 
 /**************************************************************************/

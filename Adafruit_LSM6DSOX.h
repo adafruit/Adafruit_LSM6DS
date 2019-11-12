@@ -76,9 +76,15 @@ class Adafruit_LSM6DSOX {
 public:
 
   Adafruit_LSM6DSOX();  
-  bool begin(uint8_t i2c_addr = LSM6DSOX_I2CADDR_DEFAULT,
+  bool begin_I2C(uint8_t i2c_addr = LSM6DSOX_I2CADDR_DEFAULT,
                 TwoWire *wire = &Wire,
                 int32_t sensorID = 0);
+  
+
+  bool begin_SPI(uint8_t cs_pin, SPIClass *theSPI=&SPI);
+  bool begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin, int8_t mosi_pin);
+  
+  
   bool getEvent(sensors_event_t *accel, sensors_event_t *gyro, sensors_event_t *temp);
 
   lsm6dsox_data_rate_t getAccelDataRate(void);
@@ -104,6 +110,8 @@ private:
   uint8_t _sensorid_accel, _sensorid_gyro, _sensorid_temp;
   
   Adafruit_I2CDevice *i2c_dev;
+  Adafruit_SPIDevice *spi_dev;
+
 };
 
 #endif
