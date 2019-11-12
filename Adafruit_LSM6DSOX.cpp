@@ -88,22 +88,18 @@ boolean Adafruit_LSM6DSOX::begin_I2C(uint8_t i2c_address, TwoWire *wire, int32_t
  */
 bool Adafruit_LSM6DSOX::begin_SPI(uint8_t cs_pin, SPIClass *theSPI) {
   i2c_dev = NULL;  
-  Serial.println("Making SPI device");
 
   spi_dev = new Adafruit_SPIDevice(cs_pin, 
-				   10000000,   // frequency
+				   1000000,   // frequency
 				   SPI_BITORDER_MSBFIRST,  // bit order
 				   SPI_MODE0, // data mode
 				   theSPI);
-  Serial.println("made spi device, beginning");
 
   if (!spi_dev->begin()) {
     return false;
   }
-  Serial.println("began");
 
   reset();
-  Serial.println("resat");
 
   return true;
 }
@@ -118,18 +114,15 @@ bool Adafruit_LSM6DSOX::begin_SPI(uint8_t cs_pin, SPIClass *theSPI) {
  */
 bool Adafruit_LSM6DSOX::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin, int8_t mosi_pin) {
   i2c_dev = NULL;
-  Serial.println("Making SPI device");
 
   spi_dev = new Adafruit_SPIDevice(cs_pin, sck_pin, miso_pin, mosi_pin,
-				   10000000,   // frequency
+				   1000000,   // frequency
 				   SPI_BITORDER_MSBFIRST,  // bit order
 				   SPI_MODE0); // data mode
-  Serial.println("made spi device, beginning");
 
   if (!spi_dev->begin()) {
     return false;
   }
-  Serial.println("began");
 
   reset();
 
@@ -151,15 +144,11 @@ void Adafruit_LSM6DSOX::reset(void) {
     Adafruit_BusIO_RegisterBits boot =
       Adafruit_BusIO_RegisterBits(&ctrl3, 1, 7);
 
-    Serial.println("Sending reset");
-
     sw_reset.write(true);
-    Serial.println("Sent reset");
 
     while (sw_reset.read()){
       delay(1);
     }
-    Serial.println("reset done");
 
     boot.write(true);
     while (boot.read()){
@@ -439,4 +428,32 @@ void Adafruit_LSM6DSOX::setInt2PPOD(bool ppod){
     
     ppod_bit.write(ppod);
     
+}
+
+
+// # SDO_AUX Default: input with pull-up.
+// # OCS_AUX Default: input with pull-up.
+
+// sox._ois_pu_dis = True # disable pull-up
+// time.sleep(0.010)
+    // _ois_pu_dis = RWBit(_LSM6DSOX_PIN_CTRL, 7)
+
+
+void Adafruit_LSM6DSOX::enableI2CMasterPullups(bool enable_pullups){
+
+    Adafruit_BusIO_Register func_cfg_access =
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_FUNC_CFG_ACCESS);
+    Adafruit_BusIO_RegisterBits master_cfg_enable_bit =
+      Adafruit_BusIO_RegisterBits(&func_cfg_access, 1, 6);
+  
+
+    Adafruit_BusIO_Register master_config =
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_MASTER_CONFIG);
+    Adafruit_BusIO_RegisterBits i2c_master_pu_en =
+      Adafruit_BusIO_RegisterBits(&master_config, 1, 3);
+
+    master_cfg_enable_bit.write(true);
+    i2c_master_pu_en.write(enable_pullups);    
+    master_cfg_enable_bit.write(false);
+
 }

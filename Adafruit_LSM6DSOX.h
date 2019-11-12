@@ -27,11 +27,13 @@
 #define LSM6DSOX_I2CADDR_DEFAULT 0x6a ///< LSM6DSOX default i2c address
 #define LSM6DSOX_CHIP_ID 0x6C ///< LSM6DSOX default device id from WHOAMI
 
+#define LSM6DSOX_FUNC_CFG_ACCESS 0x1 ///< Enable embedded functions register 
 #define LSM6DSOX_PIN_CTRL 0x2 ///< Pin control register
+#define LSM6DSOX_WHOAMI  0xF ///< Chip ID register
 #define LSM6DSOX_CTRL1_XL 0x10 ///< Main accelerometer config register
 #define LSM6DSOX_CTRL2_G 0x11 ///< Main gyro config register
 #define LSM6DSOX_CTRL3_C 0x12 ///< Main configuration register
-#define LSM6DSOX_WHOAMI  0xF ///< Chip ID register
+#define LSM6DSOX_MASTER_CONFIG 0x14 ///< I2C Master config; access must be enabled with  bit SHUB_REG_ACCESS is set to '1' in FUNC_CFG_ACCESS (01h).
 #define LSM6DSOX_OUT_TEMP_L  0x20 ///< First data register (temperature low)
 #define LSM6DSOX_OUTX_L_G  0x22 ///< First gyro data register
 #define LSM6DSOX_OUTX_L_A  0x28 ///< First accel data register
@@ -101,6 +103,7 @@ public:
 
   void reset(void);
   void setInt2ActiveLow(bool active_low);
+  void enableI2CMasterPullups(bool enable_pullups);
   void setInt2PPOD(bool ppod);
 
 private:
