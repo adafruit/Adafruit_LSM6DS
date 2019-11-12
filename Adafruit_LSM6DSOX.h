@@ -103,8 +103,9 @@ public:
 
   void reset(void);
   void setInt2ActiveLow(bool active_low);
-  void enableI2CMasterPullups(bool enable_pullups);
   void setInt2PPOD(bool ppod);
+  void enableI2CMasterPullups(bool enable_pullups);
+  void disableSPIMasterPullups(bool disable_pullups);
 
 private:
   void _read(void);

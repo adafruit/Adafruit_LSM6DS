@@ -429,14 +429,16 @@ void Adafruit_LSM6DSOX::setInt2PPOD(bool ppod){
     ppod_bit.write(ppod);
     
 }
+void Adafruit_LSM6DSOX::disableSPIMasterPullups(bool disable_pullups){
 
+    Adafruit_BusIO_Register pin_config =
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_PIN_CTRL);
+    
+    Adafruit_BusIO_RegisterBits disable_ois_pu =
+      Adafruit_BusIO_RegisterBits(&pin_config, 1, 7);
 
-// # SDO_AUX Default: input with pull-up.
-// # OCS_AUX Default: input with pull-up.
-
-// sox._ois_pu_dis = True # disable pull-up
-// time.sleep(0.010)
-    // _ois_pu_dis = RWBit(_LSM6DSOX_PIN_CTRL, 7)
+    disable_ois_pu.write(disable_pullups);
+}
 
 
 void Adafruit_LSM6DSOX::enableI2CMasterPullups(bool enable_pullups){
