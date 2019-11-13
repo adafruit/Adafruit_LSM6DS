@@ -32,7 +32,7 @@
 #define LSM6DSOX_FIFO_CTRL1 0x07
 #define LSM6DSOX_FIFO_CTRL2 0x08
 
-#define INT1_CTRL 0x0D 
+#define LSM6DSOX_INT1_CTRL 0x0D 
 #define LSM6DSOX_INT2_CTRL 0x0E
 #define LSM6DSOX_WHOAMI  0xF ///< Chip ID register
 #define LSM6DSOX_CTRL1_XL 0x10 ///< Main accelerometer config register
@@ -112,6 +112,7 @@ public:
   void reset(void);
   void setIntActiveLow(bool active_low);
   void setInt2PPOD(bool ppod);
+  void setInt1DataReady(bool enable_drdy);
   void enableI2CMasterPullups(bool enable_pullups);
   void disableSPIMasterPullups(bool disable_pullups);
 
