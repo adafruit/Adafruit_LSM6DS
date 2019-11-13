@@ -156,13 +156,13 @@ void Adafruit_LSM6DSOX::reset(void) {
 
   bdu.write(true);
 
-  Adafruit_BusIO_Register ctrl_9 =
-    Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL9_XL);
+  // Adafruit_BusIO_Register ctrl_9 =
+  //   Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL9_XL);
     
-  Adafruit_BusIO_RegisterBits i3c_disable_bit =
-    Adafruit_BusIO_RegisterBits(&ctrl_9, 1, 1);
+  // Adafruit_BusIO_RegisterBits i3c_disable_bit =
+  //   Adafruit_BusIO_RegisterBits(&ctrl_9, 1, 1);
 
-  i3c_disable_bit.write(true);
+  // i3c_disable_bit.write(true);
 
     // enable accelerometer and gyro by setting the data rate to non-zero (disabled)
   setAccelDataRate(LSM6DSOX_RATE_104_HZ);
@@ -409,7 +409,7 @@ void Adafruit_LSM6DSOX::_read(void) {
 
 }
 
-void Adafruit_LSM6DSOX::setInt2ActiveLow(bool active_low){
+void Adafruit_LSM6DSOX::setIntActiveLow(bool active_low){
 
     Adafruit_BusIO_Register ctrl3 =
       Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL3_C);
