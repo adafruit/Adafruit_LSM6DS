@@ -69,16 +69,12 @@ boolean Adafruit_LSM6DSOX::begin_I2C(uint8_t i2c_address, TwoWire *wire, int32_t
   }
   _sensorid_accel = sensor_id;
   _sensorid_gyro = sensor_id + 1;
-  _sensorid_temp = sensor_id + 1;
+  _sensorid_temp = sensor_id + 2;
 
   reset();
 
-
-
-
   return true;
 }
-
 
 /*!
  *    @brief  Sets up the hardware and initializes hardware SPI
@@ -159,6 +155,14 @@ void Adafruit_LSM6DSOX::reset(void) {
       Adafruit_BusIO_RegisterBits(&ctrl3, 1, 6);
 
   bdu.write(true);
+
+  Adafruit_BusIO_Register ctrl_9 =
+    Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL9_XL);
+    
+  Adafruit_BusIO_RegisterBits i3c_disable_bit =
+    Adafruit_BusIO_RegisterBits(&ctrl_9, 1, 1);
+
+  i3c_disable_bit.write(true);
 
     // enable accelerometer and gyro by setting the data rate to non-zero (disabled)
   setAccelDataRate(LSM6DSOX_RATE_104_HZ);
