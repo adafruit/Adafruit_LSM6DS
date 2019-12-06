@@ -3,11 +3,12 @@
 Adafruit LSM6DSOX ![Build Status](https://travis-ci.com/adafruit/Adafruit_LSM6DSOX.svg?branch=master)
 ================
 
-<a href="https://www.adafruit.com/products/4438"><img src="assets/board.png?raw=true" width="500px"></a>
 This is the Adafruit LSM6DSOX 6-DoF Accelerometer and Gyroscope Library for Arduino
 
 Tested and works great with the Adafruit LSM6DSOX Breakout Board 
-* <a href="https://www.adafruit.com/products/4438"><img src="assets/board.png?raw=true" width="500px"></a>
+[<img src="assets/board.png?raw=true" width="500px">](https://www.adafruit.com/products/4438)
+
+
 This chip uses I2C to communicate, 2 pins are required to interface
 
 Adafruit invests time and resources providing this open source code, please support Adafruit and open-source hardware by purchasing products from Adafruit!
