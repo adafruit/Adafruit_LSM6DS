@@ -141,6 +141,9 @@ void setup(void) {
   case LSM6DSOX_RATE_6_66K_HZ:
     Serial.println("6.66 KHz");
     break;
+  case LSM6DSOX_RATE_1_6_HZ_LP:
+    Serial.println("1.6 Hz");
+    break;
   }
 }
 

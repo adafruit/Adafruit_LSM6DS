@@ -87,9 +87,6 @@ boolean Adafruit_LSM6DSOX::begin_I2C(uint8_t i2c_address, TwoWire *wire,
  */
 bool Adafruit_LSM6DSOX::begin_SPI(uint8_t cs_pin, SPIClass *theSPI) {
   i2c_dev = NULL;
-  print_voltage();
-
-  Serial.println("beginning SPI");
 
   spi_dev = new Adafruit_SPIDevice(cs_pin,
                                    1000000,               // frequency
@@ -100,14 +97,6 @@ bool Adafruit_LSM6DSOX::begin_SPI(uint8_t cs_pin, SPIClass *theSPI) {
   if (!spi_dev->begin()) {
     return false;
   }
-
-  Serial.println("began SPI");
-  print_voltage();
-  Serial.println("Resetting:");
-
-  reset();
-  print_voltage();
-  Serial.println("reSat.");
 
   return true;
 }
@@ -131,13 +120,6 @@ bool Adafruit_LSM6DSOX::begin_SPI(int8_t cs_pin, int8_t sck_pin,
   if (!spi_dev->begin()) {
     return false;
   }
-  Serial.println("began SPI");
-  print_voltage();
-  Serial.println("Resetting:");
-
-  reset();
-  print_voltage();
-  Serial.println("reSat.");
   return true;
 }
 
@@ -147,8 +129,7 @@ bool Adafruit_LSM6DSOX::begin_SPI(int8_t cs_pin, int8_t sck_pin,
    memory
 */
 void Adafruit_LSM6DSOX::reset(void) {
-  Serial.println("In beginning of reset:");
-  print_voltage();
+
   Adafruit_BusIO_Register ctrl3 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL3_C);
 
@@ -156,32 +137,27 @@ void Adafruit_LSM6DSOX::reset(void) {
       Adafruit_BusIO_RegisterBits(&ctrl3, 1, 0);
 
   Adafruit_BusIO_RegisterBits boot = Adafruit_BusIO_RegisterBits(&ctrl3, 1, 7);
-  Serial.println("Resetting:");
-  print_voltage();
+
   sw_reset.write(true);
 
   while (sw_reset.read()) {
     delay(1);
   }
-  Serial.println("Booting:");
-  print_voltage();
+
   boot.write(true);
   while (boot.read()) {
     delay(1);
   }
-  Serial.println("BDU:");
-  print_voltage();
+
   Adafruit_BusIO_RegisterBits bdu = Adafruit_BusIO_RegisterBits(&ctrl3, 1, 6);
 
   bdu.write(true);
-  print_voltage();
   Adafruit_BusIO_Register ctrl_9 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL9_XL);
 
   Adafruit_BusIO_RegisterBits i3c_disable_bit =
       Adafruit_BusIO_RegisterBits(&ctrl_9, 1, 1);
-  Serial.println("I2C Disable:");
-  print_voltage();
+
   i3c_disable_bit.write(true);
   setInt1DataReady(true);
 
