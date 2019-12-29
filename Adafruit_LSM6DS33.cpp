@@ -3,34 +3,8 @@
  *  @file Adafruit_LSM6DS33.cpp Adafruit LSM6DS33 6-DoF Accelerometer
  *  and Gyroscope library
  *
- *  @section intro_sec Introduction
- *
- * 	I2C Driver for the Adafruit LSM6DS33 6-DoF Accelerometer
- *      and Gyroscope library
- *
- * 	This is a library for the Adafruit LSM6DS33 breakout:
- * 	https://www.adafruit.com/product/4480
- *
- * 	Adafruit invests time and resources providing this open source code,
- *  please support Adafruit and open-source hardware by purchasing products from
- * 	Adafruit!
- *
- *  @section dependencies Dependencies
- *  This library depends on the Adafruit BusIO library
- *
- *  This library depends on the Adafruit Unified Sensor library
-
- *  @section author Author
- *
  *  Bryan Siepert for Adafruit Industries
- *
- * 	@section license License
- *
  * 	BSD (see license.txt)
- *
- * 	@section  HISTORY
- *
- *     v1.0 - First release
  */
 
 #include "Arduino.h"

@@ -100,10 +100,16 @@ public:
   void configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl);
   void configInt2(bool drdy_temp, bool drdy_g, bool drdy_xl);
 
-  float temperature, accX, accY, accZ, gyroX, gyroY, gyroZ;
-  int16_t rawAccX, rawAccY, rawAccZ, rawTemp, rawGyroX, rawGyroY, rawGyroZ;
+  int16_t rawAccX, ///< Last reading's raw accelerometer X axis
+    rawAccY,  ///< Last reading's raw accelerometer Y axis
+    rawAccZ,  ///< Last reading's raw accelerometer Z axis
+    rawTemp,   ///< Last reading's raw temperature reading
+    rawGyroX,  ///< Last reading's raw gyro X axis
+    rawGyroY,  ///< Last reading's raw gyro Y axis
+    rawGyroZ;  ///< Last reading's raw gyro Z axis
 
 protected:
+  float temperature, accX, accY, accZ, gyroX, gyroY, gyroZ;
   uint8_t chipID();
   void _read(void);
 

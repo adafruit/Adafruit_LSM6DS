@@ -1,37 +1,10 @@
 
 /*!
  *  @file Adafruit_LSM6DSOX.cpp
- *
- *  @mainpage Adafruit LSM6DSOX 6-DoF Accelerometer and Gyroscope library
- *
- *  @section intro_sec Introduction
- *
- * 	I2C Driver for the Adafruit LSM6DSOX 6-DoF Accelerometer and Gyroscope
- library
- *
- * 	This is a library for the Adafruit LSM6DSOX breakout:
- * 	https://www.adafruit.com/product/PID_HERE
- *
- * 	Adafruit invests time and resources providing this open source code,
- *  please support Adafruit and open-source hardware by purchasing products
- *  from Adafruit!
- *
- *  @section dependencies Dependencies
- *  This library depends on the Adafruit BusIO library
- *
- *  This library depends on the Adafruit Unified Sensor library
-
- *  @section author Author
+ *  Adafruit LSM6DSOX 6-DoF Accelerometer and Gyroscope library
  *
  *  Bryan Siepert for Adafruit Industries
- *
- * 	@section license License
- *
  * 	BSD (see license.txt)
- *
- * 	@section  HISTORY
- *
- *     v1.0 - First release
  */
 
 #include "Arduino.h"
