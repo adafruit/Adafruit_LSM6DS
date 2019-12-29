@@ -1,4 +1,4 @@
-Adafruit LSM6DS ![Build Status](https://github.com/adafruit/Adafruit_LSM6DS/workflows/Arduino%20Library%20CI/badge.svg)
+# Adafruit LSM6DS ![Build Status](https://github.com/adafruit/Adafruit_LSM6DS/workflows/Arduino%20Library%20CI/badge.svg)
 
 ================
 
