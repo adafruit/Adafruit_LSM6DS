@@ -46,6 +46,7 @@ typedef enum data_rate {
   LSM6DS_RATE_1_66K_HZ,
   LSM6DS_RATE_3_33K_HZ,
   LSM6DS_RATE_6_66K_HZ,
+  LSM6DSOX_RATE_1_6_HZ_LP,
 } lsm6ds_data_rate_t;
 
 /** The accelerometer data range */
