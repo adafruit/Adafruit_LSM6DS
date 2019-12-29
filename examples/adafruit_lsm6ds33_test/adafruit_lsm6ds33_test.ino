@@ -1,8 +1,6 @@
 // Basic demo for accelerometer/gyro readings from Adafruit LSM6DS33
 
 #include <Adafruit_LSM6DS33.h>
-#include <Adafruit_Sensor.h>
-#include <Wire.h>
 
 // For SPI mode, we need a CS pin
 #define LSM_CS 10
@@ -103,6 +101,8 @@ void setup(void) {
   case LSM6DS_RATE_6_66K_HZ:
     Serial.println("6.66 KHz");
     break;
+  case LSM6DSOX_RATE_1_6_HZ_LP:
+    break; // unsupported rate for the DS33
   }
 
   lsm6ds33.setGyroDataRate(LSM6DS_RATE_104_HZ);
@@ -141,6 +141,8 @@ void setup(void) {
   case LSM6DS_RATE_6_66K_HZ:
     Serial.println("6.66 KHz");
     break;
+  case LSM6DSOX_RATE_1_6_HZ_LP:
+    break; // unsupported rate for the DS33
   }
 
   lsm6ds33.configInt1(false, false, true); // accelerometer DRDY on INT1

@@ -2,8 +2,6 @@
 // LSM6DSOX sensor
 
 #include <Adafruit_LSM6DSOX.h>
-#include <Adafruit_Sensor.h>
-#include <Wire.h>
 
 // For SPI mode, we need a CS pin
 #define LSM_CS 10

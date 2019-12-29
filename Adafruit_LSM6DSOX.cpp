@@ -13,7 +13,7 @@
  * 	https://www.adafruit.com/product/PID_HERE
  *
  * 	Adafruit invests time and resources providing this open source code,
- *  please support Adafruit and open-source hardware by purchasing products 
+ *  please support Adafruit and open-source hardware by purchasing products
  *  from Adafruit!
  *
  *  @section dependencies Dependencies
@@ -43,7 +43,6 @@
  *    @brief  Instantiates a new LSM6DSOX class
  */
 Adafruit_LSM6DSOX::Adafruit_LSM6DSOX(void) {}
-
 
 bool Adafruit_LSM6DSOX::_init(int32_t sensor_id) {
   Adafruit_BusIO_Register chip_id = Adafruit_BusIO_Register(

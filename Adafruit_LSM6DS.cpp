@@ -59,7 +59,7 @@ uint8_t Adafruit_LSM6DS::chipID(void) {
  *    @return True if initialization was successful, otherwise false.
  */
 boolean Adafruit_LSM6DS::begin_I2C(uint8_t i2c_address, TwoWire *wire,
-                                     int32_t sensor_id) {
+                                   int32_t sensor_id) {
   i2c_dev = new Adafruit_I2CDevice(i2c_address, wire);
 
   if (!i2c_dev->begin()) {
@@ -78,7 +78,7 @@ boolean Adafruit_LSM6DS::begin_I2C(uint8_t i2c_address, TwoWire *wire,
  *    @return True if initialization was successful, otherwise false.
  */
 bool Adafruit_LSM6DS::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
-                                  int32_t sensor_id) {
+                                int32_t sensor_id) {
   i2c_dev = NULL;
 
   spi_dev = new Adafruit_SPIDevice(cs_pin,
@@ -103,9 +103,8 @@ bool Adafruit_LSM6DS::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
  *            The user-defined ID to differentiate different sensors
  *    @return True if initialization was successful, otherwise false.
  */
-bool Adafruit_LSM6DS::begin_SPI(int8_t cs_pin, int8_t sck_pin,
-                                  int8_t miso_pin, int8_t mosi_pin,
-                                  int32_t sensor_id) {
+bool Adafruit_LSM6DS::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
+                                int8_t mosi_pin, int32_t sensor_id) {
   i2c_dev = NULL;
 
   spi_dev = new Adafruit_SPIDevice(cs_pin, sck_pin, miso_pin, mosi_pin,
@@ -169,7 +168,7 @@ void Adafruit_LSM6DS::reset(void) {
 */
 /**************************************************************************/
 bool Adafruit_LSM6DS::getEvent(sensors_event_t *accel, sensors_event_t *gyro,
-                                 sensors_event_t *temp) {
+                               sensors_event_t *temp) {
   uint32_t t = millis();
   _read();
 
