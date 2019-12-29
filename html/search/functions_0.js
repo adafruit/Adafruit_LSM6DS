@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['adafruit_5flsm6dsox',['Adafruit_LSM6DSOX',['../class_adafruit___l_s_m6_d_s_o_x.html#a7290feea7fc738b7275c9ba9665e1912',1,'Adafruit_LSM6DSOX']]]
+  ['_5finit',['_init',['../class_adafruit___l_s_m6_d_s.html#a6c914444a7db2c2b0791285fa07a365c',1,'Adafruit_LSM6DS']]],
+  ['_5fread',['_read',['../class_adafruit___l_s_m6_d_s.html#a832522fa898999b584e8d006710d11ce',1,'Adafruit_LSM6DS']]]
 ];
