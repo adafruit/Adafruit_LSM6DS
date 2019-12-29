@@ -102,9 +102,12 @@ public:
   float temperature, accX, accY, accZ, gyroX, gyroY, gyroZ;
   int16_t rawAccX, rawAccY, rawAccZ, rawTemp, rawGyroX, rawGyroY, rawGyroZ;
 
-private:
+protected:
   uint8_t chipID();
   void _read(void);
+
+  // unique initializer post i2c/spi init
+  virtual bool _init(int32_t sensor_id) = 0;
 
   uint8_t _sensorid_accel, _sensorid_gyro, _sensorid_temp;
 

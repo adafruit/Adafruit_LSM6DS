@@ -206,7 +206,7 @@ bool Adafruit_LSM6DS::getEvent(sensors_event_t *accel, sensors_event_t *gyro,
     @brief Gets the accelerometer data rate.
     @returns The the accelerometer data rate.
 */
-lsm6ds33_data_rate_t Adafruit_LSM6DS::getAccelDataRate(void) {
+lsm6ds_data_rate_t Adafruit_LSM6DS::getAccelDataRate(void) {
 
   Adafruit_BusIO_Register ctrl1 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL1_XL);
@@ -214,16 +214,16 @@ lsm6ds33_data_rate_t Adafruit_LSM6DS::getAccelDataRate(void) {
   Adafruit_BusIO_RegisterBits accel_data_rate =
       Adafruit_BusIO_RegisterBits(&ctrl1, 4, 4);
 
-  return (lsm6ds33_data_rate_t)accel_data_rate.read();
+  return (lsm6ds_data_rate_t)accel_data_rate.read();
 }
 
 /**************************************************************************/
 /*!
     @brief Sets the accelerometer data rate.
     @param  data_rate
-            The the accelerometer data rate. Must be a `lsm6ds33_data_rate_t`.
+            The the accelerometer data rate. Must be a `lsm6ds_data_rate_t`.
 */
-void Adafruit_LSM6DS::setAccelDataRate(lsm6ds33_data_rate_t data_rate) {
+void Adafruit_LSM6DS::setAccelDataRate(lsm6ds_data_rate_t data_rate) {
 
   Adafruit_BusIO_Register ctrl1 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL1_XL);
@@ -239,7 +239,7 @@ void Adafruit_LSM6DS::setAccelDataRate(lsm6ds33_data_rate_t data_rate) {
     @brief Gets the accelerometer measurement range.
     @returns The the accelerometer measurement range.
 */
-lsm6ds33_accel_range_t Adafruit_LSM6DS::getAccelRange(void) {
+lsm6ds_accel_range_t Adafruit_LSM6DS::getAccelRange(void) {
 
   Adafruit_BusIO_Register ctrl1 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL1_XL);
@@ -247,14 +247,14 @@ lsm6ds33_accel_range_t Adafruit_LSM6DS::getAccelRange(void) {
   Adafruit_BusIO_RegisterBits accel_range =
       Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
 
-  return (lsm6ds33_accel_range_t)accel_range.read();
+  return (lsm6ds_accel_range_t)accel_range.read();
 }
 /**************************************************************************/
 /*!
     @brief Sets the accelerometer measurement range.
-    @param new_range The `lsm6ds33_accel_range_t` range to set.
+    @param new_range The `lsm6ds_accel_range_t` range to set.
 */
-void Adafruit_LSM6DS::setAccelRange(lsm6ds33_accel_range_t new_range) {
+void Adafruit_LSM6DS::setAccelRange(lsm6ds_accel_range_t new_range) {
 
   Adafruit_BusIO_Register ctrl1 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL1_XL);
@@ -271,7 +271,7 @@ void Adafruit_LSM6DS::setAccelRange(lsm6ds33_accel_range_t new_range) {
     @brief Gets the gyro data rate.
     @returns The the gyro data rate.
 */
-lsm6ds33_data_rate_t Adafruit_LSM6DS::getGyroDataRate(void) {
+lsm6ds_data_rate_t Adafruit_LSM6DS::getGyroDataRate(void) {
 
   Adafruit_BusIO_Register ctrl2 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL2_G);
@@ -279,16 +279,16 @@ lsm6ds33_data_rate_t Adafruit_LSM6DS::getGyroDataRate(void) {
   Adafruit_BusIO_RegisterBits gyro_data_rate =
       Adafruit_BusIO_RegisterBits(&ctrl2, 4, 4);
 
-  return (lsm6ds33_data_rate_t)gyro_data_rate.read();
+  return (lsm6ds_data_rate_t)gyro_data_rate.read();
 }
 
 /**************************************************************************/
 /*!
     @brief Sets the gyro data rate.
     @param  data_rate
-            The the gyro data rate. Must be a `lsm6ds33_data_rate_t`.
+            The the gyro data rate. Must be a `lsm6ds_data_rate_t`.
 */
-void Adafruit_LSM6DS::setGyroDataRate(lsm6ds33_data_rate_t data_rate) {
+void Adafruit_LSM6DS::setGyroDataRate(lsm6ds_data_rate_t data_rate) {
 
   Adafruit_BusIO_Register ctrl2 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL2_G);
@@ -304,7 +304,7 @@ void Adafruit_LSM6DS::setGyroDataRate(lsm6ds33_data_rate_t data_rate) {
     @brief Gets the gyro range.
     @returns The the gyro range.
 */
-lsm6ds33_gyro_range_t Adafruit_LSM6DS::getGyroRange(void) {
+lsm6ds_gyro_range_t Adafruit_LSM6DS::getGyroRange(void) {
 
   Adafruit_BusIO_Register ctrl2 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL2_G);
@@ -312,15 +312,15 @@ lsm6ds33_gyro_range_t Adafruit_LSM6DS::getGyroRange(void) {
   Adafruit_BusIO_RegisterBits gyro_range =
       Adafruit_BusIO_RegisterBits(&ctrl2, 3, 1);
 
-  return (lsm6ds33_gyro_range_t)gyro_range.read();
+  return (lsm6ds_gyro_range_t)gyro_range.read();
 }
 
 /**************************************************************************/
 /*!
     @brief Sets the gyro range.
-    @param new_range The `lsm6ds33_gyro_range_t` to set.
+    @param new_range The `lsm6ds_gyro_range_t` to set.
 */
-void Adafruit_LSM6DS::setGyroRange(lsm6ds33_gyro_range_t new_range) {
+void Adafruit_LSM6DS::setGyroRange(lsm6ds_gyro_range_t new_range) {
 
   Adafruit_BusIO_Register ctrl2 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL2_G);
@@ -354,7 +354,7 @@ void Adafruit_LSM6DS::_read(void) {
   rawAccY = buffer[11] << 8 | buffer[10];
   rawAccZ = buffer[13] << 8 | buffer[12];
 
-  lsm6ds33_gyro_range_t gyro_range = getGyroRange();
+  lsm6ds_gyro_range_t gyro_range = getGyroRange();
   float gyro_scale = 1;
   if (gyro_range == LSM6DS_GYRO_RANGE_2000_DPS)
     gyro_scale = 70.0;
@@ -371,7 +371,7 @@ void Adafruit_LSM6DS::_read(void) {
   gyroY = rawGyroY * gyro_scale;
   gyroZ = rawGyroZ * gyro_scale;
 
-  lsm6ds33_accel_range_t accel_range = getAccelRange();
+  lsm6ds_accel_range_t accel_range = getAccelRange();
   float accel_scale = 1;
   if (accel_range == LSM6DS_ACCEL_RANGE_16_G)
     accel_scale = 0.488;
