@@ -1,9 +1,8 @@
+Adafruit LSM6DS ![Build Status](https://github.com/adafruit/Adafruit_LSM6DS/workflows/Arduino%20Library%20CI/badge.svg)
 
-
-Adafruit LSM6DSOX ![Build Status](https://travis-ci.com/adafruit/Adafruit_LSM6DSOX.svg?branch=master)
 ================
 
-This is the Adafruit LSM6DSOX 6-DoF Accelerometer and Gyroscope Library for Arduino
+This is the Adafruit LSM6DS 6-DoF Accelerometer and Gyroscope Sensor Library for Arduino
 
 Tested and works great with the Adafruit LSM6DSOX Breakout Board 
 [<img src="assets/board.png?raw=true" width="500px">](https://www.adafruit.com/products/4438)
@@ -35,4 +34,4 @@ Written by Bryan Siepert for Adafruit Industries.
 BSD license, check license.txt for more information
 All text above must be included in any redistribution
 
-To install, use the Arduino Library Manager and search for "Adafruit LSM6DSOX" and install the library.
+To install, use the Arduino Library Manager and search for "Adafruit LSM6DS" and install the library.
