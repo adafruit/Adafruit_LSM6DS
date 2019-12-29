@@ -101,25 +101,36 @@ public:
   void configInt2(bool drdy_temp, bool drdy_g, bool drdy_xl);
 
   int16_t rawAccX, ///< Last reading's raw accelerometer X axis
-    rawAccY,  ///< Last reading's raw accelerometer Y axis
-    rawAccZ,  ///< Last reading's raw accelerometer Z axis
-    rawTemp,   ///< Last reading's raw temperature reading
-    rawGyroX,  ///< Last reading's raw gyro X axis
-    rawGyroY,  ///< Last reading's raw gyro Y axis
-    rawGyroZ;  ///< Last reading's raw gyro Z axis
+      rawAccY,     ///< Last reading's raw accelerometer Y axis
+      rawAccZ,     ///< Last reading's raw accelerometer Z axis
+      rawTemp,     ///< Last reading's raw temperature reading
+      rawGyroX,    ///< Last reading's raw gyro X axis
+      rawGyroY,    ///< Last reading's raw gyro Y axis
+      rawGyroZ;    ///< Last reading's raw gyro Z axis
 
 protected:
-  float temperature, accX, accY, accZ, gyroX, gyroY, gyroZ;
+  float temperature, ///< Last reading's temperature (C)
+      accX,          ///< Last reading's accelerometer X axis m/s^2
+      accY,          ///< Last reading's accelerometer Y axis m/s^2
+      accZ,          ///< Last reading's accelerometer Z axis m/s^2
+      gyroX,         ///< Last reading's gyro X axis dps
+      gyroY,         ///< Last reading's gyro X axis dps
+      gyroZ;         ///< Last reading's gyro X axis dps
   uint8_t chipID();
   void _read(void);
 
-  // unique initializer post i2c/spi init
+  /*!  @brief  Unique subclass initializer post i2c/spi init
+   *   @param sensor_id Optional unique ID for the sensor set
+   *   @returns True if chip identified and initialized
+   */
   virtual bool _init(int32_t sensor_id) = 0;
 
-  uint8_t _sensorid_accel, _sensorid_gyro, _sensorid_temp;
+  uint16_t _sensorid_accel, ///< ID number for accelerometer
+      _sensorid_gyro,       ///< ID number for gyro
+      _sensorid_temp;       ///< ID number for temperature
 
-  Adafruit_I2CDevice *i2c_dev;
-  Adafruit_SPIDevice *spi_dev;
+  Adafruit_I2CDevice *i2c_dev; ///< Pointer to I2C bus interface
+  Adafruit_SPIDevice *spi_dev; ///< Pointer to SPI bus interface
 };
 
 #endif

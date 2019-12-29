@@ -40,6 +40,10 @@
  */
 Adafruit_LSM6DS::Adafruit_LSM6DS(void) {}
 
+/*!
+ *    @brief  Read chip identification register
+ *    @returns 8 Bit value from WHOAMI register
+ */
 uint8_t Adafruit_LSM6DS::chipID(void) {
   Adafruit_BusIO_Register chip_id = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_WHOAMI);
