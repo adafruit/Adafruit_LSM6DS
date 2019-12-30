@@ -66,7 +66,6 @@ typedef enum gyro_range {
   LSM6DS_GYRO_RANGE_2000_DPS = 0b110
 } lsm6ds_gyro_range_t;
 
-
 class Adafruit_LSM6DS;
 
 /** Adafruit Unified Sensor interface for temperature component of LSM6DS */
@@ -86,9 +85,12 @@ private:
 /** Adafruit Unified Sensor interface for accelerometer component of LSM6DS */
 class Adafruit_LSM6DS_Accelerometer : public Adafruit_Sensor {
 public:
-  /** @brief Create an Adafruit_Sensor compatible object for the accelerometer sensor
+  /** @brief Create an Adafruit_Sensor compatible object for the accelerometer
+     sensor
       @param parent A pointer to the LSM6DS class */
-  Adafruit_LSM6DS_Accelerometer(Adafruit_LSM6DS *parent) { _theLSM6DS = parent; }
+  Adafruit_LSM6DS_Accelerometer(Adafruit_LSM6DS *parent) {
+    _theLSM6DS = parent;
+  }
   bool getEvent(sensors_event_t *);
   void getSensor(sensor_t *);
 
@@ -96,7 +98,6 @@ private:
   int _sensorID = 0x6D1;
   Adafruit_LSM6DS *_theLSM6DS = NULL;
 };
-
 
 /** Adafruit Unified Sensor interface for gyro component of LSM6DS */
 class Adafruit_LSM6DS_Gyro : public Adafruit_Sensor {
@@ -111,7 +112,6 @@ private:
   int _sensorID = 0x6D2;
   Adafruit_LSM6DS *_theLSM6DS = NULL;
 };
-
 
 /*!
  *    @brief  Class that stores state and functions for interacting with
@@ -184,11 +184,11 @@ protected:
   Adafruit_LSM6DS_Accelerometer *accel_sensor = NULL;
   Adafruit_LSM6DS_Gyro *gyro_sensor = NULL;
 
- private:
+private:
   friend class Adafruit_LSM6DS_Temp;
   friend class Adafruit_LSM6DS_Accelerometer;
   friend class Adafruit_LSM6DS_Gyro;
-  
+
   void fillTempEvent(sensors_event_t *temp, uint32_t timestamp);
   void fillAccelEvent(sensors_event_t *accel, uint32_t timestamp);
   void fillGyroEvent(sensors_event_t *gyro, uint32_t timestamp);

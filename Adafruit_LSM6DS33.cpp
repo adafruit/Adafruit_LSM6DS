@@ -15,12 +15,11 @@
 /*!
  *    @brief  Instantiates a new LSM6DS33 class
  */
-Adafruit_LSM6DS33::Adafruit_LSM6DS33(void) {
-}
+Adafruit_LSM6DS33::Adafruit_LSM6DS33(void) {}
 
 bool Adafruit_LSM6DS33::_init(int32_t sensor_id) {
   // make sure we're talking to the right chip
-  if (chipID()!= LSM6DS33_CHIP_ID) {
+  if (chipID() != LSM6DS33_CHIP_ID) {
     return false;
   }
   _sensorid_accel = sensor_id;
