@@ -38,7 +38,24 @@
 /*!
  *    @brief  Instantiates a new LSM6DS class
  */
-Adafruit_LSM6DS::Adafruit_LSM6DS(void) {}
+Adafruit_LSM6DS::Adafruit_LSM6DS(void) {
+}
+
+/*!
+ *    @brief  Cleans up the LSM6DS
+ */
+Adafruit_LSM6DS::~Adafruit_LSM6DS(void) {
+  if (temp_sensor)
+    delete temp_sensor;
+}
+
+/*!  @brief  Unique subclass initializer post i2c/spi init
+ *   @param sensor_id Optional unique ID for the sensor set
+ *   @returns True if chip identified and initialized
+ */
+bool Adafruit_LSM6DS::_init(int32_t sensor_id) {
+  return false; 
+};
 
 /*!
  *    @brief  Read chip identification register
@@ -47,6 +64,8 @@ Adafruit_LSM6DS::Adafruit_LSM6DS(void) {}
 uint8_t Adafruit_LSM6DS::chipID(void) {
   Adafruit_BusIO_Register chip_id = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_WHOAMI);
+
+  Serial.print("Read ID 0x"); Serial.println(chip_id.read(), HEX);
 
   // make sure we're talking to the right chip
   return chip_id.read();
@@ -153,6 +172,31 @@ void Adafruit_LSM6DS::reset(void) {
   // bdu.write(true);
 }
 
+/*!
+    @brief  Gets an Adafruit Unified Sensor object for the temp sensor component
+    @return Adafruit_Sensor pointer to temperature sensor
+ */
+Adafruit_Sensor *Adafruit_LSM6DS::getTemperatureSensor(void) {
+  return temp_sensor;
+}
+
+/*!
+    @brief  Gets an Adafruit Unified Sensor object for the accelerometer 
+    sensor component
+    @return Adafruit_Sensor pointer to accelerometer sensor
+ */
+Adafruit_Sensor *Adafruit_LSM6DS::getAccelerometerSensor(void) {
+  return accel_sensor;
+}
+
+/*!
+    @brief  Gets an Adafruit Unified Sensor object for the gyro sensor component
+    @return Adafruit_Sensor pointer to gyro sensor
+ */
+Adafruit_Sensor *Adafruit_LSM6DS::getGyroSensor(void) {
+  return gyro_sensor;
+}
+
 /**************************************************************************/
 /*!
     @brief  Gets the most recent sensor event, Adafruit Unified Sensor format
@@ -176,32 +220,46 @@ bool Adafruit_LSM6DS::getEvent(sensors_event_t *accel, sensors_event_t *gyro,
   uint32_t t = millis();
   _read();
 
-  memset(accel, 0, sizeof(sensors_event_t));
-  accel->version = 1;
-  accel->sensor_id = _sensorid_accel;
-  accel->type = SENSOR_TYPE_ACCELEROMETER;
-  accel->timestamp = t;
-  accel->acceleration.x = accX * SENSORS_GRAVITY_STANDARD / 1000;
-  accel->acceleration.y = accY * SENSORS_GRAVITY_STANDARD / 1000;
-  accel->acceleration.z = accZ * SENSORS_GRAVITY_STANDARD / 1000;
+  // use helpers to fill in the events
+  fillAccelEvent(accel, t);
+  fillGyroEvent(gyro, t);
+  fillTempEvent(temp, t);
+  return true;
+}
 
-  memset(gyro, 0, sizeof(sensors_event_t));
-  gyro->version = 1;
-  gyro->sensor_id = _sensorid_gyro;
-  gyro->type = SENSOR_TYPE_GYROSCOPE;
-  gyro->timestamp = t;
-  gyro->gyro.x = gyroX / 1000;
-  gyro->gyro.y = gyroY / 1000;
-  gyro->gyro.z = gyroZ / 1000;
 
+void Adafruit_LSM6DS::fillTempEvent(sensors_event_t *temp,
+				    uint32_t timestamp) {
   memset(temp, 0, sizeof(sensors_event_t));
   temp->version = sizeof(sensors_event_t);
   temp->sensor_id = _sensorid_temp;
   temp->type = SENSOR_TYPE_AMBIENT_TEMPERATURE;
-  temp->timestamp = t;
+  temp->timestamp = timestamp;
   temp->temperature = (temperature / 256.0) + 25.0;
+}
 
-  return true;
+void Adafruit_LSM6DS::fillGyroEvent(sensors_event_t *gyro,
+				    uint32_t timestamp) {
+  memset(gyro, 0, sizeof(sensors_event_t));
+  gyro->version = 1;
+  gyro->sensor_id = _sensorid_gyro;
+  gyro->type = SENSOR_TYPE_GYROSCOPE;
+  gyro->timestamp = timestamp;
+  gyro->gyro.x = gyroX / 1000;
+  gyro->gyro.y = gyroY / 1000;
+  gyro->gyro.z = gyroZ / 1000;
+}
+
+void Adafruit_LSM6DS::fillAccelEvent(sensors_event_t *accel,
+				    uint32_t timestamp) {
+  memset(accel, 0, sizeof(sensors_event_t));
+  accel->version = 1;
+  accel->sensor_id = _sensorid_accel;
+  accel->type = SENSOR_TYPE_ACCELEROMETER;
+  accel->timestamp = timestamp;
+  accel->acceleration.x = accX * SENSORS_GRAVITY_STANDARD / 1000;
+  accel->acceleration.y = accY * SENSORS_GRAVITY_STANDARD / 1000;
+  accel->acceleration.z = accZ * SENSORS_GRAVITY_STANDARD / 1000;
 }
 
 /**************************************************************************/
@@ -443,4 +501,114 @@ void Adafruit_LSM6DS::configInt2(bool drdy_temp, bool drdy_g, bool drdy_xl) {
       Adafruit_BusIO_RegisterBits(&int2_ctrl, 3, 0);
 
   int2_drdy_bits.write((drdy_temp << 2) | (drdy_g << 1) | drdy_xl);
+}
+
+
+
+
+/**************************************************************************/
+/*!
+    @brief  Gets the sensor_t data for the LSM6DS's gyroscope sensor
+*/
+/**************************************************************************/
+void Adafruit_LSM6DS_Gyro::getSensor(sensor_t *sensor) {
+  /* Clear the sensor_t object */
+  memset(sensor, 0, sizeof(sensor_t));
+
+  /* Insert the sensor name in the fixed length char array */
+  strncpy(sensor->name, "LSM6DS_G", sizeof(sensor->name) - 1);
+  sensor->name[sizeof(sensor->name) - 1] = 0;
+  sensor->version = 1;
+  sensor->sensor_id = _sensorID;
+  sensor->type = SENSOR_TYPE_GYROSCOPE;
+  sensor->min_delay = 0;
+  sensor->min_value = -34.91; /* -2000 dps -> rad/s (radians per second) */
+  sensor->max_value = +34.91;
+  sensor->resolution = 7.6358e-5; /* 4.375 mdps -> rad/s */
+}
+
+/**************************************************************************/
+/*!
+    @brief  Gets the gyroscope as a standard sensor event
+    @param  event Sensor event object that will be populated
+    @returns True
+*/
+/**************************************************************************/
+bool Adafruit_LSM6DS_Gyro::getEvent(sensors_event_t *event) {
+  _theLSM6DS->_read();
+  _theLSM6DS->fillGyroEvent(event, millis());
+  
+  return true;
+}
+
+
+/**************************************************************************/
+/*!
+    @brief  Gets the sensor_t data for the LSM6DS's accelerometer
+*/
+/**************************************************************************/
+void Adafruit_LSM6DS_Accelerometer::getSensor(sensor_t *sensor) {
+  /* Clear the sensor_t object */
+  memset(sensor, 0, sizeof(sensor_t));
+
+  /* Insert the sensor name in the fixed length char array */
+  strncpy(sensor->name, "LSM6DS_A", sizeof(sensor->name) - 1);
+  sensor->name[sizeof(sensor->name) - 1] = 0;
+  sensor->version = 1;
+  sensor->sensor_id = _sensorID;
+  sensor->type = SENSOR_TYPE_ACCELEROMETER;
+  sensor->min_delay = 0;
+  sensor->min_value = -156.9064F; /*  -16g = 156.9064 m/s^2  */
+  sensor->max_value = 156.9064F;  /* 16g = 156.9064 m/s^2  */
+  sensor->resolution = 0.061; /* 0.061 mg/LSB at +-2g */
+}
+
+/**************************************************************************/
+/*!
+    @brief  Gets the accelerometer as a standard sensor event
+    @param  event Sensor event object that will be populated
+    @returns True
+*/
+/**************************************************************************/
+bool Adafruit_LSM6DS_Accelerometer::getEvent(sensors_event_t *event) {
+  _theLSM6DS->_read();
+  _theLSM6DS->fillAccelEvent(event, millis());
+  
+  return true;
+}
+
+
+/**************************************************************************/
+/*!
+    @brief  Gets the sensor_t data for the LSM6DS's tenperature
+*/
+/**************************************************************************/
+void Adafruit_LSM6DS_Temp::getSensor(sensor_t *sensor) {
+  /* Clear the sensor_t object */
+  memset(sensor, 0, sizeof(sensor_t));
+
+  /* Insert the sensor name in the fixed length char array */
+  strncpy(sensor->name, "LSM6DS_T", sizeof(sensor->name) - 1);
+  sensor->name[sizeof(sensor->name) - 1] = 0;
+  sensor->version = 1;
+  sensor->sensor_id = _sensorID;
+  sensor->type = SENSOR_TYPE_AMBIENT_TEMPERATURE;
+  sensor->min_delay = 0;
+  sensor->min_value = -40;
+  sensor->max_value = 85;
+  sensor->resolution = 1; /* not a great sensor */
+}
+
+/**************************************************************************/
+/*!
+    @brief  Gets the temperature as a standard sensor event
+    @param  event Sensor event object that will be populated
+    @returns True
+*/
+/**************************************************************************/
+bool Adafruit_LSM6DS_Temp::getEvent(sensors_event_t *event) {
+  _theLSM6DS->_read();
+  _theLSM6DS->fillTempEvent(event, millis());
+  
+  return true;
 }

@@ -29,6 +29,7 @@
 class Adafruit_LSM6DS33 : public Adafruit_LSM6DS {
 public:
   Adafruit_LSM6DS33();
+  ~Adafruit_LSM6DS33() {};
 
 private:
   bool _init(int32_t sensor_id);

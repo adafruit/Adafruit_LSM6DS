@@ -15,14 +15,12 @@
 /*!
  *    @brief  Instantiates a new LSM6DS33 class
  */
-Adafruit_LSM6DS33::Adafruit_LSM6DS33(void) {}
+Adafruit_LSM6DS33::Adafruit_LSM6DS33(void) {
+}
 
 bool Adafruit_LSM6DS33::_init(int32_t sensor_id) {
-  Adafruit_BusIO_Register chip_id = Adafruit_BusIO_Register(
-      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_WHOAMI);
-
   // make sure we're talking to the right chip
-  if (chip_id.read() != LSM6DS33_CHIP_ID) {
+  if (chipID()!= LSM6DS33_CHIP_ID) {
     return false;
   }
   _sensorid_accel = sensor_id;
@@ -36,6 +34,10 @@ bool Adafruit_LSM6DS33::_init(int32_t sensor_id) {
   setGyroDataRate(LSM6DS_RATE_104_HZ);
 
   delay(10);
+
+  temp_sensor = new Adafruit_LSM6DS_Temp(this);
+  accel_sensor = new Adafruit_LSM6DS_Accelerometer(this);
+  gyro_sensor = new Adafruit_LSM6DS_Gyro(this);
 
   return true;
 }

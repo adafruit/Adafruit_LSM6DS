@@ -66,6 +66,53 @@ typedef enum gyro_range {
   LSM6DS_GYRO_RANGE_2000_DPS = 0b110
 } lsm6ds_gyro_range_t;
 
+
+class Adafruit_LSM6DS;
+
+/** Adafruit Unified Sensor interface for temperature component of LSM6DS */
+class Adafruit_LSM6DS_Temp : public Adafruit_Sensor {
+public:
+  /** @brief Create an Adafruit_Sensor compatible object for the temp sensor
+      @param parent A pointer to the LSM6DS class */
+  Adafruit_LSM6DS_Temp(Adafruit_LSM6DS *parent) { _theLSM6DS = parent; }
+  bool getEvent(sensors_event_t *);
+  void getSensor(sensor_t *);
+
+private:
+  int _sensorID = 0x6D0;
+  Adafruit_LSM6DS *_theLSM6DS = NULL;
+};
+
+/** Adafruit Unified Sensor interface for accelerometer component of LSM6DS */
+class Adafruit_LSM6DS_Accelerometer : public Adafruit_Sensor {
+public:
+  /** @brief Create an Adafruit_Sensor compatible object for the accelerometer sensor
+      @param parent A pointer to the LSM6DS class */
+  Adafruit_LSM6DS_Accelerometer(Adafruit_LSM6DS *parent) { _theLSM6DS = parent; }
+  bool getEvent(sensors_event_t *);
+  void getSensor(sensor_t *);
+
+private:
+  int _sensorID = 0x6D1;
+  Adafruit_LSM6DS *_theLSM6DS = NULL;
+};
+
+
+/** Adafruit Unified Sensor interface for gyro component of LSM6DS */
+class Adafruit_LSM6DS_Gyro : public Adafruit_Sensor {
+public:
+  /** @brief Create an Adafruit_Sensor compatible object for the gyro sensor
+      @param parent A pointer to the LSM6DS class */
+  Adafruit_LSM6DS_Gyro(Adafruit_LSM6DS *parent) { _theLSM6DS = parent; }
+  bool getEvent(sensors_event_t *);
+  void getSensor(sensor_t *);
+
+private:
+  int _sensorID = 0x6D2;
+  Adafruit_LSM6DS *_theLSM6DS = NULL;
+};
+
+
 /*!
  *    @brief  Class that stores state and functions for interacting with
  *            the LSM6DS I2C Accel/Gyro
@@ -73,6 +120,8 @@ typedef enum gyro_range {
 class Adafruit_LSM6DS {
 public:
   Adafruit_LSM6DS();
+  ~Adafruit_LSM6DS();
+
   bool begin_I2C(uint8_t i2c_addr = LSM6DS_I2CADDR_DEFAULT,
                  TwoWire *wire = &Wire, int32_t sensorID = 0);
 
@@ -108,6 +157,10 @@ public:
       rawGyroY,    ///< Last reading's raw gyro Y axis
       rawGyroZ;    ///< Last reading's raw gyro Z axis
 
+  Adafruit_Sensor *getTemperatureSensor(void);
+  Adafruit_Sensor *getAccelerometerSensor(void);
+  Adafruit_Sensor *getGyroSensor(void);
+
 protected:
   float temperature, ///< Last reading's temperature (C)
       accX,          ///< Last reading's accelerometer X axis m/s^2
@@ -118,12 +171,7 @@ protected:
       gyroZ;         ///< Last reading's gyro X axis dps
   uint8_t chipID();
   void _read(void);
-
-  /*!  @brief  Unique subclass initializer post i2c/spi init
-   *   @param sensor_id Optional unique ID for the sensor set
-   *   @returns True if chip identified and initialized
-   */
-  virtual bool _init(int32_t sensor_id) = 0;
+  virtual bool _init(int32_t sensor_id);
 
   uint16_t _sensorid_accel, ///< ID number for accelerometer
       _sensorid_gyro,       ///< ID number for gyro
@@ -131,6 +179,19 @@ protected:
 
   Adafruit_I2CDevice *i2c_dev; ///< Pointer to I2C bus interface
   Adafruit_SPIDevice *spi_dev; ///< Pointer to SPI bus interface
+
+  Adafruit_LSM6DS_Temp *temp_sensor = NULL;
+  Adafruit_LSM6DS_Accelerometer *accel_sensor = NULL;
+  Adafruit_LSM6DS_Gyro *gyro_sensor = NULL;
+
+ private:
+  friend class Adafruit_LSM6DS_Temp;
+  friend class Adafruit_LSM6DS_Accelerometer;
+  friend class Adafruit_LSM6DS_Gyro;
+  
+  void fillTempEvent(sensors_event_t *temp, uint32_t timestamp);
+  void fillAccelEvent(sensors_event_t *accel, uint32_t timestamp);
+  void fillGyroEvent(sensors_event_t *gyro, uint32_t timestamp);
 };
 
 #endif

@@ -50,6 +50,10 @@ bool Adafruit_LSM6DSOX::_init(int32_t sensor_id) {
 
   delay(10);
 
+  temp_sensor = new Adafruit_LSM6DS_Temp(this);
+  accel_sensor = new Adafruit_LSM6DS_Accelerometer(this);
+  gyro_sensor = new Adafruit_LSM6DS_Gyro(this);
+
   return true;
 }
 
