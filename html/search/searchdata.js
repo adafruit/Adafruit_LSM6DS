@@ -1,13 +1,14 @@
 var indexSectionsWithContent =
 {
-  0: "_abcdegilrst",
+  0: "_abcdegilrst~",
   1: "a",
   2: "a",
-  3: "_abcdegrs",
+  3: "_abcdegrs~",
   4: "_agirst",
   5: "l",
   6: "adg",
-  7: "l"
+  7: "a",
+  8: "il"
 };
 
 var indexSectionNames =
@@ -19,7 +20,8 @@ var indexSectionNames =
   4: "variables",
   5: "typedefs",
   6: "enums",
-  7: "defines"
+  7: "related",
+  8: "defines"
 };
 
 var indexSectionLabels =
@@ -31,6 +33,7 @@ var indexSectionLabels =
   4: "Variables",
   5: "Typedefs",
   6: "Enumerations",
-  7: "Macros"
+  7: "Friends",
+  8: "Macros"
 };
 
