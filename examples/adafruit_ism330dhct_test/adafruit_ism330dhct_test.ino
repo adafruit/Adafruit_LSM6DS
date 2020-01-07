@@ -1,7 +1,6 @@
-// Basic demo for accelerometer & gyro readings from Adafruit
-// LSM6DSOX sensor
+// Basic demo for accelerometer/gyro readings from Adafruit ISM330DHCT
 
-#include <Adafruit_LSM6DSOX.h>
+#include <Adafruit_ISM330DHCT.h>
 
 // For SPI mode, we need a CS pin
 #define LSM_CS 10
@@ -10,28 +9,28 @@
 #define LSM_MISO 12
 #define LSM_MOSI 11
 
-Adafruit_LSM6DSOX sox;
+Adafruit_ISM330DHCT ism330dhct;
 void setup(void) {
   Serial.begin(115200);
   while (!Serial)
     delay(10); // will pause Zero, Leonardo, etc until serial console opens
 
-  Serial.println("Adafruit LSM6DSOX test!");
+  Serial.println("Adafruit ISM330DHCT test!");
 
-  if (!sox.begin_I2C()) {
-    // if (!sox.begin_SPI(LSM_CS)) {
-    // if (!sox.begin_SPI(LSM_CS, LSM_SCK, LSM_MISO, LSM_MOSI)) {
-    // Serial.println("Failed to find LSM6DSOX chip");
+  if (!ism330dhct.begin_I2C()) {
+    // if (!ism330dhct.begin_SPI(LSM_CS)) {
+    // if (!ism330dhct.begin_SPI(LSM_CS, LSM_SCK, LSM_MISO, LSM_MOSI)) {
+    Serial.println("Failed to find ISM330DHCT chip");
     while (1) {
       delay(10);
     }
   }
 
-  Serial.println("LSM6DSOX Found!");
+  Serial.println("ISM330DHCT Found!");
 
-  // sox.setAccelRange(LSM6DSOX_ACCEL_RANGE_2_G);
+  // ism330dhct.setAccelRange(LSM6DS_ACCEL_RANGE_2_G);
   Serial.print("Accelerometer range set to: ");
-  switch (sox.getAccelRange()) {
+  switch (ism330dhct.getAccelRange()) {
   case LSM6DS_ACCEL_RANGE_2_G:
     Serial.println("+-2G");
     break;
@@ -46,9 +45,9 @@ void setup(void) {
     break;
   }
 
-  // sox.setGyroRange(LSM6DSOX_GYRO_RANGE_250_DPS);
+  // ism330dhct.setGyroRange(LSM6DS_GYRO_RANGE_250_DPS);
   Serial.print("Gyro range set to: ");
-  switch (sox.getGyroRange()) {
+  switch (ism330dhct.getGyroRange()) {
   case LSM6DS_GYRO_RANGE_125_DPS:
     Serial.println("125 degrees/s");
     break;
@@ -66,9 +65,9 @@ void setup(void) {
     break;
   }
 
-  // sox.setAccelDataRate(LSM6DSOX_RATE_12_5_HZ);
+  ism330dhct.setAccelDataRate(LSM6DS_RATE_208_HZ);
   Serial.print("Accelerometer data rate set to: ");
-  switch (sox.getAccelDataRate()) {
+  switch (ism330dhct.getAccelDataRate()) {
   case LSM6DS_RATE_SHUTDOWN:
     Serial.println("0 Hz");
     break;
@@ -103,13 +102,12 @@ void setup(void) {
     Serial.println("6.66 KHz");
     break;
   case LSM6DSOX_RATE_1_6_HZ_LP:
-    Serial.println("1.6 Hz");
-    break;
+    break; // unsupported rate for the DS33
   }
 
-  // sox.setGyroDataRate(LSM6DSOX_RATE_12_5_HZ);
+  ism330dhct.setGyroDataRate(LSM6DS_RATE_104_HZ);
   Serial.print("Gyro data rate set to: ");
-  switch (sox.getGyroDataRate()) {
+  switch (ism330dhct.getGyroDataRate()) {
   case LSM6DS_RATE_SHUTDOWN:
     Serial.println("0 Hz");
     break;
@@ -144,18 +142,19 @@ void setup(void) {
     Serial.println("6.66 KHz");
     break;
   case LSM6DSOX_RATE_1_6_HZ_LP:
-    Serial.println("1.6 Hz");
-    break;
+    break; // unsupported rate for the DS33
   }
+
+  ism330dhct.configInt1(false, false, true); // accelerometer DRDY on INT1
+  ism330dhct.configInt2(false, true, false); // gyro DRDY on INT2
 }
 
 void loop() {
-
   //  /* Get a new normalized sensor event */
   sensors_event_t accel;
   sensors_event_t gyro;
   sensors_event_t temp;
-  sox.getEvent(&accel, &gyro, &temp);
+  ism330dhct.getEvent(&accel, &gyro, &temp);
 
   Serial.print("\t\tTemperature ");
   Serial.print(temp.temperature);
@@ -170,7 +169,7 @@ void loop() {
   Serial.print(accel.acceleration.z);
   Serial.println(" m/s^2 ");
 
-  /* Display the results (acceleration is measured in m/s^2) */
+  /* Display the results (rotation is measured in dps) */
   Serial.print("\t\tGyro X: ");
   Serial.print(gyro.gyro.x);
   Serial.print(" \tY: ");
@@ -182,18 +181,19 @@ void loop() {
 
   delay(100);
 
-  /*   serial plotter friendly format */
-  //  Serial.print(temp.temperature);
-  //  Serial.print(",");
+  /*   serial plotter friendly format
+  Serial.print(temp.temperature);
+  Serial.print(",");
 
-  //  Serial.print(accel.acceleration.x);
-  //  Serial.print(","); Serial.print(accel.acceleration.y);
-  //  Serial.print(","); Serial.print(accel.acceleration.z);
+  Serial.print(accel.acceleration.x);
+  Serial.print(","); Serial.print(accel.acceleration.y);
+  Serial.print(","); Serial.print(accel.acceleration.z);
+  Serial.print(",");
 
-  //  Serial.print(",");
-  //  Serial.print(gyro.gyro.x);
-  //  Serial.print(","); Serial.print(gyro.gyro.y);
-  //  Serial.print(","); Serial.print(gyro.gyro.z);
-  //  Serial.println();
-  //  delayMicroseconds(10000);
+  Serial.print(gyro.gyro.x);
+  Serial.print(","); Serial.print(gyro.gyro.y);
+  Serial.print(","); Serial.print(gyro.gyro.z);
+  Serial.println();
+  delay(10);
+  */
 }

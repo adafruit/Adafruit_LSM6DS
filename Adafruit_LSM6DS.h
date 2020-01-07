@@ -180,14 +180,19 @@ protected:
   Adafruit_I2CDevice *i2c_dev; ///< Pointer to I2C bus interface
   Adafruit_SPIDevice *spi_dev; ///< Pointer to SPI bus interface
 
-  Adafruit_LSM6DS_Temp *temp_sensor = NULL;
-  Adafruit_LSM6DS_Accelerometer *accel_sensor = NULL;
-  Adafruit_LSM6DS_Gyro *gyro_sensor = NULL;
+  Adafruit_LSM6DS_Temp *temp_sensor = NULL; ///< Temp sensor data object
+  Adafruit_LSM6DS_Accelerometer *accel_sensor =
+      NULL;                                 ///< Accelerometer data object
+  Adafruit_LSM6DS_Gyro *gyro_sensor = NULL; ///< Gyro data object
 
 private:
-  friend class Adafruit_LSM6DS_Temp;
-  friend class Adafruit_LSM6DS_Accelerometer;
-  friend class Adafruit_LSM6DS_Gyro;
+  friend class Adafruit_LSM6DS_Temp; ///< Gives access to private members to
+                                     ///< Temp data object
+  friend class Adafruit_LSM6DS_Accelerometer; ///< Gives access to private
+                                              ///< members to Accelerometer data
+                                              ///< object
+  friend class Adafruit_LSM6DS_Gyro; ///< Gives access to private members to
+                                     ///< Gyro data object
 
   void fillTempEvent(sensors_event_t *temp, uint32_t timestamp);
   void fillAccelEvent(sensors_event_t *accel, uint32_t timestamp);
