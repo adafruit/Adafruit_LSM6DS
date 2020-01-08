@@ -29,7 +29,7 @@ void setup(void) {
 
   Serial.println("LSM6DSOX Found!");
 
-  // sox.setAccelRange(LSM6DSOX_ACCEL_RANGE_2_G);
+  // sox.setAccelRange(LSM6DS_ACCEL_RANGE_2_G);
   Serial.print("Accelerometer range set to: ");
   switch (sox.getAccelRange()) {
   case LSM6DS_ACCEL_RANGE_2_G:
@@ -46,7 +46,7 @@ void setup(void) {
     break;
   }
 
-  // sox.setGyroRange(LSM6DSOX_GYRO_RANGE_250_DPS);
+  // sox.setGyroRange(LSM6DS_GYRO_RANGE_250_DPS );
   Serial.print("Gyro range set to: ");
   switch (sox.getGyroRange()) {
   case LSM6DS_GYRO_RANGE_125_DPS:
@@ -64,9 +64,11 @@ void setup(void) {
   case LSM6DS_GYRO_RANGE_2000_DPS:
     Serial.println("2000 degrees/s");
     break;
+  case ISM330DHCT_GYRO_RANGE_4000_DPS:
+    break; // unsupported range for the DSOX
   }
 
-  // sox.setAccelDataRate(LSM6DSOX_RATE_12_5_HZ);
+  // sox.setAccelDataRate(LSM6DS_RATE_12_5_HZ);
   Serial.print("Accelerometer data rate set to: ");
   switch (sox.getAccelDataRate()) {
   case LSM6DS_RATE_SHUTDOWN:
@@ -107,7 +109,7 @@ void setup(void) {
     break;
   }
 
-  // sox.setGyroDataRate(LSM6DSOX_RATE_12_5_HZ);
+  // sox.setGyroDataRate(LSM6DS_RATE_12_5_HZ);
   Serial.print("Gyro data rate set to: ");
   switch (sox.getGyroDataRate()) {
   case LSM6DS_RATE_SHUTDOWN:
@@ -143,9 +145,6 @@ void setup(void) {
   case LSM6DS_RATE_6_66K_HZ:
     Serial.println("6.66 KHz");
     break;
-  case LSM6DSOX_RATE_1_6_HZ_LP:
-    Serial.println("1.6 Hz");
-    break;
   }
 }
 
@@ -170,7 +169,7 @@ void loop() {
   Serial.print(accel.acceleration.z);
   Serial.println(" m/s^2 ");
 
-  /* Display the results (acceleration is measured in m/s^2) */
+  /* Display the results (rotation is measured in dps) */
   Serial.print("\t\tGyro X: ");
   Serial.print(gyro.gyro.x);
   Serial.print(" \tY: ");
@@ -182,18 +181,19 @@ void loop() {
 
   delay(100);
 
-  /*   serial plotter friendly format */
+  //  // serial plotter friendly format
+
   //  Serial.print(temp.temperature);
   //  Serial.print(",");
 
   //  Serial.print(accel.acceleration.x);
   //  Serial.print(","); Serial.print(accel.acceleration.y);
   //  Serial.print(","); Serial.print(accel.acceleration.z);
-
   //  Serial.print(",");
-  //  Serial.print(gyro.gyro.x);
-  //  Serial.print(","); Serial.print(gyro.gyro.y);
-  //  Serial.print(","); Serial.print(gyro.gyro.z);
-  //  Serial.println();
+
+  // Serial.print(gyro.gyro.x);
+  // Serial.print(","); Serial.print(gyro.gyro.y);
+  // Serial.print(","); Serial.print(gyro.gyro.z);
+  // Serial.println();
   //  delayMicroseconds(10000);
 }

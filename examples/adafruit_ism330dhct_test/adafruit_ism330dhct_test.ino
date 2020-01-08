@@ -63,9 +63,12 @@ void setup(void) {
   case LSM6DS_GYRO_RANGE_2000_DPS:
     Serial.println("2000 degrees/s");
     break;
+  case ISM330DHCT_GYRO_RANGE_4000_DPS:
+    Serial.println("4000 degrees/s");
+    break;
   }
 
-  ism330dhct.setAccelDataRate(LSM6DS_RATE_208_HZ);
+  // ism330dhct.setAccelDataRate(LSM6DS_RATE_12_5_HZ);
   Serial.print("Accelerometer data rate set to: ");
   switch (ism330dhct.getAccelDataRate()) {
   case LSM6DS_RATE_SHUTDOWN:
@@ -103,10 +106,9 @@ void setup(void) {
     break;
   case LSM6DSOX_RATE_1_6_HZ_LP:
     Serial.println("1.6 Hz");
-    break;
   }
 
-  ism330dhct.setGyroDataRate(LSM6DS_RATE_104_HZ);
+  // ism330dhct.setGyroDataRate(LSM6DS_RATE_12_5_HZ);
   Serial.print("Gyro data rate set to: ");
   switch (ism330dhct.getGyroDataRate()) {
   case LSM6DS_RATE_SHUTDOWN:
@@ -142,8 +144,6 @@ void setup(void) {
   case LSM6DS_RATE_6_66K_HZ:
     Serial.println("6.66 KHz");
     break;
-  case LSM6DSOX_RATE_1_6_HZ_LP:
-    break; // unsupported rate for the DS33
   }
 
   ism330dhct.configInt1(false, false, true); // accelerometer DRDY on INT1
@@ -182,19 +182,19 @@ void loop() {
 
   delay(100);
 
-  /*   serial plotter friendly format
-  Serial.print(temp.temperature);
-  Serial.print(",");
+  //  // serial plotter friendly format
 
-  Serial.print(accel.acceleration.x);
-  Serial.print(","); Serial.print(accel.acceleration.y);
-  Serial.print(","); Serial.print(accel.acceleration.z);
-  Serial.print(",");
+  //  Serial.print(temp.temperature);
+  //  Serial.print(",");
 
-  Serial.print(gyro.gyro.x);
-  Serial.print(","); Serial.print(gyro.gyro.y);
-  Serial.print(","); Serial.print(gyro.gyro.z);
-  Serial.println();
-  delay(10);
-  */
+  //  Serial.print(accel.acceleration.x);
+  //  Serial.print(","); Serial.print(accel.acceleration.y);
+  //  Serial.print(","); Serial.print(accel.acceleration.z);
+  //  Serial.print(",");
+
+  // Serial.print(gyro.gyro.x);
+  // Serial.print(","); Serial.print(gyro.gyro.y);
+  // Serial.print(","); Serial.print(gyro.gyro.z);
+  // Serial.println();
+  //  delayMicroseconds(10000);
 }
