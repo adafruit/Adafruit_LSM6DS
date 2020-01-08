@@ -59,11 +59,12 @@ typedef enum accel_range {
 
 /** The gyro data range */
 typedef enum gyro_range {
-  LSM6DS_GYRO_RANGE_125_DPS = 0b001,
-  LSM6DS_GYRO_RANGE_250_DPS = 0b000,
-  LSM6DS_GYRO_RANGE_500_DPS = 0b010,
-  LSM6DS_GYRO_RANGE_1000_DPS = 0b100,
-  LSM6DS_GYRO_RANGE_2000_DPS = 0b110
+  LSM6DS_GYRO_RANGE_125_DPS = 0b0010,
+  LSM6DS_GYRO_RANGE_250_DPS = 0b0000,
+  LSM6DS_GYRO_RANGE_500_DPS = 0b0100,
+  LSM6DS_GYRO_RANGE_1000_DPS = 0b1000,
+  LSM6DS_GYRO_RANGE_2000_DPS = 0b1100,
+  ISM330DHCT_GYRO_RANGE_4000_DPS = 0b0001
 } lsm6ds_gyro_range_t;
 
 class Adafruit_LSM6DS;
@@ -180,14 +181,19 @@ protected:
   Adafruit_I2CDevice *i2c_dev; ///< Pointer to I2C bus interface
   Adafruit_SPIDevice *spi_dev; ///< Pointer to SPI bus interface
 
-  Adafruit_LSM6DS_Temp *temp_sensor = NULL;
-  Adafruit_LSM6DS_Accelerometer *accel_sensor = NULL;
-  Adafruit_LSM6DS_Gyro *gyro_sensor = NULL;
+  Adafruit_LSM6DS_Temp *temp_sensor = NULL; ///< Temp sensor data object
+  Adafruit_LSM6DS_Accelerometer *accel_sensor =
+      NULL;                                 ///< Accelerometer data object
+  Adafruit_LSM6DS_Gyro *gyro_sensor = NULL; ///< Gyro data object
 
 private:
-  friend class Adafruit_LSM6DS_Temp;
-  friend class Adafruit_LSM6DS_Accelerometer;
-  friend class Adafruit_LSM6DS_Gyro;
+  friend class Adafruit_LSM6DS_Temp; ///< Gives access to private members to
+                                     ///< Temp data object
+  friend class Adafruit_LSM6DS_Accelerometer; ///< Gives access to private
+                                              ///< members to Accelerometer data
+                                              ///< object
+  friend class Adafruit_LSM6DS_Gyro; ///< Gives access to private members to
+                                     ///< Gyro data object
 
   void fillTempEvent(sensors_event_t *temp, uint32_t timestamp);
   void fillAccelEvent(sensors_event_t *accel, uint32_t timestamp);
