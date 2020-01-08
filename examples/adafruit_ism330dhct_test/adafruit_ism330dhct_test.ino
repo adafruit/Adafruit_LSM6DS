@@ -104,8 +104,6 @@ void setup(void) {
   case LSM6DS_RATE_6_66K_HZ:
     Serial.println("6.66 KHz");
     break;
-  case LSM6DSOX_RATE_1_6_HZ_LP:
-    Serial.println("1.6 Hz");
   }
 
   // ism330dhct.setGyroDataRate(LSM6DS_RATE_12_5_HZ);
