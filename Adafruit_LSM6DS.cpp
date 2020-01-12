@@ -374,7 +374,7 @@ lsm6ds_gyro_range_t Adafruit_LSM6DS::getGyroRange(void) {
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL2_G);
 
   Adafruit_BusIO_RegisterBits gyro_range =
-      Adafruit_BusIO_RegisterBits(&ctrl2, 3, 1);
+      Adafruit_BusIO_RegisterBits(&ctrl2, 4, 0);
 
   return (lsm6ds_gyro_range_t)gyro_range.read();
 }
@@ -390,7 +390,7 @@ void Adafruit_LSM6DS::setGyroRange(lsm6ds_gyro_range_t new_range) {
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL2_G);
 
   Adafruit_BusIO_RegisterBits gyro_range =
-      Adafruit_BusIO_RegisterBits(&ctrl2, 3, 1);
+      Adafruit_BusIO_RegisterBits(&ctrl2, 4, 0);
 
   gyro_range.write(new_range);
   delay(20);
@@ -420,6 +420,8 @@ void Adafruit_LSM6DS::_read(void) {
 
   lsm6ds_gyro_range_t gyro_range = getGyroRange();
   float gyro_scale = 1;
+  if (gyro_range == ISM330DHCT_GYRO_RANGE_4000_DPS)
+    gyro_scale = 140.0;
   if (gyro_range == LSM6DS_GYRO_RANGE_2000_DPS)
     gyro_scale = 70.0;
   if (gyro_range == LSM6DS_GYRO_RANGE_1000_DPS)

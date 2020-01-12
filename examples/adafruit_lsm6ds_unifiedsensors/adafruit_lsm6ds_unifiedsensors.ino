@@ -52,7 +52,7 @@ void loop() {
   Serial.print(" \tZ: ");
   Serial.print(accel.acceleration.z);
   Serial.println(" m/s^2 ");
-  
+
   /* Display the results (rotation is measured in dps) */
   Serial.print("\t\tGyro X: ");
   Serial.print(gyro.gyro.x);
@@ -62,10 +62,10 @@ void loop() {
   Serial.print(gyro.gyro.z);
   Serial.println(" degrees/s ");
   Serial.println();
- 
+
   delay(100);
 
-  /*   serial plotter friendly format 
+  /*   serial plotter friendly format
   Serial.print(temp.temperature);
   Serial.print(",");
 

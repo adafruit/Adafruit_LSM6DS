@@ -18,8 +18,8 @@ void setup(void) {
   Serial.println("Adafruit LSM6DS33 test!");
 
   if (!lsm6ds33.begin_I2C()) {
-  //if (!lsm6ds33.begin_SPI(LSM_CS)) {
-  //if (!lsm6ds33.begin_SPI(LSM_CS, LSM_SCK, LSM_MISO, LSM_MOSI)) {
+    // if (!lsm6ds33.begin_SPI(LSM_CS)) {
+    // if (!lsm6ds33.begin_SPI(LSM_CS, LSM_SCK, LSM_MISO, LSM_MOSI)) {
     Serial.println("Failed to find LSM6DS33 chip");
     while (1) {
       delay(10);
@@ -63,9 +63,11 @@ void setup(void) {
   case LSM6DS_GYRO_RANGE_2000_DPS:
     Serial.println("2000 degrees/s");
     break;
+  case ISM330DHCT_GYRO_RANGE_4000_DPS:
+    break; // unsupported range for the DS33
   }
 
-  lsm6ds33.setAccelDataRate(LSM6DS_RATE_208_HZ);
+  // lsm6ds33.setAccelDataRate(LSM6DS_RATE_12_5_HZ);
   Serial.print("Accelerometer data rate set to: ");
   switch (lsm6ds33.getAccelDataRate()) {
   case LSM6DS_RATE_SHUTDOWN:
@@ -105,7 +107,7 @@ void setup(void) {
     break; // unsupported rate for the DS33
   }
 
-  lsm6ds33.setGyroDataRate(LSM6DS_RATE_104_HZ);
+  // lsm6ds33.setGyroDataRate(LSM6DS_RATE_12_5_HZ);
   Serial.print("Gyro data rate set to: ");
   switch (lsm6ds33.getGyroDataRate()) {
   case LSM6DS_RATE_SHUTDOWN:
@@ -141,8 +143,6 @@ void setup(void) {
   case LSM6DS_RATE_6_66K_HZ:
     Serial.println("6.66 KHz");
     break;
-  case LSM6DSOX_RATE_1_6_HZ_LP:
-    break; // unsupported rate for the DS33
   }
 
   lsm6ds33.configInt1(false, false, true); // accelerometer DRDY on INT1
@@ -168,7 +168,7 @@ void loop() {
   Serial.print(" \tZ: ");
   Serial.print(accel.acceleration.z);
   Serial.println(" m/s^2 ");
-  
+
   /* Display the results (rotation is measured in dps) */
   Serial.print("\t\tGyro X: ");
   Serial.print(gyro.gyro.x);
@@ -178,22 +178,22 @@ void loop() {
   Serial.print(gyro.gyro.z);
   Serial.println(" degrees/s ");
   Serial.println();
- 
+
   delay(100);
 
-  /*   serial plotter friendly format 
-  Serial.print(temp.temperature);
-  Serial.print(",");
+  //  // serial plotter friendly format
 
-  Serial.print(accel.acceleration.x);
-  Serial.print(","); Serial.print(accel.acceleration.y);
-  Serial.print(","); Serial.print(accel.acceleration.z);
-  Serial.print(",");
+  //  Serial.print(temp.temperature);
+  //  Serial.print(",");
 
-  Serial.print(gyro.gyro.x);
-  Serial.print(","); Serial.print(gyro.gyro.y);
-  Serial.print(","); Serial.print(gyro.gyro.z);
-  Serial.println();
-  delay(10);
-  */
+  //  Serial.print(accel.acceleration.x);
+  //  Serial.print(","); Serial.print(accel.acceleration.y);
+  //  Serial.print(","); Serial.print(accel.acceleration.z);
+  //  Serial.print(",");
+
+  // Serial.print(gyro.gyro.x);
+  // Serial.print(","); Serial.print(gyro.gyro.y);
+  // Serial.print(","); Serial.print(gyro.gyro.z);
+  // Serial.println();
+  //  delayMicroseconds(10000);
 }
