@@ -81,6 +81,10 @@ uint8_t Adafruit_LSM6DS::chipID(void) {
  */
 boolean Adafruit_LSM6DS::begin_I2C(uint8_t i2c_address, TwoWire *wire,
                                    int32_t sensor_id) {
+  if (i2c_dev) {
+    delete i2c_dev; // remove old interface
+  }
+
   i2c_dev = new Adafruit_I2CDevice(i2c_address, wire);
 
   if (!i2c_dev->begin()) {
@@ -102,6 +106,9 @@ bool Adafruit_LSM6DS::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
                                 int32_t sensor_id) {
   i2c_dev = NULL;
 
+  if (spi_dev) {
+    delete spi_dev; // remove old interface
+  }
   spi_dev = new Adafruit_SPIDevice(cs_pin,
                                    1000000,               // frequency
                                    SPI_BITORDER_MSBFIRST, // bit order
@@ -128,6 +135,9 @@ bool Adafruit_LSM6DS::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
                                 int8_t mosi_pin, int32_t sensor_id) {
   i2c_dev = NULL;
 
+  if (spi_dev) {
+    delete spi_dev; // remove old interface
+  }
   spi_dev = new Adafruit_SPIDevice(cs_pin, sck_pin, miso_pin, mosi_pin,
                                    1000000,               // frequency
                                    SPI_BITORDER_MSBFIRST, // bit order
