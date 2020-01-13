@@ -178,8 +178,8 @@ protected:
       _sensorid_gyro,       ///< ID number for gyro
       _sensorid_temp;       ///< ID number for temperature
 
-  Adafruit_I2CDevice *i2c_dev; ///< Pointer to I2C bus interface
-  Adafruit_SPIDevice *spi_dev; ///< Pointer to SPI bus interface
+  Adafruit_I2CDevice *i2c_dev = NULL; ///< Pointer to I2C bus interface
+  Adafruit_SPIDevice *spi_dev = NULL; ///< Pointer to SPI bus interface
 
   Adafruit_LSM6DS_Temp *temp_sensor = NULL; ///< Temp sensor data object
   Adafruit_LSM6DS_Accelerometer *accel_sensor =
