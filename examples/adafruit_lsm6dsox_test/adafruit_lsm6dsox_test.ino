@@ -166,14 +166,14 @@ void loop() {
   Serial.print(accel.acceleration.z);
   Serial.println(" m/s^2 ");
 
-  /* Display the results (rotation is measured in dps) */
+  /* Display the results (rotation is measured in rad/s) */
   Serial.print("\t\tGyro X: ");
   Serial.print(gyro.gyro.x);
   Serial.print(" \tY: ");
   Serial.print(gyro.gyro.y);
   Serial.print(" \tZ: ");
   Serial.print(gyro.gyro.z);
-  Serial.println(" degrees/s ");
+  Serial.println(" radians/s ");
   Serial.println();
 
   delay(100);

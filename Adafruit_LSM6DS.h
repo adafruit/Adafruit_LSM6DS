@@ -166,9 +166,9 @@ protected:
       accX,          ///< Last reading's accelerometer X axis m/s^2
       accY,          ///< Last reading's accelerometer Y axis m/s^2
       accZ,          ///< Last reading's accelerometer Z axis m/s^2
-      gyroX,         ///< Last reading's gyro X axis dps
-      gyroY,         ///< Last reading's gyro X axis dps
-      gyroZ;         ///< Last reading's gyro X axis dps
+      gyroX,         ///< Last reading's gyro X axis in rad/s
+      gyroY,         ///< Last reading's gyro Y axis in rad/s
+      gyroZ;         ///< Last reading's gyro Z axis in rad/s
   uint8_t chipID();
   void _read(void);
   virtual bool _init(int32_t sensor_id);
@@ -177,8 +177,8 @@ protected:
       _sensorid_gyro,       ///< ID number for gyro
       _sensorid_temp;       ///< ID number for temperature
 
-  Adafruit_I2CDevice *i2c_dev; ///< Pointer to I2C bus interface
-  Adafruit_SPIDevice *spi_dev; ///< Pointer to SPI bus interface
+  Adafruit_I2CDevice *i2c_dev = NULL; ///< Pointer to I2C bus interface
+  Adafruit_SPIDevice *spi_dev = NULL; ///< Pointer to SPI bus interface
 
   Adafruit_LSM6DS_Temp *temp_sensor = NULL; ///< Temp sensor data object
   Adafruit_LSM6DS_Accelerometer *accel_sensor =

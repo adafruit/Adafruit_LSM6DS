@@ -81,6 +81,10 @@ uint8_t Adafruit_LSM6DS::chipID(void) {
  */
 boolean Adafruit_LSM6DS::begin_I2C(uint8_t i2c_address, TwoWire *wire,
                                    int32_t sensor_id) {
+  if (i2c_dev) {
+    delete i2c_dev; // remove old interface
+  }
+
   i2c_dev = new Adafruit_I2CDevice(i2c_address, wire);
 
   if (!i2c_dev->begin()) {
@@ -102,6 +106,9 @@ bool Adafruit_LSM6DS::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
                                 int32_t sensor_id) {
   i2c_dev = NULL;
 
+  if (spi_dev) {
+    delete spi_dev; // remove old interface
+  }
   spi_dev = new Adafruit_SPIDevice(cs_pin,
                                    1000000,               // frequency
                                    SPI_BITORDER_MSBFIRST, // bit order
@@ -128,6 +135,9 @@ bool Adafruit_LSM6DS::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
                                 int8_t mosi_pin, int32_t sensor_id) {
   i2c_dev = NULL;
 
+  if (spi_dev) {
+    delete spi_dev; // remove old interface
+  }
   spi_dev = new Adafruit_SPIDevice(cs_pin, sck_pin, miso_pin, mosi_pin,
                                    1000000,               // frequency
                                    SPI_BITORDER_MSBFIRST, // bit order
@@ -238,9 +248,9 @@ void Adafruit_LSM6DS::fillGyroEvent(sensors_event_t *gyro, uint32_t timestamp) {
   gyro->sensor_id = _sensorid_gyro;
   gyro->type = SENSOR_TYPE_GYROSCOPE;
   gyro->timestamp = timestamp;
-  gyro->gyro.x = gyroX / 1000;
-  gyro->gyro.y = gyroY / 1000;
-  gyro->gyro.z = gyroZ / 1000;
+  gyro->gyro.x = gyroX;
+  gyro->gyro.y = gyroY;
+  gyro->gyro.z = gyroZ;
 }
 
 void Adafruit_LSM6DS::fillAccelEvent(sensors_event_t *accel,
@@ -250,9 +260,9 @@ void Adafruit_LSM6DS::fillAccelEvent(sensors_event_t *accel,
   accel->sensor_id = _sensorid_accel;
   accel->type = SENSOR_TYPE_ACCELEROMETER;
   accel->timestamp = timestamp;
-  accel->acceleration.x = accX * SENSORS_GRAVITY_STANDARD / 1000;
-  accel->acceleration.y = accY * SENSORS_GRAVITY_STANDARD / 1000;
-  accel->acceleration.z = accZ * SENSORS_GRAVITY_STANDARD / 1000;
+  accel->acceleration.x = accX;
+  accel->acceleration.y = accY;
+  accel->acceleration.z = accZ;
 }
 
 /**************************************************************************/
@@ -409,7 +419,7 @@ void Adafruit_LSM6DS::_read(void) {
   rawAccZ = buffer[13] << 8 | buffer[12];
 
   lsm6ds_gyro_range_t gyro_range = getGyroRange();
-  float gyro_scale = 1;
+  float gyro_scale = 1; // range is in milli-dps per bit!
   if (gyro_range == ISM330DHCT_GYRO_RANGE_4000_DPS)
     gyro_scale = 140.0;
   if (gyro_range == LSM6DS_GYRO_RANGE_2000_DPS)
@@ -423,12 +433,12 @@ void Adafruit_LSM6DS::_read(void) {
   if (gyro_range == LSM6DS_GYRO_RANGE_125_DPS)
     gyro_scale = 4.375;
 
-  gyroX = rawGyroX * gyro_scale;
-  gyroY = rawGyroY * gyro_scale;
-  gyroZ = rawGyroZ * gyro_scale;
+  gyroX = rawGyroX * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
+  gyroY = rawGyroY * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
+  gyroZ = rawGyroZ * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
 
   lsm6ds_accel_range_t accel_range = getAccelRange();
-  float accel_scale = 1;
+  float accel_scale = 1; // range is in milli-g per bit!
   if (accel_range == LSM6DS_ACCEL_RANGE_16_G)
     accel_scale = 0.488;
   if (accel_range == LSM6DS_ACCEL_RANGE_8_G)
@@ -438,9 +448,9 @@ void Adafruit_LSM6DS::_read(void) {
   if (accel_range == LSM6DS_ACCEL_RANGE_2_G)
     accel_scale = 0.061;
 
-  accX = rawAccX * accel_scale;
-  accY = rawAccY * accel_scale;
-  accZ = rawAccZ * accel_scale;
+  accX = rawAccX * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
+  accY = rawAccY * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
+  accZ = rawAccZ * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
 }
 
 /**************************************************************************/
