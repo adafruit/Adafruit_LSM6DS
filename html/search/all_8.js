@@ -1,6 +1,8 @@
 var searchData=
 [
   ['lsm6ds33_5fchip_5fid',['LSM6DS33_CHIP_ID',['../_adafruit___l_s_m6_d_s33_8h.html#a7411bbf061392f688dfa0f33d2c58b1a',1,'Adafruit_LSM6DS33.h']]],
+  ['lsm6ds3_5fchip_5fid',['LSM6DS3_CHIP_ID',['../_adafruit___l_s_m6_d_s3_8h.html#a113cfc3fc0a6374216e5eb21efdde360',1,'Adafruit_LSM6DS3.h']]],
+  ['lsm6ds3_5fmaster_5fconfig',['LSM6DS3_MASTER_CONFIG',['../_adafruit___l_s_m6_d_s3_8h.html#a08200b71f42f11e6a6795076540496ae',1,'Adafruit_LSM6DS3.h']]],
   ['lsm6ds_5faccel_5frange_5ft',['lsm6ds_accel_range_t',['../_adafruit___l_s_m6_d_s_8h.html#ac89a3e47800e1fe72344880b46ea5ca7',1,'Adafruit_LSM6DS.h']]],
   ['lsm6ds_5fctrl1_5fxl',['LSM6DS_CTRL1_XL',['../_adafruit___l_s_m6_d_s_8h.html#aebd6e48e22034599b4513e1a9e35bffc',1,'Adafruit_LSM6DS.h']]],
   ['lsm6ds_5fctrl2_5fg',['LSM6DS_CTRL2_G',['../_adafruit___l_s_m6_d_s_8h.html#a5706372e576b7a8b0364d6f9038e9ab1',1,'Adafruit_LSM6DS.h']]],
