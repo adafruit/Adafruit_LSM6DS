@@ -41,7 +41,6 @@ bool Adafruit_LSM6DS3::_init(int32_t sensor_id) {
   return true;
 }
 
-
 /**************************************************************************/
 /*!
     @brief Enables and disables the I2C master bus pulllups.
@@ -55,4 +54,3 @@ void Adafruit_LSM6DS3::enableI2CMasterPullups(bool enable_pullups) {
 
   i2c_master_pu_en.write(enable_pullups);
 }
-
