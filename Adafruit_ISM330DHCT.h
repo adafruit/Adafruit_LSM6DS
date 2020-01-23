@@ -18,7 +18,7 @@
 #ifndef _ADAFRUIT_ISM330DHCT_H
 #define _ADAFRUIT_ISM330DHCT_H
 
-#include "Adafruit_LSM6DS.h"
+#include "Adafruit_LSM6DSOX.h"
 
 #define ISM330DHCT_CHIP_ID 0x6B ///< ISM330DHCT default device id from WHOAMI
 
@@ -26,7 +26,7 @@
  *    @brief  Class that stores state and functions for interacting with
  *            the ISM330DHCT I2C Digital Potentiometer
  */
-class Adafruit_ISM330DHCT : public Adafruit_LSM6DS {
+class Adafruit_ISM330DHCT : public Adafruit_LSM6DSOX {
 public:
   Adafruit_ISM330DHCT();
   ~Adafruit_ISM330DHCT(){};
