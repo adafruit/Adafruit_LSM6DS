@@ -62,8 +62,7 @@ uint8_t Adafruit_LSM6DS::chipID(void) {
   Adafruit_BusIO_Register chip_id = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_WHOAMI);
 
-  Serial.print("Read ID 0x");
-  Serial.println(chip_id.read(), HEX);
+  //Serial.print("Read ID 0x"); Serial.println(chip_id.read(), HEX);
 
   // make sure we're talking to the right chip
   return chip_id.read();
