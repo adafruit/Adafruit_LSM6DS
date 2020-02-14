@@ -611,3 +611,52 @@ bool Adafruit_LSM6DS_Temp::getEvent(sensors_event_t *event) {
 
   return true;
 }
+
+
+void Adafruit_LSM6DS::enablePedometer(bool enable) {
+  // enable or disable!
+  Adafruit_BusIO_Register tapcfg = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_TAP_CFG);
+  Adafruit_BusIO_RegisterBits pedo_en =
+      Adafruit_BusIO_RegisterBits(&tapcfg, 1, 6);
+  pedo_en.write(enable);
+}
+
+void Adafruit_LSM6DS::configPedometer(bool scale_4g, 
+				      uint8_t threshold, 
+				      uint8_t debounce_time,
+				      uint8_t debounce_thresh,
+				      uint8_t stepcount_delta) {
+  // set the threshold and whether we're using 2g or 4g
+  Adafruit_BusIO_Register pedoths = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_PEDO_THS);
+
+  Adafruit_BusIO_RegisterBits pedo_4g =
+      Adafruit_BusIO_RegisterBits(&pedoths, 1, 7);
+  pedo_4g.write(scale_4g);
+
+  Adafruit_BusIO_RegisterBits pedo_thresh =
+      Adafruit_BusIO_RegisterBits(&pedoths, 5, 0);
+  pedo_thresh.write(threshold);
+
+  Adafruit_BusIO_Register pedo_debounce = Adafruit_BusIO_Register(
+     i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_PEDODEB);
+
+  Adafruit_BusIO_RegisterBits pedo_debstep =
+      Adafruit_BusIO_RegisterBits(&pedo_debounce, 3, 0);
+  pedo_debtime.write(debounce_time);
+
+  Adafruit_BusIO_RegisterBits pedo_debtime =
+      Adafruit_BusIO_RegisterBits(&pedo_debounce, 5, 3);
+  pedo_debstep.write(debounce_thresh);
+
+  // Time period register for step detection on delta time
+  Adafruit_BusIO_Register stepcount = Adafruit_BusIO_Register(
+     i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_STEPCOUNTDELTA);
+  stepcount.write(stepcount_delta);
+}
+
+
+
+
+}
