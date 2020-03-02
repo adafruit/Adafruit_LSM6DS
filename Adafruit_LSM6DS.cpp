@@ -499,7 +499,7 @@ void Adafruit_LSM6DS::configIntOutputs(bool active_low, bool open_drain) {
     @param step_detect true to output the step detection interrupt (default off)
 */
 void Adafruit_LSM6DS::configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl,
-                                 bool step_detect = false) {
+                                 bool step_detect) {
 
   Adafruit_BusIO_Register int1_ctrl = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_INT1_CTRL);
@@ -653,9 +653,9 @@ void Adafruit_LSM6DS::resetPedometer(void) {
   // reset bit to clear counter
   Adafruit_BusIO_Register ctrl10 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL10_C);
-  Adafruit_BusIO_RegisterBits func_en =
-      Adafruit_BusIO_RegisterBits(&ctrl10, 1, 2);
-  func_en.write(true);
+  Adafruit_BusIO_RegisterBits ped_rst =
+      Adafruit_BusIO_RegisterBits(&ctrl10, 1, 1);
+  ped_rst.write(true);
 }
 
 uint16_t Adafruit_LSM6DS::readPedometer(void) {
