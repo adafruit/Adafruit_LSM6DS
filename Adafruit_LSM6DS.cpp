@@ -484,7 +484,6 @@ void Adafruit_LSM6DS::configIntOutputs(bool active_low, bool open_drain) {
 
   Adafruit_BusIO_Register ctrl3 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL3_C);
-
   Adafruit_BusIO_RegisterBits ppod_bits =
       Adafruit_BusIO_RegisterBits(&ctrl3, 2, 4);
 
@@ -497,16 +496,16 @@ void Adafruit_LSM6DS::configIntOutputs(bool active_low, bool open_drain) {
     @param drdy_temp true to output the data ready temperature interrupt
     @param drdy_g true to output the data ready gyro interrupt
     @param drdy_xl true to output the data ready accelerometer interrupt
+    @param step_detect true to output the step detection interrupt (default off)
 */
-void Adafruit_LSM6DS::configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl) {
+void Adafruit_LSM6DS::configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl,
+                                 bool step_detect) {
 
   Adafruit_BusIO_Register int1_ctrl = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_INT1_CTRL);
 
-  Adafruit_BusIO_RegisterBits int1_drdy_bits =
-      Adafruit_BusIO_RegisterBits(&int1_ctrl, 3, 0);
-
-  int1_drdy_bits.write((drdy_temp << 2) | (drdy_g << 1) | drdy_xl);
+  int1_ctrl.write((step_detect << 7) | (drdy_temp << 2) | (drdy_g << 1) |
+                  drdy_xl);
 }
 
 /**************************************************************************/
@@ -630,4 +629,51 @@ bool Adafruit_LSM6DS_Temp::getEvent(sensors_event_t *event) {
   _theLSM6DS->fillTempEvent(event, millis());
 
   return true;
+}
+
+/**************************************************************************/
+/*!
+    @brief Enables and disables the pedometer function
+    @param enable True to turn on the pedometer function, false to turn off
+*/
+void Adafruit_LSM6DS::enablePedometer(bool enable) {
+  // enable or disable step counter
+  Adafruit_BusIO_Register tapcfg = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_TAP_CFG);
+  Adafruit_BusIO_RegisterBits pedo_en =
+      Adafruit_BusIO_RegisterBits(&tapcfg, 1, 6);
+  pedo_en.write(enable);
+
+  // enable or disable functionality
+  Adafruit_BusIO_Register ctrl10 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL10_C);
+  Adafruit_BusIO_RegisterBits func_en =
+      Adafruit_BusIO_RegisterBits(&ctrl10, 1, 2);
+  func_en.write(enable);
+
+  resetPedometer();
+}
+
+/**************************************************************************/
+/*!
+    @brief Reset the pedometer count
+*/
+void Adafruit_LSM6DS::resetPedometer(void) {
+  // reset bit to clear counter
+  Adafruit_BusIO_Register ctrl10 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL10_C);
+  Adafruit_BusIO_RegisterBits ped_rst =
+      Adafruit_BusIO_RegisterBits(&ctrl10, 1, 1);
+  ped_rst.write(true);
+}
+
+/**************************************************************************/
+/*!
+    @brief Read the 16-bit pedometer count
+    @returns The value from the step counter
+*/
+uint16_t Adafruit_LSM6DS::readPedometer(void) {
+  Adafruit_BusIO_Register steps_reg = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_STEPCOUNTER, 2);
+  return steps_reg.read();
 }
