@@ -631,6 +631,11 @@ bool Adafruit_LSM6DS_Temp::getEvent(sensors_event_t *event) {
   return true;
 }
 
+/**************************************************************************/
+/*!
+    @brief Enables and disables the pedometer function
+    @param enable True to turn on the pedometer function, false to turn off
+*/
 void Adafruit_LSM6DS::enablePedometer(bool enable) {
   // enable or disable step counter
   Adafruit_BusIO_Register tapcfg = Adafruit_BusIO_Register(
@@ -649,6 +654,10 @@ void Adafruit_LSM6DS::enablePedometer(bool enable) {
   resetPedometer();
 }
 
+/**************************************************************************/
+/*!
+    @brief Reset the pedometer count
+*/
 void Adafruit_LSM6DS::resetPedometer(void) {
   // reset bit to clear counter
   Adafruit_BusIO_Register ctrl10 = Adafruit_BusIO_Register(
@@ -658,6 +667,11 @@ void Adafruit_LSM6DS::resetPedometer(void) {
   ped_rst.write(true);
 }
 
+/**************************************************************************/
+/*!
+    @brief Read the 16-bit pedometer count
+    @returns The value from the step counter
+*/
 uint16_t Adafruit_LSM6DS::readPedometer(void) {
   Adafruit_BusIO_Register steps_reg = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_STEPCOUNTER, 2);
