@@ -146,6 +146,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:ab695c9dee9f126479ded2664e588e4a6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#ab695c9dee9f126479ded2664e588e4a6">configInt2</a> (bool drdy_temp, bool drdy_g, bool drdy_xl)</td></tr>
 <tr class="memdesc:ab695c9dee9f126479ded2664e588e4a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables and disables the data ready interrupt on INT 2.  <a href="#ab695c9dee9f126479ded2664e588e4a6">More...</a><br /></td></tr>
 <tr class="separator:ab695c9dee9f126479ded2664e588e4a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f64a353d6f7f28f2479bf49d91bf2b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#a0f64a353d6f7f28f2479bf49d91bf2b0">highPassFilter</a> (bool enabled, <a class="el" href="_adafruit___l_s_m6_d_s_8h.html#a5e23f7c84bc532bcb082422f4ad9ec63">lsm6ds_hp_filter_t</a> filter)</td></tr>
+<tr class="memdesc:a0f64a353d6f7f28f2479bf49d91bf2b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables the high pass filter and/or slope filter.  <a href="#a0f64a353d6f7f28f2479bf49d91bf2b0">More...</a><br /></td></tr>
+<tr class="separator:a0f64a353d6f7f28f2479bf49d91bf2b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e37b1ef1e372cbe15855705bb4a115c"><td class="memItemLeft" align="right" valign="top">Adafruit_Sensor *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#a0e37b1ef1e372cbe15855705bb4a115c">getTemperatureSensor</a> (void)</td></tr>
 <tr class="memdesc:a0e37b1ef1e372cbe15855705bb4a115c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an Adafruit Unified Sensor object for the temp sensor component.  <a href="#a0e37b1ef1e372cbe15855705bb4a115c">More...</a><br /></td></tr>
 <tr class="separator:a0e37b1ef1e372cbe15855705bb4a115c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -775,6 +778,43 @@ Friends</h2></td></tr>
     <tr><td class="paramname">drdy_temp</td><td>true to output the data ready temperature interrupt </td></tr>
     <tr><td class="paramname">drdy_g</td><td>true to output the data ready gyro interrupt </td></tr>
     <tr><td class="paramname">drdy_xl</td><td>true to output the data ready accelerometer interrupt </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a0f64a353d6f7f28f2479bf49d91bf2b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f64a353d6f7f28f2479bf49d91bf2b0">&#9670;&nbsp;</a></span>highPassFilter()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Adafruit_LSM6DS::highPassFilter </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>filter_enabled</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="_adafruit___l_s_m6_d_s_8h.html#a5e23f7c84bc532bcb082422f4ad9ec63">lsm6ds_hp_filter_t</a>&#160;</td>
+          <td class="paramname"><em>filter</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enables the high pass filter and/or slope filter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filter_enabled</td><td>Whether to enable the slope filter (see datasheet) </td></tr>
+    <tr><td class="paramname">filter</td><td>The lsm6ds_hp_filter_t that sets the data rate divisor </td></tr>
   </table>
   </dd>
 </dl>

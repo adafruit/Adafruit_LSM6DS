@@ -121,6 +121,10 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_adafruit___l_s_m6_d_s_8h.html#a86ac1f0eacfb5c2ecdcea800aa48e5ae">LSM6DS_CTRL3_C</a>&#160;&#160;&#160;0x12</td></tr>
 <tr class="memdesc:a86ac1f0eacfb5c2ecdcea800aa48e5ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main configuration register. <br /></td></tr>
 <tr class="separator:a86ac1f0eacfb5c2ecdcea800aa48e5ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15c8480e50cd4d499868a385ad65a9c3"><td class="memItemLeft" align="right" valign="top"><a id="a15c8480e50cd4d499868a385ad65a9c3"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_adafruit___l_s_m6_d_s_8h.html#a15c8480e50cd4d499868a385ad65a9c3">LSM6DS_CTRL8_XL</a>&#160;&#160;&#160;0x17</td></tr>
+<tr class="memdesc:a15c8480e50cd4d499868a385ad65a9c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">High and low pass for accel. <br /></td></tr>
+<tr class="separator:a15c8480e50cd4d499868a385ad65a9c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a130856c5e000f14e3a2282a641ff97ab"><td class="memItemLeft" align="right" valign="top"><a id="a130856c5e000f14e3a2282a641ff97ab"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_adafruit___l_s_m6_d_s_8h.html#a130856c5e000f14e3a2282a641ff97ab">LSM6DS_OUT_TEMP_L</a>&#160;&#160;&#160;0x20</td></tr>
 <tr class="memdesc:a130856c5e000f14e3a2282a641ff97ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">First data register (temperature low) <br /></td></tr>
@@ -142,6 +146,8 @@ Typedefs</h2></td></tr>
 <tr class="separator:ac89a3e47800e1fe72344880b46ea5ca7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a92a19cbb6a60ecf7f7679e405db675"><td class="memItemLeft" align="right" valign="top">typedef enum <a class="el" href="_adafruit___l_s_m6_d_s_8h.html#abd7e25190a4f35d6019cc958b71e20df">gyro_range</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_adafruit___l_s_m6_d_s_8h.html#a5a92a19cbb6a60ecf7f7679e405db675">lsm6ds_gyro_range_t</a></td></tr>
 <tr class="separator:a5a92a19cbb6a60ecf7f7679e405db675"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e23f7c84bc532bcb082422f4ad9ec63"><td class="memItemLeft" align="right" valign="top">typedef enum <a class="el" href="_adafruit___l_s_m6_d_s_8h.html#a9883b7095f80760926b0230219bc16e1">hpf_range</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_adafruit___l_s_m6_d_s_8h.html#a5e23f7c84bc532bcb082422f4ad9ec63">lsm6ds_hp_filter_t</a></td></tr>
+<tr class="separator:a5e23f7c84bc532bcb082422f4ad9ec63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -179,6 +185,12 @@ Enumerations</h2></td></tr>
 <br />
  }</td></tr>
 <tr class="separator:abd7e25190a4f35d6019cc958b71e20df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9883b7095f80760926b0230219bc16e1"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_adafruit___l_s_m6_d_s_8h.html#a9883b7095f80760926b0230219bc16e1">hpf_range</a> { <b>LSM6DS_HPF_ODR_DIV_50</b> = 0, 
+<b>LSM6DS_HPF_ODR_DIV_100</b> = 1, 
+<b>LSM6DS_HPF_ODR_DIV_9</b> = 2, 
+<b>LSM6DS_HPF_ODR_DIV_400</b> = 3
+ }</td></tr>
+<tr class="separator:a9883b7095f80760926b0230219bc16e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>I2C Driver base for Adafruit LSM6DSxx 6-DoF Accelerometer and Gyroscope library</p>
@@ -228,6 +240,21 @@ Enumerations</h2></td></tr>
 
 </div>
 </div>
+<a id="a5e23f7c84bc532bcb082422f4ad9ec63"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e23f7c84bc532bcb082422f4ad9ec63">&#9670;&nbsp;</a></span>lsm6ds_hp_filter_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef enum <a class="el" href="_adafruit___l_s_m6_d_s_8h.html#a9883b7095f80760926b0230219bc16e1">hpf_range</a>  <a class="el" href="_adafruit___l_s_m6_d_s_8h.html#a5e23f7c84bc532bcb082422f4ad9ec63">lsm6ds_hp_filter_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>The gyro data range </p>
+
+</div>
+</div>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a6052e5c5601ce0a0e5e0deeb30fcb515"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6052e5c5601ce0a0e5e0deeb30fcb515">&#9670;&nbsp;</a></span>data_rate</h2>
@@ -267,6 +294,21 @@ Enumerations</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">enum <a class="el" href="_adafruit___l_s_m6_d_s_8h.html#abd7e25190a4f35d6019cc958b71e20df">gyro_range</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>The gyro data range </p>
+
+</div>
+</div>
+<a id="a9883b7095f80760926b0230219bc16e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9883b7095f80760926b0230219bc16e1">&#9670;&nbsp;</a></span>hpf_range</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="_adafruit___l_s_m6_d_s_8h.html#a9883b7095f80760926b0230219bc16e1">hpf_range</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
