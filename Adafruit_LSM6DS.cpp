@@ -394,6 +394,26 @@ void Adafruit_LSM6DS::setGyroRange(lsm6ds_gyro_range_t new_range) {
   gyro_range.write(new_range);
   delay(20);
 }
+
+/**************************************************************************/
+/*!
+    @brief Enables the high pass filter and/or slope filter
+    @param filter_enabled Whether to enable the slope filter (see datasheet)
+    @param filter The lsm6ds_hp_filter_t that sets the data rate divisor
+*/
+/**************************************************************************/
+void Adafruit_LSM6DS::highPassFilter(bool filter_enabled,
+                                     lsm6ds_hp_filter_t filter) {
+  Adafruit_BusIO_Register ctrl8 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL8_XL);
+  Adafruit_BusIO_RegisterBits HPF_en =
+      Adafruit_BusIO_RegisterBits(&ctrl8, 1, 2);
+  Adafruit_BusIO_RegisterBits HPF_filter =
+      Adafruit_BusIO_RegisterBits(&ctrl8, 2, 5);
+  HPF_en.write(filter_enabled);
+  HPF_filter.write(filter);
+}
+
 /******************* Adafruit_Sensor functions *****************/
 /*!
  *     @brief  Updates the measurement data for all sensors simultaneously
