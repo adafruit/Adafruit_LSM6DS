@@ -484,7 +484,6 @@ void Adafruit_LSM6DS::configIntOutputs(bool active_low, bool open_drain) {
 
   Adafruit_BusIO_Register ctrl3 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL3_C);
-
   Adafruit_BusIO_RegisterBits ppod_bits =
       Adafruit_BusIO_RegisterBits(&ctrl3, 2, 4);
 
@@ -497,10 +496,10 @@ void Adafruit_LSM6DS::configIntOutputs(bool active_low, bool open_drain) {
     @param drdy_temp true to output the data ready temperature interrupt
     @param drdy_g true to output the data ready gyro interrupt
     @param drdy_xl true to output the data ready accelerometer interrupt
-    @param step_detect true to output the step detection interrupt
+    @param step_detect true to output the step detection interrupt (default off)
 */
 void Adafruit_LSM6DS::configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl,
-                                 bool step_detect) {
+                                 bool step_detect = false) {
 
   Adafruit_BusIO_Register int1_ctrl = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_INT1_CTRL);
