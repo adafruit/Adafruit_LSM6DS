@@ -614,14 +614,40 @@ bool Adafruit_LSM6DS_Temp::getEvent(sensors_event_t *event) {
 
 
 void Adafruit_LSM6DS::enablePedometer(bool enable) {
-  // enable or disable!
+  // enable or disable step counter
   Adafruit_BusIO_Register tapcfg = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_TAP_CFG);
   Adafruit_BusIO_RegisterBits pedo_en =
       Adafruit_BusIO_RegisterBits(&tapcfg, 1, 6);
   pedo_en.write(enable);
+
+  // enable or disable functionality
+  Adafruit_BusIO_Register ctrl10 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL10_C);
+  Adafruit_BusIO_RegisterBits func_en =
+      Adafruit_BusIO_RegisterBits(&ctrl10, 1, 2);
+  func_en.write(enable);
+
+  resetPedometer();
 }
 
+void Adafruit_LSM6DS::resetPedometer(void) {
+  // reset bit to clear counter
+  Adafruit_BusIO_Register ctrl10 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL10_C);
+  Adafruit_BusIO_RegisterBits func_en =
+      Adafruit_BusIO_RegisterBits(&ctrl10, 1, 2);
+  func_en.write(true);
+}
+
+uint16_t Adafruit_LSM6DS::readPedometer(void) {
+  Adafruit_BusIO_Register steps_reg = 
+    Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, 
+			    LSM6DS_STEPCOUNTER, 2);
+  return steps_reg.read();
+}
+
+/*
 void Adafruit_LSM6DS::configPedometer(bool scale_4g, 
 				      uint8_t threshold, 
 				      uint8_t debounce_time,
@@ -656,7 +682,5 @@ void Adafruit_LSM6DS::configPedometer(bool scale_4g,
   stepcount.write(stepcount_delta);
 }
 
+*/
 
-
-
-}

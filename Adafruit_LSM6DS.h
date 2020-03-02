@@ -29,9 +29,12 @@
 #define LSM6DS_CTRL1_XL 0x10       ///< Main accelerometer config register
 #define LSM6DS_CTRL2_G 0x11        ///< Main gyro config register
 #define LSM6DS_CTRL3_C 0x12        ///< Main configuration register
+#define LSM6DS_CTRL10_C 0x19       ///< Main configuration register
 #define LSM6DS_OUT_TEMP_L 0x20     ///< First data register (temperature low)
 #define LSM6DS_OUTX_L_G 0x22       ///< First gyro data register
 #define LSM6DS_OUTX_L_A 0x28       ///< First accel data register
+#define LSM6DS_STEPCOUNTER 0x4B       ///< 16-bit step counter
+#define LSM6DS_TAP_CFG 0x58       ///< Tap/pedometer configuration
 
 /** The accelerometer data rate */
 typedef enum data_rate {
@@ -148,6 +151,11 @@ public:
   void configIntOutputs(bool active_low, bool open_drain);
   void configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl);
   void configInt2(bool drdy_temp, bool drdy_g, bool drdy_xl);
+
+  void enablePedometer(bool enable);
+  void resetPedometer(void);
+  uint16_t readPedometer(void);
+
 
   int16_t rawAccX, ///< Last reading's raw accelerometer X axis
       rawAccY,     ///< Last reading's raw accelerometer Y axis
