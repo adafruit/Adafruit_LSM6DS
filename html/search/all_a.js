@@ -7,5 +7,7 @@ var searchData=
   ['rawgyroy',['rawGyroY',['../class_adafruit___l_s_m6_d_s.html#acb5eddaf04ae5618b169b3e29f84d1f9',1,'Adafruit_LSM6DS']]],
   ['rawgyroz',['rawGyroZ',['../class_adafruit___l_s_m6_d_s.html#a6712034ebfbe857ec9d264de33d63c5a',1,'Adafruit_LSM6DS']]],
   ['rawtemp',['rawTemp',['../class_adafruit___l_s_m6_d_s.html#ad650889ec47e77e029f0cc23826c03ef',1,'Adafruit_LSM6DS']]],
-  ['reset',['reset',['../class_adafruit___l_s_m6_d_s.html#a94a2df4a808561ddb66be1d356f3b708',1,'Adafruit_LSM6DS']]]
+  ['readpedometer',['readPedometer',['../class_adafruit___l_s_m6_d_s.html#a7d73284c677e66d9cb2a118c465908d3',1,'Adafruit_LSM6DS']]],
+  ['reset',['reset',['../class_adafruit___l_s_m6_d_s.html#a94a2df4a808561ddb66be1d356f3b708',1,'Adafruit_LSM6DS']]],
+  ['resetpedometer',['resetPedometer',['../class_adafruit___l_s_m6_d_s.html#ab0e8315c289e8b737899d212f0bec238',1,'Adafruit_LSM6DS']]]
 ];
