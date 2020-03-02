@@ -479,12 +479,14 @@ void Adafruit_LSM6DS::configIntOutputs(bool active_low, bool open_drain) {
     @param drdy_xl true to output the data ready accelerometer interrupt
     @param step_detect true to output the step detection interrupt
 */
-void Adafruit_LSM6DS::configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl, bool step_detect) {
+void Adafruit_LSM6DS::configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl,
+                                 bool step_detect) {
 
   Adafruit_BusIO_Register int1_ctrl = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_INT1_CTRL);
-  
-  int1_ctrl.write((step_detect << 7) | (drdy_temp << 2) | (drdy_g << 1) | drdy_xl);
+
+  int1_ctrl.write((step_detect << 7) | (drdy_temp << 2) | (drdy_g << 1) |
+                  drdy_xl);
 }
 
 /**************************************************************************/
@@ -610,7 +612,6 @@ bool Adafruit_LSM6DS_Temp::getEvent(sensors_event_t *event) {
   return true;
 }
 
-
 void Adafruit_LSM6DS::enablePedometer(bool enable) {
   // enable or disable step counter
   Adafruit_BusIO_Register tapcfg = Adafruit_BusIO_Register(
@@ -639,8 +640,7 @@ void Adafruit_LSM6DS::resetPedometer(void) {
 }
 
 uint16_t Adafruit_LSM6DS::readPedometer(void) {
-  Adafruit_BusIO_Register steps_reg = 
-    Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, 
-			    LSM6DS_STEPCOUNTER, 2);
+  Adafruit_BusIO_Register steps_reg = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_STEPCOUNTER, 2);
   return steps_reg.read();
 }

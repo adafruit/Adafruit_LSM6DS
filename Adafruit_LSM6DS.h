@@ -33,8 +33,8 @@
 #define LSM6DS_OUT_TEMP_L 0x20     ///< First data register (temperature low)
 #define LSM6DS_OUTX_L_G 0x22       ///< First gyro data register
 #define LSM6DS_OUTX_L_A 0x28       ///< First accel data register
-#define LSM6DS_STEPCOUNTER 0x4B       ///< 16-bit step counter
-#define LSM6DS_TAP_CFG 0x58       ///< Tap/pedometer configuration
+#define LSM6DS_STEPCOUNTER 0x4B    ///< 16-bit step counter
+#define LSM6DS_TAP_CFG 0x58        ///< Tap/pedometer configuration
 
 /** The accelerometer data rate */
 typedef enum data_rate {
