@@ -149,13 +149,12 @@ public:
 
   void reset(void);
   void configIntOutputs(bool active_low, bool open_drain);
-  void configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl);
+  void configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl, bool step_detect);
   void configInt2(bool drdy_temp, bool drdy_g, bool drdy_xl);
 
   void enablePedometer(bool enable);
   void resetPedometer(void);
   uint16_t readPedometer(void);
-
 
   int16_t rawAccX, ///< Last reading's raw accelerometer X axis
       rawAccY,     ///< Last reading's raw accelerometer Y axis
