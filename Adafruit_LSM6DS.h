@@ -29,6 +29,7 @@
 #define LSM6DS_CTRL1_XL 0x10       ///< Main accelerometer config register
 #define LSM6DS_CTRL2_G 0x11        ///< Main gyro config register
 #define LSM6DS_CTRL3_C 0x12        ///< Main configuration register
+#define LSM6DS_CTRL8_XL 0x17       ///< High and low pass for accel
 #define LSM6DS_CTRL10_C 0x19       ///< Main configuration register
 #define LSM6DS_OUT_TEMP_L 0x20     ///< First data register (temperature low)
 #define LSM6DS_OUTX_L_G 0x22       ///< First gyro data register
@@ -68,6 +69,14 @@ typedef enum gyro_range {
   LSM6DS_GYRO_RANGE_2000_DPS = 0b1100,
   ISM330DHCT_GYRO_RANGE_4000_DPS = 0b0001
 } lsm6ds_gyro_range_t;
+
+/** The gyro data range */
+typedef enum hpf_range {
+  LSM6DS_HPF_ODR_DIV_50 = 0,
+  LSM6DS_HPF_ODR_DIV_100 = 1,
+  LSM6DS_HPF_ODR_DIV_9 = 2,
+  LSM6DS_HPF_ODR_DIV_400 = 3,
+} lsm6ds_hp_filter_t;
 
 class Adafruit_LSM6DS;
 
@@ -151,6 +160,7 @@ public:
   void configIntOutputs(bool active_low, bool open_drain);
   void configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl, bool step_detect);
   void configInt2(bool drdy_temp, bool drdy_g, bool drdy_xl);
+  void highPassFilter(bool enabled, lsm6ds_hp_filter_t filter);
 
   void enablePedometer(bool enable);
   void resetPedometer(void);
