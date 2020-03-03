@@ -140,15 +140,21 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a9ce22d3f40574b7c5a83145aa5c7a49c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#a9ce22d3f40574b7c5a83145aa5c7a49c">configIntOutputs</a> (bool active_low, bool open_drain)</td></tr>
 <tr class="memdesc:a9ce22d3f40574b7c5a83145aa5c7a49c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the INT1 and INT2 pin activation mode.  <a href="#a9ce22d3f40574b7c5a83145aa5c7a49c">More...</a><br /></td></tr>
 <tr class="separator:a9ce22d3f40574b7c5a83145aa5c7a49c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac579f5fe5c21897413431402997b0ae8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#ac579f5fe5c21897413431402997b0ae8">configInt1</a> (bool drdy_temp, bool drdy_g, bool drdy_xl, bool step_detect=false)</td></tr>
-<tr class="memdesc:ac579f5fe5c21897413431402997b0ae8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables and disables the data ready interrupt on INT 1.  <a href="#ac579f5fe5c21897413431402997b0ae8">More...</a><br /></td></tr>
-<tr class="separator:ac579f5fe5c21897413431402997b0ae8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae5a54331e8dd88bd8690bb5bb8b388c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#aae5a54331e8dd88bd8690bb5bb8b388c">configInt1</a> (bool drdy_temp, bool drdy_g, bool drdy_xl, bool step_detect=false, bool wakeup=false)</td></tr>
+<tr class="memdesc:aae5a54331e8dd88bd8690bb5bb8b388c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables and disables the data ready interrupt on INT 1.  <a href="#aae5a54331e8dd88bd8690bb5bb8b388c">More...</a><br /></td></tr>
+<tr class="separator:aae5a54331e8dd88bd8690bb5bb8b388c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab695c9dee9f126479ded2664e588e4a6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#ab695c9dee9f126479ded2664e588e4a6">configInt2</a> (bool drdy_temp, bool drdy_g, bool drdy_xl)</td></tr>
 <tr class="memdesc:ab695c9dee9f126479ded2664e588e4a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables and disables the data ready interrupt on INT 2.  <a href="#ab695c9dee9f126479ded2664e588e4a6">More...</a><br /></td></tr>
 <tr class="separator:ab695c9dee9f126479ded2664e588e4a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f64a353d6f7f28f2479bf49d91bf2b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#a0f64a353d6f7f28f2479bf49d91bf2b0">highPassFilter</a> (bool enabled, <a class="el" href="_adafruit___l_s_m6_d_s_8h.html#a5e23f7c84bc532bcb082422f4ad9ec63">lsm6ds_hp_filter_t</a> filter)</td></tr>
 <tr class="memdesc:a0f64a353d6f7f28f2479bf49d91bf2b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables the high pass filter and/or slope filter.  <a href="#a0f64a353d6f7f28f2479bf49d91bf2b0">More...</a><br /></td></tr>
 <tr class="separator:a0f64a353d6f7f28f2479bf49d91bf2b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6dff11953542dccd0cc5a101f486c110"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#a6dff11953542dccd0cc5a101f486c110">enableWakeup</a> (bool enable, uint8_t duration, uint8_t thresh)</td></tr>
+<tr class="memdesc:a6dff11953542dccd0cc5a101f486c110"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables and disables the wakeup function.  <a href="#a6dff11953542dccd0cc5a101f486c110">More...</a><br /></td></tr>
+<tr class="separator:a6dff11953542dccd0cc5a101f486c110"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1c5cd8f419e37ecb17b637b26d1cafe"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#af1c5cd8f419e37ecb17b637b26d1cafe">awake</a> (void)</td></tr>
+<tr class="memdesc:af1c5cd8f419e37ecb17b637b26d1cafe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks interrupt register to see if we have a wake signal.  <a href="#af1c5cd8f419e37ecb17b637b26d1cafe">More...</a><br /></td></tr>
+<tr class="separator:af1c5cd8f419e37ecb17b637b26d1cafe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a99ae12559e61d1cafa34bf2610ee6bd6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#a99ae12559e61d1cafa34bf2610ee6bd6">enablePedometer</a> (bool enable)</td></tr>
 <tr class="memdesc:a99ae12559e61d1cafa34bf2610ee6bd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables and disables the pedometer function.  <a href="#a99ae12559e61d1cafa34bf2610ee6bd6">More...</a><br /></td></tr>
 <tr class="separator:a99ae12559e61d1cafa34bf2610ee6bd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -706,8 +712,8 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="ac579f5fe5c21897413431402997b0ae8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac579f5fe5c21897413431402997b0ae8">&#9670;&nbsp;</a></span>configInt1()</h2>
+<a id="aae5a54331e8dd88bd8690bb5bb8b388c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae5a54331e8dd88bd8690bb5bb8b388c">&#9670;&nbsp;</a></span>configInt1()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -734,7 +740,13 @@ Friends</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>step_detect</em> = <code>false</code>&#160;</td>
+          <td class="paramname"><em>step_detect</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>wakeup</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -751,6 +763,7 @@ Friends</h2></td></tr>
     <tr><td class="paramname">drdy_g</td><td>true to output the data ready gyro interrupt </td></tr>
     <tr><td class="paramname">drdy_xl</td><td>true to output the data ready accelerometer interrupt </td></tr>
     <tr><td class="paramname">step_detect</td><td>true to output the step detection interrupt (default off) </td></tr>
+    <tr><td class="paramname">wakeup</td><td>true to output the wake up interrupt (default off) </td></tr>
   </table>
   </dd>
 </dl>
@@ -835,6 +848,71 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a6dff11953542dccd0cc5a101f486c110"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6dff11953542dccd0cc5a101f486c110">&#9670;&nbsp;</a></span>enableWakeup()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Adafruit_LSM6DS::enableWakeup </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>enable</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>duration</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>thresh</em> = <code>20</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enables and disables the wakeup function. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">enable</td><td>True to turn on the wakeup function, false to turn off </td></tr>
+    <tr><td class="paramname">duration</td><td>How many &gt; threshold readings to generate a wakeup </td></tr>
+    <tr><td class="paramname">thresh</td><td>The threshold (sensitivity) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af1c5cd8f419e37ecb17b637b26d1cafe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1c5cd8f419e37ecb17b637b26d1cafe">&#9670;&nbsp;</a></span>awake()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Adafruit_LSM6DS::awake </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Checks interrupt register to see if we have a wake signal. </p>
+<dl class="section return"><dt>Returns</dt><dd>True if wake event bit is set in WAKEUP_SRC (cleared on read) </dd></dl>
 
 </div>
 </div>

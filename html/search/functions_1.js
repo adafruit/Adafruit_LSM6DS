@@ -7,5 +7,6 @@ var searchData=
   ['adafruit_5flsm6ds_5faccelerometer',['Adafruit_LSM6DS_Accelerometer',['../class_adafruit___l_s_m6_d_s___accelerometer.html#a6414e322094b09c6a093fc57d77cbd46',1,'Adafruit_LSM6DS_Accelerometer']]],
   ['adafruit_5flsm6ds_5fgyro',['Adafruit_LSM6DS_Gyro',['../class_adafruit___l_s_m6_d_s___gyro.html#af7e8905a02f5575ad63c7c183c402109',1,'Adafruit_LSM6DS_Gyro']]],
   ['adafruit_5flsm6ds_5ftemp',['Adafruit_LSM6DS_Temp',['../class_adafruit___l_s_m6_d_s___temp.html#a0c38d56036039a0ee5e72103b2b0f9ef',1,'Adafruit_LSM6DS_Temp']]],
-  ['adafruit_5flsm6dsox',['Adafruit_LSM6DSOX',['../class_adafruit___l_s_m6_d_s_o_x.html#a7290feea7fc738b7275c9ba9665e1912',1,'Adafruit_LSM6DSOX']]]
+  ['adafruit_5flsm6dsox',['Adafruit_LSM6DSOX',['../class_adafruit___l_s_m6_d_s_o_x.html#a7290feea7fc738b7275c9ba9665e1912',1,'Adafruit_LSM6DSOX']]],
+  ['awake',['awake',['../class_adafruit___l_s_m6_d_s.html#af1c5cd8f419e37ecb17b637b26d1cafe',1,'Adafruit_LSM6DS']]]
 ];
