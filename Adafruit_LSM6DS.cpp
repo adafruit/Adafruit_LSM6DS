@@ -499,13 +499,20 @@ void Adafruit_LSM6DS::configIntOutputs(bool active_low, bool open_drain) {
     @param step_detect true to output the step detection interrupt (default off)
 */
 void Adafruit_LSM6DS::configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl,
-                                 bool step_detect) {
+                                 bool step_detect, bool wakeup) {
 
   Adafruit_BusIO_Register int1_ctrl = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_INT1_CTRL);
 
-  int1_ctrl.write((step_detect << 7) | (drdy_temp << 2) | (drdy_g << 1) |
-                  drdy_xl);
+  int1_ctrl.write((step_detect << 7) |
+		  (drdy_temp << 2) | (drdy_g << 1) | drdy_xl);
+
+  Adafruit_BusIO_Register md1cfg = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_MD1_CFG);
+  
+  Adafruit_BusIO_RegisterBits wu =
+      Adafruit_BusIO_RegisterBits(&md1cfg, 1, 5);
+  wu.write(wakeup);
 }
 
 /**************************************************************************/
@@ -652,6 +659,44 @@ void Adafruit_LSM6DS::enablePedometer(bool enable) {
   func_en.write(enable);
 
   resetPedometer();
+}
+
+/**************************************************************************/
+/*!
+    @brief Enables and disables the wakeup function
+    @param enable True to turn on the wakeup function, false to turn off
+*/
+void Adafruit_LSM6DS::enableWakeup(bool enable, uint8_t duration=0, uint8_t thresh=20) {
+  // enable or disable functionality
+  Adafruit_BusIO_Register tapcfg = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_TAP_CFG);
+  Adafruit_BusIO_RegisterBits slope_en =
+      Adafruit_BusIO_RegisterBits(&tapcfg, 1, 4);
+  Adafruit_BusIO_RegisterBits timer_en =
+      Adafruit_BusIO_RegisterBits(&tapcfg, 1, 7);
+  slope_en.write(enable);
+  timer_en.write(enable);
+  if (enable) {
+    Adafruit_BusIO_Register wake_dur = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_WAKEUP_DUR);
+    Adafruit_BusIO_RegisterBits durbits =
+      Adafruit_BusIO_RegisterBits(&wake_dur, 2, 5);
+    durbits.write(duration);
+
+    Adafruit_BusIO_Register wake_ths = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_WAKEUP_THS);
+    Adafruit_BusIO_RegisterBits thsbits =
+      Adafruit_BusIO_RegisterBits(&wake_ths, 6, 0);
+    thsbits.write(thresh);
+  }
+}
+
+bool Adafruit_LSM6DS::awake(void) {
+  Adafruit_BusIO_Register wakesrc = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_WAKEUP_SRC);
+  Adafruit_BusIO_RegisterBits wake_evt =
+      Adafruit_BusIO_RegisterBits(&wakesrc, 1, 3);
+  return wake_evt.read();
 }
 
 /**************************************************************************/
