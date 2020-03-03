@@ -497,15 +497,22 @@ void Adafruit_LSM6DS::configIntOutputs(bool active_low, bool open_drain) {
     @param drdy_g true to output the data ready gyro interrupt
     @param drdy_xl true to output the data ready accelerometer interrupt
     @param step_detect true to output the step detection interrupt (default off)
+    @param wakeup true to output the wake up interrupt (default off)
 */
 void Adafruit_LSM6DS::configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl,
-                                 bool step_detect) {
+                                 bool step_detect, bool wakeup) {
 
   Adafruit_BusIO_Register int1_ctrl = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_INT1_CTRL);
 
   int1_ctrl.write((step_detect << 7) | (drdy_temp << 2) | (drdy_g << 1) |
                   drdy_xl);
+
+  Adafruit_BusIO_Register md1cfg = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_MD1_CFG);
+
+  Adafruit_BusIO_RegisterBits wu = Adafruit_BusIO_RegisterBits(&md1cfg, 1, 5);
+  wu.write(wakeup);
 }
 
 /**************************************************************************/
@@ -636,6 +643,7 @@ bool Adafruit_LSM6DS_Temp::getEvent(sensors_event_t *event) {
     @brief Enables and disables the pedometer function
     @param enable True to turn on the pedometer function, false to turn off
 */
+/**************************************************************************/
 void Adafruit_LSM6DS::enablePedometer(bool enable) {
   // enable or disable step counter
   Adafruit_BusIO_Register tapcfg = Adafruit_BusIO_Register(
@@ -656,8 +664,57 @@ void Adafruit_LSM6DS::enablePedometer(bool enable) {
 
 /**************************************************************************/
 /*!
+    @brief Enables and disables the wakeup function
+    @param enable True to turn on the wakeup function, false to turn off
+    @param duration How many > threshold readings to generate a wakeup
+    @param thresh The threshold (sensitivity)
+*/
+/**************************************************************************/
+void Adafruit_LSM6DS::enableWakeup(bool enable, uint8_t duration = 0,
+                                   uint8_t thresh = 20) {
+  // enable or disable functionality
+  Adafruit_BusIO_Register tapcfg = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_TAP_CFG);
+  Adafruit_BusIO_RegisterBits slope_en =
+      Adafruit_BusIO_RegisterBits(&tapcfg, 1, 4);
+  Adafruit_BusIO_RegisterBits timer_en =
+      Adafruit_BusIO_RegisterBits(&tapcfg, 1, 7);
+  slope_en.write(enable);
+  timer_en.write(enable);
+  if (enable) {
+    Adafruit_BusIO_Register wake_dur = Adafruit_BusIO_Register(
+        i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_WAKEUP_DUR);
+    Adafruit_BusIO_RegisterBits durbits =
+        Adafruit_BusIO_RegisterBits(&wake_dur, 2, 5);
+    durbits.write(duration);
+
+    Adafruit_BusIO_Register wake_ths = Adafruit_BusIO_Register(
+        i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_WAKEUP_THS);
+    Adafruit_BusIO_RegisterBits thsbits =
+        Adafruit_BusIO_RegisterBits(&wake_ths, 6, 0);
+    thsbits.write(thresh);
+  }
+}
+
+/**************************************************************************/
+/*!
+    @brief Checks interrupt register to see if we have a wake signal
+    @returns True if wake event bit is set in WAKEUP_SRC (cleared on read)
+*/
+/**************************************************************************/
+bool Adafruit_LSM6DS::awake(void) {
+  Adafruit_BusIO_Register wakesrc = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_WAKEUP_SRC);
+  Adafruit_BusIO_RegisterBits wake_evt =
+      Adafruit_BusIO_RegisterBits(&wakesrc, 1, 3);
+  return wake_evt.read();
+}
+
+/**************************************************************************/
+/*!
     @brief Reset the pedometer count
 */
+/**************************************************************************/
 void Adafruit_LSM6DS::resetPedometer(void) {
   // reset bit to clear counter
   Adafruit_BusIO_Register ctrl10 = Adafruit_BusIO_Register(
@@ -672,6 +729,7 @@ void Adafruit_LSM6DS::resetPedometer(void) {
     @brief Read the 16-bit pedometer count
     @returns The value from the step counter
 */
+/**************************************************************************/
 uint16_t Adafruit_LSM6DS::readPedometer(void) {
   Adafruit_BusIO_Register steps_reg = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_STEPCOUNTER, 2);
