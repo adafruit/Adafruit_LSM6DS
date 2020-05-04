@@ -76,7 +76,7 @@ typedef enum gyro_range {
   ISM330DHCT_GYRO_RANGE_4000_DPS = 0b0001
 } lsm6ds_gyro_range_t;
 
-/** The gyro data range */
+/** The high pass filter bandwidth */
 typedef enum hpf_range {
   LSM6DS_HPF_ODR_DIV_50 = 0,
   LSM6DS_HPF_ODR_DIV_100 = 1,
