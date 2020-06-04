@@ -27,6 +27,9 @@ bool Adafruit_LSM6DS33::_init(int32_t sensor_id) {
   _sensorid_temp = sensor_id + 2;
 
   reset();
+  if (chipID() != LSM6DS33_CHIP_ID) {
+    return false;
+  }
 
   // enable accelerometer and gyro by setting the data rate to non-zero
   setAccelDataRate(LSM6DS_RATE_104_HZ);

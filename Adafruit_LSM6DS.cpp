@@ -167,16 +167,6 @@ void Adafruit_LSM6DS::reset(void) {
   while (sw_reset.read()) {
     delay(1);
   }
-
-  boot.write(true);
-  while (boot.read()) {
-    delay(1);
-  }
-
-  // Adafruit_BusIO_RegisterBits bdu = Adafruit_BusIO_RegisterBits(&ctrl3, 1,
-  // 6);
-
-  // bdu.write(true);
 }
 
 /*!
