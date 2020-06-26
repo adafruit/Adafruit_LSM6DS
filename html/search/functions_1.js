@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['adafruit_5fism330dhct',['Adafruit_ISM330DHCT',['../class_adafruit___i_s_m330_d_h_c_t.html#aee06980116e5bc14ff38febb74aa734d',1,'Adafruit_ISM330DHCT']]],
+  ['adafruit_5fism330dhcx',['Adafruit_ISM330DHCX',['../class_adafruit___i_s_m330_d_h_c_x.html#af6d469ccfa018a990dedfe0aa334d104',1,'Adafruit_ISM330DHCX']]],
   ['adafruit_5flsm6ds',['Adafruit_LSM6DS',['../class_adafruit___l_s_m6_d_s.html#ab0d0d731978a6d372e97cb0ac4b1db46',1,'Adafruit_LSM6DS']]],
   ['adafruit_5flsm6ds3',['Adafruit_LSM6DS3',['../class_adafruit___l_s_m6_d_s3.html#a7c17e7e076fb1cf9b35852822a0c7a55',1,'Adafruit_LSM6DS3']]],
   ['adafruit_5flsm6ds33',['Adafruit_LSM6DS33',['../class_adafruit___l_s_m6_d_s33.html#a47b48d2a1a464d000173ad3d29a46a0f',1,'Adafruit_LSM6DS33']]],
