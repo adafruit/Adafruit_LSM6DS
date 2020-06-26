@@ -1,6 +1,6 @@
 
 /*!
- *  @file Adafruit_ISM330DHCT.cpp Adafruit ISM330DHCT 6-DoF Accelerometer
+ *  @file Adafruit_ISM330DHCX.cpp Adafruit ISM330DHCX 6-DoF Accelerometer
  *  and Gyroscope library
  *
  *  Bryan Siepert for Adafruit Industries
@@ -10,16 +10,16 @@
 #include "Arduino.h"
 #include <Wire.h>
 
-#include "Adafruit_ISM330DHCT.h"
+#include "Adafruit_ISM330DHCX.h"
 
 /*!
- *    @brief  Instantiates a new ISM330DHCT class
+ *    @brief  Instantiates a new ISM330DHCX class
  */
-Adafruit_ISM330DHCT::Adafruit_ISM330DHCT(void) {}
+Adafruit_ISM330DHCX::Adafruit_ISM330DHCX(void) {}
 
-bool Adafruit_ISM330DHCT::_init(int32_t sensor_id) {
+bool Adafruit_ISM330DHCX::_init(int32_t sensor_id) {
   // make sure we're talking to the right chip
-  if (chipID() != ISM330DHCT_CHIP_ID) {
+  if (chipID() != ISM330DHCX_CHIP_ID) {
     return false;
   }
   _sensorid_accel = sensor_id;

@@ -1,6 +1,6 @@
-// Basic demo for accelerometer/gyro readings from Adafruit ISM330DHCT
+// Basic demo for accelerometer/gyro readings from Adafruit ISM330DHCX
 
-#include <Adafruit_ISM330DHCT.h>
+#include <Adafruit_ISM330DHCX.h>
 
 // For SPI mode, we need a CS pin
 #define LSM_CS 10
@@ -9,28 +9,28 @@
 #define LSM_MISO 12
 #define LSM_MOSI 11
 
-Adafruit_ISM330DHCT ism330dhct;
+Adafruit_ISM330DHCX ism330dhcx;
 void setup(void) {
   Serial.begin(115200);
   while (!Serial)
     delay(10); // will pause Zero, Leonardo, etc until serial console opens
 
-  Serial.println("Adafruit ISM330DHCT test!");
+  Serial.println("Adafruit ISM330DHCX test!");
 
-  if (!ism330dhct.begin_I2C()) {
-    // if (!ism330dhct.begin_SPI(LSM_CS)) {
-    // if (!ism330dhct.begin_SPI(LSM_CS, LSM_SCK, LSM_MISO, LSM_MOSI)) {
-    Serial.println("Failed to find ISM330DHCT chip");
+  if (!ism330dhcx.begin_I2C()) {
+    // if (!ism330dhcx.begin_SPI(LSM_CS)) {
+    // if (!ism330dhcx.begin_SPI(LSM_CS, LSM_SCK, LSM_MISO, LSM_MOSI)) {
+    Serial.println("Failed to find ISM330DHCX chip");
     while (1) {
       delay(10);
     }
   }
 
-  Serial.println("ISM330DHCT Found!");
+  Serial.println("ISM330DHCX Found!");
 
-  // ism330dhct.setAccelRange(LSM6DS_ACCEL_RANGE_2_G);
+  // ism330dhcx.setAccelRange(LSM6DS_ACCEL_RANGE_2_G);
   Serial.print("Accelerometer range set to: ");
-  switch (ism330dhct.getAccelRange()) {
+  switch (ism330dhcx.getAccelRange()) {
   case LSM6DS_ACCEL_RANGE_2_G:
     Serial.println("+-2G");
     break;
@@ -45,9 +45,9 @@ void setup(void) {
     break;
   }
 
-  // ism330dhct.setGyroRange(LSM6DS_GYRO_RANGE_250_DPS);
+  // ism330dhcx.setGyroRange(LSM6DS_GYRO_RANGE_250_DPS);
   Serial.print("Gyro range set to: ");
-  switch (ism330dhct.getGyroRange()) {
+  switch (ism330dhcx.getGyroRange()) {
   case LSM6DS_GYRO_RANGE_125_DPS:
     Serial.println("125 degrees/s");
     break;
@@ -63,14 +63,14 @@ void setup(void) {
   case LSM6DS_GYRO_RANGE_2000_DPS:
     Serial.println("2000 degrees/s");
     break;
-  case ISM330DHCT_GYRO_RANGE_4000_DPS:
+  case ISM330DHCX_GYRO_RANGE_4000_DPS:
     Serial.println("4000 degrees/s");
     break;
   }
 
-  // ism330dhct.setAccelDataRate(LSM6DS_RATE_12_5_HZ);
+  // ism330dhcx.setAccelDataRate(LSM6DS_RATE_12_5_HZ);
   Serial.print("Accelerometer data rate set to: ");
-  switch (ism330dhct.getAccelDataRate()) {
+  switch (ism330dhcx.getAccelDataRate()) {
   case LSM6DS_RATE_SHUTDOWN:
     Serial.println("0 Hz");
     break;
@@ -106,9 +106,9 @@ void setup(void) {
     break;
   }
 
-  // ism330dhct.setGyroDataRate(LSM6DS_RATE_12_5_HZ);
+  // ism330dhcx.setGyroDataRate(LSM6DS_RATE_12_5_HZ);
   Serial.print("Gyro data rate set to: ");
-  switch (ism330dhct.getGyroDataRate()) {
+  switch (ism330dhcx.getGyroDataRate()) {
   case LSM6DS_RATE_SHUTDOWN:
     Serial.println("0 Hz");
     break;
@@ -144,8 +144,8 @@ void setup(void) {
     break;
   }
 
-  ism330dhct.configInt1(false, false, true); // accelerometer DRDY on INT1
-  ism330dhct.configInt2(false, true, false); // gyro DRDY on INT2
+  ism330dhcx.configInt1(false, false, true); // accelerometer DRDY on INT1
+  ism330dhcx.configInt2(false, true, false); // gyro DRDY on INT2
 }
 
 void loop() {
@@ -153,7 +153,7 @@ void loop() {
   sensors_event_t accel;
   sensors_event_t gyro;
   sensors_event_t temp;
-  ism330dhct.getEvent(&accel, &gyro, &temp);
+  ism330dhcx.getEvent(&accel, &gyro, &temp);
 
   Serial.print("\t\tTemperature ");
   Serial.print(temp.temperature);
