@@ -73,7 +73,7 @@ typedef enum gyro_range {
   LSM6DS_GYRO_RANGE_500_DPS = 0b0100,
   LSM6DS_GYRO_RANGE_1000_DPS = 0b1000,
   LSM6DS_GYRO_RANGE_2000_DPS = 0b1100,
-  ISM330DHCT_GYRO_RANGE_4000_DPS = 0b0001
+  ISM330DHCX_GYRO_RANGE_4000_DPS = 0b0001
 } lsm6ds_gyro_range_t;
 
 /** The high pass filter bandwidth */

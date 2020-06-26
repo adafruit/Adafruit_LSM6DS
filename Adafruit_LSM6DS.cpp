@@ -429,7 +429,7 @@ void Adafruit_LSM6DS::_read(void) {
 
   lsm6ds_gyro_range_t gyro_range = getGyroRange();
   float gyro_scale = 1; // range is in milli-dps per bit!
-  if (gyro_range == ISM330DHCT_GYRO_RANGE_4000_DPS)
+  if (gyro_range == ISM330DHCX_GYRO_RANGE_4000_DPS)
     gyro_scale = 140.0;
   if (gyro_range == LSM6DS_GYRO_RANGE_2000_DPS)
     gyro_scale = 70.0;
