@@ -38,17 +38,9 @@ class Adafruit_LSM6DSO32 : public Adafruit_LSM6DSOX {
 public:
   Adafruit_LSM6DSO32();
 
-  void enableI2CMasterPullups(bool enable_pullups);
-  void disableSPIMasterPullups(bool disable_pullups);
   lsm6dso32_accel_range_t getAccelRange(void);
   void setAccelRange(lsm6dso32_accel_range_t new_range);
   void _read(void);
-
-  // // lsm6ds_data_rate_t getGyroDataRate(void);
-  // // void setGyroDataRate(lsm6ds_data_rate_t data_rate);
-
-  // lsm6dso32_gyro_range_t getGyroRange(void);
-  // void setGyroRange(lsm6dso32_gyro_range_t new_range);
 
 private:
   bool _init(int32_t sensor_id);

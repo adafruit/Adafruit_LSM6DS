@@ -58,48 +58,12 @@ bool Adafruit_LSM6DSO32::_init(int32_t sensor_id) {
   return true;
 }
 
-// /**************************************************************************/
-// /*!
-//     @brief Disables and enables the SPI master bus pulllups.
-//     @param disable_pullups true to **disable** the I2C pullups, false to enable.
-// */
-// void Adafruit_LSM6DSO32::disableSPIMasterPullups(bool disable_pullups) {
-
-//   Adafruit_BusIO_Register pin_config = Adafruit_BusIO_Register(
-//       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSO32_PIN_CTRL);
-
-//   Adafruit_BusIO_RegisterBits disable_ois_pu =
-//       Adafruit_BusIO_RegisterBits(&pin_config, 1, 7);
-
-//   disable_ois_pu.write(disable_pullups);
-// }
-
-// /**************************************************************************/
-// /*!
-//     @brief Enables and disables the I2C master bus pulllups.
-//     @param enable_pullups true to enable the I2C pullups, false to disable.
-// */
-// void Adafruit_LSM6DSO32::enableI2CMasterPullups(bool enable_pullups) {
-
-//   Adafruit_BusIO_Register func_cfg_access = Adafruit_BusIO_Register(
-//       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSO32_FUNC_CFG_ACCESS);
-//   Adafruit_BusIO_RegisterBits master_cfg_enable_bit =
-//       Adafruit_BusIO_RegisterBits(&func_cfg_access, 1, 6);
-
-//   Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
-//       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSO32_MASTER_CONFIG);
-//   Adafruit_BusIO_RegisterBits i2c_master_pu_en =
-//       Adafruit_BusIO_RegisterBits(&master_config, 1, 3);
-
-//   master_cfg_enable_bit.write(true);
-//   i2c_master_pu_en.write(enable_pullups);
-//   master_cfg_enable_bit.write(false);
-// }
 /******************* Adafruit_Sensor functions *****************/
 /*!
  *     @brief  Updates the measurement data for all sensors simultaneously
  */
 /**************************************************************************/
+// works for now, should refactor
 void Adafruit_LSM6DSO32::_read(void) {
   // get raw readings
   Adafruit_BusIO_Register data_reg = Adafruit_BusIO_Register(
@@ -117,12 +81,7 @@ void Adafruit_LSM6DSO32::_read(void) {
   rawAccX = buffer[9] << 8 | buffer[8];
   rawAccY = buffer[11] << 8 | buffer[10];
   rawAccZ = buffer[13] << 8 | buffer[12];
-  // FS = ±125 dps 4.375
-  // mdps/LSB
-  // FS = ±250 dps 8.75
-  // FS = ±500 dps 17.50
-  // FS = ±1000 dps 35
-  // FS = ±2000 dps 70
+
   lsm6ds_gyro_range_t gyro_range = getGyroRange();
   float gyro_scale = 1; // range is in milli-dps per bit!
   if (gyro_range == ISM330DHCX_GYRO_RANGE_4000_DPS)
@@ -138,9 +97,9 @@ void Adafruit_LSM6DSO32::_read(void) {
   if (gyro_range == LSM6DS_GYRO_RANGE_125_DPS)
     gyro_scale = 4.375;
 
-  gyroX = rawGyroX * gyro_scale * 1 / 1000.0;
-  gyroY = rawGyroY * gyro_scale * 1 / 1000.0;
-  gyroZ = rawGyroZ * gyro_scale * 1 / 1000.0;
+  gyroX = rawGyroX * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
+  gyroY = rawGyroY * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
+  gyroZ = rawGyroZ * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
 
   lsm6dso32_accel_range_t accel_range = getAccelRange();
   float accel_scale = 1; // range is in milli-g per bit!
