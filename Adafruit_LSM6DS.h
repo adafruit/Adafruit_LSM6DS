@@ -175,7 +175,6 @@ public:
   void enablePedometer(bool enable);
   void resetPedometer(void);
   uint16_t readPedometer(void);
-
   int16_t rawAccX, ///< Last reading's raw accelerometer X axis
       rawAccY,     ///< Last reading's raw accelerometer Y axis
       rawAccZ,     ///< Last reading's raw accelerometer Z axis
@@ -197,7 +196,7 @@ protected:
       gyroY,         ///< Last reading's gyro Y axis in rad/s
       gyroZ;         ///< Last reading's gyro Z axis in rad/s
   uint8_t chipID();
-  void _read(void);
+  virtual void _read(void);
   virtual bool _init(int32_t sensor_id);
 
   uint16_t _sensorid_accel, ///< ID number for accelerometer
