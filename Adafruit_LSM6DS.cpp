@@ -228,7 +228,7 @@ void Adafruit_LSM6DS::fillTempEvent(sensors_event_t *temp, uint32_t timestamp) {
   temp->sensor_id = _sensorid_temp;
   temp->type = SENSOR_TYPE_AMBIENT_TEMPERATURE;
   temp->timestamp = timestamp;
-  temp->temperature = (temperature / 256.0) + 25.0;
+  temp->temperature = temperature;
 }
 
 void Adafruit_LSM6DS::fillGyroEvent(sensors_event_t *gyro, uint32_t timestamp) {
@@ -417,7 +417,8 @@ void Adafruit_LSM6DS::_read(void) {
   uint8_t buffer[14];
   data_reg.read(buffer, 14);
 
-  temperature = buffer[1] << 8 | buffer[0];
+  rawTemp = buffer[1] << 8 | buffer[0];
+  temperature = (rawTemp / 256.0) + 25.0;
 
   rawGyroX = buffer[3] << 8 | buffer[2];
   rawGyroY = buffer[5] << 8 | buffer[4];
