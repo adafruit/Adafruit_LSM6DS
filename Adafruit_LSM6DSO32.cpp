@@ -72,7 +72,8 @@ void Adafruit_LSM6DSO32::_read(void) {
   uint8_t buffer[14];
   data_reg.read(buffer, 14);
 
-  temperature = buffer[1] << 8 | buffer[0];
+  rawTemp = buffer[1] << 8 | buffer[0];
+  temperature = (rawTemp / 256.0) + 25.0;
 
   rawGyroX = buffer[3] << 8 | buffer[2];
   rawGyroY = buffer[5] << 8 | buffer[4];
