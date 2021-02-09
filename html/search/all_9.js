@@ -26,6 +26,8 @@ var searchData=
   ['lsm6ds_5fwakeup_5fsrc',['LSM6DS_WAKEUP_SRC',['../_adafruit___l_s_m6_d_s_8h.html#a729a36b61c1ec93f307f1bf8c489dbb1',1,'Adafruit_LSM6DS.h']]],
   ['lsm6ds_5fwakeup_5fths',['LSM6DS_WAKEUP_THS',['../_adafruit___l_s_m6_d_s_8h.html#a57b4f4cba9aab5831a8e1133b6b3735b',1,'Adafruit_LSM6DS.h']]],
   ['lsm6ds_5fwhoami',['LSM6DS_WHOAMI',['../_adafruit___l_s_m6_d_s_8h.html#ae8bc395bd4c2317797040268ef21ff16',1,'Adafruit_LSM6DS.h']]],
+  ['lsm6dsl_5fchip_5fid',['LSM6DSL_CHIP_ID',['../_adafruit___l_s_m6_d_s_l_8h.html#ae59f1dd6f5ea50fbc665a2e99ccba890',1,'Adafruit_LSM6DSL.h']]],
+  ['lsm6dsl_5fmaster_5fconfig',['LSM6DSL_MASTER_CONFIG',['../_adafruit___l_s_m6_d_s_l_8h.html#a3e0396cb9619ed0c70b7aa197e6ae296',1,'Adafruit_LSM6DSL.h']]],
   ['lsm6dso32_5faccel_5frange_5ft',['lsm6dso32_accel_range_t',['../_adafruit___l_s_m6_d_s_o32_8h.html#aa1fad0f7289bb388dd20cae7c6a8b625',1,'Adafruit_LSM6DSO32.h']]],
   ['lsm6dso32_5fchip_5fid',['LSM6DSO32_CHIP_ID',['../_adafruit___l_s_m6_d_s_o32_8h.html#aab1c94dc73e466e8fb17dfda78bc2cb0',1,'Adafruit_LSM6DSO32.h']]],
   ['lsm6dsox_5fchip_5fid',['LSM6DSOX_CHIP_ID',['../_adafruit___l_s_m6_d_s_o_x_8h.html#a9f783f20fe7be228a31f9f95067b27f7',1,'Adafruit_LSM6DSOX.h']]],
