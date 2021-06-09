@@ -31,6 +31,7 @@ bool Adafruit_LSM6DSOX::_init(int32_t sensor_id) {
 
   reset();
 
+  // Block Data Update
   Adafruit_BusIO_Register ctrl3 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL3_C);
   Adafruit_BusIO_RegisterBits bdu = Adafruit_BusIO_RegisterBits(&ctrl3, 1, 6);
@@ -44,9 +45,13 @@ bool Adafruit_LSM6DSOX::_init(int32_t sensor_id) {
 
   i3c_disable_bit.write(true);
 
-  // enable accelerometer and gyro by setting the data rate to non-zero
+  // Enable accelerometer with 104 Hz data rate,
   setAccelDataRate(LSM6DS_RATE_104_HZ);
+  setAccelRange(LSM6DS_ACCEL_RANGE_4_G);
+
+  // Enable gyro with 104 Hz data rate, 2000 dps
   setGyroDataRate(LSM6DS_RATE_104_HZ);
+  setGyroRange(LSM6DS_GYRO_RANGE_2000_DPS);
 
   delay(10);
 

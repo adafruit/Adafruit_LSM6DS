@@ -32,6 +32,7 @@
 #define LSM6DS_CTRL8_XL 0x17       ///< High and low pass for accel
 #define LSM6DS_CTRL10_C 0x19       ///< Main configuration register
 #define LSM6DS_WAKEUP_SRC 0x1B     ///< Why we woke up
+#define LSM6DS_STATUS_REG 0X1E     ///< Status register
 #define LSM6DS_OUT_TEMP_L 0x20     ///< First data register (temperature low)
 #define LSM6DS_OUTX_L_G 0x22       ///< First gyro data register
 #define LSM6DS_OUTX_L_A 0x28       ///< First accel data register
@@ -187,6 +188,15 @@ public:
   Adafruit_Sensor *getAccelerometerSensor(void);
   Adafruit_Sensor *getGyroSensor(void);
 
+  // Arduino compatible API
+  int readAcceleration(float &x, float &y, float &z);
+  float accelerationSampleRate(void);
+  int accelerationAvailable(void);
+
+  int readGyroscope(float &x, float &y, float &z);
+  float gyroscopeSampleRate(void);
+  int gyroscopeAvailable(void);
+
 protected:
   float temperature, ///< Last reading's temperature (C)
       accX,          ///< Last reading's accelerometer X axis m/s^2
@@ -195,7 +205,8 @@ protected:
       gyroX,         ///< Last reading's gyro X axis in rad/s
       gyroY,         ///< Last reading's gyro Y axis in rad/s
       gyroZ;         ///< Last reading's gyro Z axis in rad/s
-  uint8_t chipID();
+  uint8_t chipID(void);
+  uint8_t status(void);
   virtual void _read(void);
   virtual bool _init(int32_t sensor_id);
 
@@ -205,6 +216,7 @@ protected:
 
   Adafruit_I2CDevice *i2c_dev = NULL; ///< Pointer to I2C bus interface
   Adafruit_SPIDevice *spi_dev = NULL; ///< Pointer to SPI bus interface
+  Adafruit_BusIO_Register *busio = NULL;
 
   Adafruit_LSM6DS_Temp *temp_sensor = NULL; ///< Temp sensor data object
   Adafruit_LSM6DS_Accelerometer *accel_sensor =
