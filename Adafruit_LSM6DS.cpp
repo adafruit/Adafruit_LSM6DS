@@ -210,7 +210,8 @@ void Adafruit_LSM6DS::reset(void) {
   Adafruit_BusIO_RegisterBits sw_reset =
       Adafruit_BusIO_RegisterBits(&ctrl3, 1, 0);
 
-  Adafruit_BusIO_RegisterBits boot = Adafruit_BusIO_RegisterBits(&ctrl3, 1, 7);
+  // Adafruit_BusIO_RegisterBits boot = Adafruit_BusIO_RegisterBits(&ctrl3, 1,
+  // 7);
 
   sw_reset.write(true);
 
@@ -780,7 +781,7 @@ uint16_t Adafruit_LSM6DS::readPedometer(void) {
 /**************************************************************************/
 /*!
     @brief Gets the accelerometer data rate.
-    @returns The accelerometer data rate in float
+    @returns The data rate in float
 */
 float Adafruit_LSM6DS::accelerationSampleRate(void) {
   return _data_rate_arr[this->getAccelDataRate()];
@@ -820,8 +821,8 @@ int Adafruit_LSM6DS::readAcceleration(float &x, float &y, float &z) {
 
 /**************************************************************************/
 /*!
-    @brief Gets the gyroscope data rate.
-    @returns The gyroscope data rate in float
+    @brief Get the gyroscope data rate.
+    @returns The data rate in float
 */
 float Adafruit_LSM6DS::gyroscopeSampleRate(void) {
   return _data_rate_arr[this->getGyroDataRate()];
