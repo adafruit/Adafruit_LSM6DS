@@ -45,19 +45,8 @@ bool Adafruit_LSM6DSOX::_init(int32_t sensor_id) {
 
   i3c_disable_bit.write(true);
 
-  // Enable accelerometer with 104 Hz data rate, 4G
-  setAccelDataRate(LSM6DS_RATE_104_HZ);
-  setAccelRange(LSM6DS_ACCEL_RANGE_4_G);
-
-  // Enable gyro with 104 Hz data rate, 2000 dps
-  setGyroDataRate(LSM6DS_RATE_104_HZ);
-  setGyroRange(LSM6DS_GYRO_RANGE_2000_DPS);
-
-  delay(10);
-
-  temp_sensor = new Adafruit_LSM6DS_Temp(this);
-  accel_sensor = new Adafruit_LSM6DS_Accelerometer(this);
-  gyro_sensor = new Adafruit_LSM6DS_Gyro(this);
+  // call base class _init()
+  Adafruit_LSM6DS::_init(sensor_id);
 
   return true;
 }
