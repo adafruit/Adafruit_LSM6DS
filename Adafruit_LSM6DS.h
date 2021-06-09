@@ -176,6 +176,16 @@ public:
   void enablePedometer(bool enable);
   void resetPedometer(void);
   uint16_t readPedometer(void);
+
+  // Arduino compatible API
+  int readAcceleration(float &x, float &y, float &z);
+  float accelerationSampleRate(void);
+  int accelerationAvailable(void);
+
+  int readGyroscope(float &x, float &y, float &z);
+  float gyroscopeSampleRate(void);
+  int gyroscopeAvailable(void);
+
   int16_t rawAccX, ///< Last reading's raw accelerometer X axis
       rawAccY,     ///< Last reading's raw accelerometer Y axis
       rawAccZ,     ///< Last reading's raw accelerometer Z axis
@@ -187,15 +197,6 @@ public:
   Adafruit_Sensor *getTemperatureSensor(void);
   Adafruit_Sensor *getAccelerometerSensor(void);
   Adafruit_Sensor *getGyroSensor(void);
-
-  // Arduino compatible API
-  int readAcceleration(float &x, float &y, float &z);
-  float accelerationSampleRate(void);
-  int accelerationAvailable(void);
-
-  int readGyroscope(float &x, float &y, float &z);
-  float gyroscopeSampleRate(void);
-  int gyroscopeAvailable(void);
 
 protected:
   float temperature, ///< Last reading's temperature (C)
