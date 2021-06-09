@@ -45,7 +45,7 @@ bool Adafruit_LSM6DSOX::_init(int32_t sensor_id) {
 
   i3c_disable_bit.write(true);
 
-  // Enable accelerometer with 104 Hz data rate,
+  // Enable accelerometer with 104 Hz data rate, 4G
   setAccelDataRate(LSM6DS_RATE_104_HZ);
   setAccelRange(LSM6DS_ACCEL_RANGE_4_G);
 

@@ -139,7 +139,7 @@ private:
 class Adafruit_LSM6DS {
 public:
   Adafruit_LSM6DS();
-  ~Adafruit_LSM6DS();
+  virtual ~Adafruit_LSM6DS();
 
   bool begin_I2C(uint8_t i2c_addr = LSM6DS_I2CADDR_DEFAULT,
                  TwoWire *wire = &Wire, int32_t sensorID = 0);

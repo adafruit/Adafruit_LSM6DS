@@ -61,7 +61,10 @@ Adafruit_LSM6DS::~Adafruit_LSM6DS(void) {
  *   @param sensor_id Optional unique ID for the sensor set
  *   @returns True if chip identified and initialized
  */
-bool Adafruit_LSM6DS::_init(int32_t sensor_id) { return false; };
+bool Adafruit_LSM6DS::_init(int32_t sensor_id) {
+  (void)sensor_id;
+  return false;
+};
 
 /*!
  *    @brief  Read chip identification register
@@ -595,7 +598,7 @@ bool Adafruit_LSM6DS_Gyro::getEvent(sensors_event_t *event) {
 /*!
     @brief  Gets the sensor_t data for the LSM6DS's accelerometer
 */
-/****************************************************************_data_rate_arr**********/
+/**************************************************************************/
 void Adafruit_LSM6DS_Accelerometer::getSensor(sensor_t *sensor) {
   /* Clear the sensor_t object */
   memset(sensor, 0, sizeof(sensor_t));
