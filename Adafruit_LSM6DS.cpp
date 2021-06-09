@@ -787,7 +787,7 @@ int Adafruit_LSM6DS::readAcceleration(float &x, float &y, float &z) {
 
   busio->setAddress(LSM6DS_OUTX_L_A);
 
-  if (! busio->read((uint8_t *) data, sizeof(data))) {
+  if (!busio->read((uint8_t *)data, sizeof(data))) {
     x = y = z = NAN;
     return 0;
   }
@@ -828,7 +828,7 @@ int Adafruit_LSM6DS::readGyroscope(float &x, float &y, float &z) {
 
   busio->setAddress(LSM6DS_OUTX_L_G);
 
-  if (! busio->read((uint8_t *) data, sizeof(data))) {
+  if (!busio->read((uint8_t *)data, sizeof(data))) {
     x = y = z = NAN;
     return 0;
   }
