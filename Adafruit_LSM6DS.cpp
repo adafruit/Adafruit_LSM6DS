@@ -799,6 +799,9 @@ int Adafruit_LSM6DS::accelerationAvailable(void) {
 /**************************************************************************/
 /*!
     @brief Read accelerometer data
+    @param x reference to x axis
+    @param y reference to y axis
+    @param z reference to z axis
     @returns 1 if success, 0 if not
 */
 int Adafruit_LSM6DS::readAcceleration(float &x, float &y, float &z) {
@@ -839,7 +842,10 @@ int Adafruit_LSM6DS::gyroscopeAvailable(void) {
 
 /**************************************************************************/
 /*!
-    @brief Read accelerometer data
+    @brief Read gyroscope data
+    @param x reference to x axis
+    @param y reference to y axis
+    @param z reference to z axis
     @returns 1 if success, 0 if not
 */
 int Adafruit_LSM6DS::readGyroscope(float &x, float &y, float &z) {
