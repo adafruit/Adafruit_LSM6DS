@@ -8,5 +8,7 @@ var searchData=
   ['getgyrorange',['getGyroRange',['../class_adafruit___l_s_m6_d_s.html#af66843690423e96c1eab735197acac71',1,'Adafruit_LSM6DS']]],
   ['getgyrosensor',['getGyroSensor',['../class_adafruit___l_s_m6_d_s.html#a67cb57a7fb3c309b02592d3ddd887e9e',1,'Adafruit_LSM6DS']]],
   ['getsensor',['getSensor',['../class_adafruit___l_s_m6_d_s___temp.html#ad84af07adbf1be0b00f7d1e3f63d1acf',1,'Adafruit_LSM6DS_Temp::getSensor()'],['../class_adafruit___l_s_m6_d_s___accelerometer.html#a26dace0e7cd008620ac994c2f9190e9a',1,'Adafruit_LSM6DS_Accelerometer::getSensor()'],['../class_adafruit___l_s_m6_d_s___gyro.html#afe551da48b055d2b9eba39189a668a5b',1,'Adafruit_LSM6DS_Gyro::getSensor()']]],
-  ['gettemperaturesensor',['getTemperatureSensor',['../class_adafruit___l_s_m6_d_s.html#a0e37b1ef1e372cbe15855705bb4a115c',1,'Adafruit_LSM6DS']]]
+  ['gettemperaturesensor',['getTemperatureSensor',['../class_adafruit___l_s_m6_d_s.html#a0e37b1ef1e372cbe15855705bb4a115c',1,'Adafruit_LSM6DS']]],
+  ['gyroscopeavailable',['gyroscopeAvailable',['../class_adafruit___l_s_m6_d_s.html#a1079c9a3139a3206f90bd537d97eb64d',1,'Adafruit_LSM6DS']]],
+  ['gyroscopesamplerate',['gyroscopeSampleRate',['../class_adafruit___l_s_m6_d_s.html#a86a2c8bc543f643f6391ec8342229bf9',1,'Adafruit_LSM6DS']]]
 ];

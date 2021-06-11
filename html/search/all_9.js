@@ -20,6 +20,7 @@ var searchData=
   ['lsm6ds_5fout_5ftemp_5fl',['LSM6DS_OUT_TEMP_L',['../_adafruit___l_s_m6_d_s_8h.html#a130856c5e000f14e3a2282a641ff97ab',1,'Adafruit_LSM6DS.h']]],
   ['lsm6ds_5foutx_5fl_5fa',['LSM6DS_OUTX_L_A',['../_adafruit___l_s_m6_d_s_8h.html#a293553af3c987faf5e0ea30bf021c745',1,'Adafruit_LSM6DS.h']]],
   ['lsm6ds_5foutx_5fl_5fg',['LSM6DS_OUTX_L_G',['../_adafruit___l_s_m6_d_s_8h.html#a353771ecd3d65185de48de52ee4243e3',1,'Adafruit_LSM6DS.h']]],
+  ['lsm6ds_5fstatus_5freg',['LSM6DS_STATUS_REG',['../_adafruit___l_s_m6_d_s_8h.html#af754f57178bd3c0e09b1149db8bfb367',1,'Adafruit_LSM6DS.h']]],
   ['lsm6ds_5fstepcounter',['LSM6DS_STEPCOUNTER',['../_adafruit___l_s_m6_d_s_8h.html#a0e5dfaa1a6ce900ea3e7b226e03d3d29',1,'Adafruit_LSM6DS.h']]],
   ['lsm6ds_5ftap_5fcfg',['LSM6DS_TAP_CFG',['../_adafruit___l_s_m6_d_s_8h.html#ac547a893c606d5dc79ac3998f7b16bf2',1,'Adafruit_LSM6DS.h']]],
   ['lsm6ds_5fwakeup_5fdur',['LSM6DS_WAKEUP_DUR',['../_adafruit___l_s_m6_d_s_8h.html#a8d9548bdac6c58e73d9dd8fe575a4728',1,'Adafruit_LSM6DS.h']]],

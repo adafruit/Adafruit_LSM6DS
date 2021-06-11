@@ -11,6 +11,8 @@ var searchData=
   ['gettemperaturesensor',['getTemperatureSensor',['../class_adafruit___l_s_m6_d_s.html#a0e37b1ef1e372cbe15855705bb4a115c',1,'Adafruit_LSM6DS']]],
   ['gyro_5frange',['gyro_range',['../_adafruit___l_s_m6_d_s_8h.html#abd7e25190a4f35d6019cc958b71e20df',1,'Adafruit_LSM6DS.h']]],
   ['gyro_5fsensor',['gyro_sensor',['../class_adafruit___l_s_m6_d_s.html#a453e98c9f7629f7f72b6399e80cb0d9a',1,'Adafruit_LSM6DS']]],
+  ['gyroscopeavailable',['gyroscopeAvailable',['../class_adafruit___l_s_m6_d_s.html#a1079c9a3139a3206f90bd537d97eb64d',1,'Adafruit_LSM6DS']]],
+  ['gyroscopesamplerate',['gyroscopeSampleRate',['../class_adafruit___l_s_m6_d_s.html#a86a2c8bc543f643f6391ec8342229bf9',1,'Adafruit_LSM6DS']]],
   ['gyrox',['gyroX',['../class_adafruit___l_s_m6_d_s.html#aa8b53b4ecac98fe809a6a648d9f8388f',1,'Adafruit_LSM6DS']]],
   ['gyroy',['gyroY',['../class_adafruit___l_s_m6_d_s.html#a5005a5a7c1c68f281b624f319a70826c',1,'Adafruit_LSM6DS']]],
   ['gyroz',['gyroZ',['../class_adafruit___l_s_m6_d_s.html#adcf96a14804559feb7879f0888fcf510',1,'Adafruit_LSM6DS']]]

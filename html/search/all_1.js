@@ -2,6 +2,8 @@ var searchData=
 [
   ['accel_5frange',['accel_range',['../_adafruit___l_s_m6_d_s_8h.html#ad548999846dfd5d5af7b9efa951a11d4',1,'Adafruit_LSM6DS.h']]],
   ['accel_5fsensor',['accel_sensor',['../class_adafruit___l_s_m6_d_s.html#ad98ceb93ab8a410e7e624e0bc39e2cc8',1,'Adafruit_LSM6DS']]],
+  ['accelerationavailable',['accelerationAvailable',['../class_adafruit___l_s_m6_d_s.html#a3e8c0f75690ba8cdaf077f597b7d662d',1,'Adafruit_LSM6DS']]],
+  ['accelerationsamplerate',['accelerationSampleRate',['../class_adafruit___l_s_m6_d_s.html#a13da3e8541da50498926ea5b487a8236',1,'Adafruit_LSM6DS']]],
   ['accx',['accX',['../class_adafruit___l_s_m6_d_s.html#a76ea9cf3e3cdd0c82c124d673d2143bf',1,'Adafruit_LSM6DS']]],
   ['accy',['accY',['../class_adafruit___l_s_m6_d_s.html#a3c31c69d9f1dbffe64d5e603c4c13521',1,'Adafruit_LSM6DS']]],
   ['accz',['accZ',['../class_adafruit___l_s_m6_d_s.html#a1ac9b2183e2b0055445d4ae71ffb7974',1,'Adafruit_LSM6DS']]],
