@@ -86,11 +86,12 @@ bool Adafruit_LSM6DS::_init(int32_t sensor_id) {
  *    @returns 8 Bit value from WHOAMI register
  */
 uint8_t Adafruit_LSM6DS::chipID(void) {
-  busio->setAddress(LSM6DS_WHOAMI);
+  Adafruit_BusIO_Register chip_id = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_WHOAMI);
   // Serial.print("Read ID 0x"); Serial.println(chip_id.read(), HEX);
 
   // make sure we're talking to the right chip
-  return busio->read();
+  return chip_id.read();
 }
 
 /*!
@@ -98,8 +99,9 @@ uint8_t Adafruit_LSM6DS::chipID(void) {
  *    @returns 8 Bit value from Status register
  */
 uint8_t Adafruit_LSM6DS::status(void) {
-  busio->setAddress(LSM6DS_STATUS_REG);
-  return busio->read();
+  Adafruit_BusIO_Register status_reg = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_STATUS_REG);
+  return status_reg.read();
 }
 
 /*!
@@ -121,11 +123,6 @@ boolean Adafruit_LSM6DS::begin_I2C(uint8_t i2c_address, TwoWire *wire,
   i2c_dev = new Adafruit_I2CDevice(i2c_address, wire);
 
   if (!i2c_dev->begin()) {
-    return false;
-  }
-
-  busio = new Adafruit_BusIO_Register(i2c_dev, 0x0000);
-  if (!busio) {
     return false;
   }
 
@@ -156,11 +153,6 @@ bool Adafruit_LSM6DS::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
     return false;
   }
 
-  busio = new Adafruit_BusIO_Register(spi_dev, 0x0000, ADDRBIT8_HIGH_TOREAD);
-  if (!busio) {
-    return false;
-  }
-
   return _init(sensor_id);
 }
 
@@ -186,11 +178,6 @@ bool Adafruit_LSM6DS::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
                                    SPI_BITORDER_MSBFIRST, // bit order
                                    SPI_MODE0);            // data mode
   if (!spi_dev->begin()) {
-    return false;
-  }
-
-  busio = new Adafruit_BusIO_Register(spi_dev, 0x0000, ADDRBIT8_HIGH_TOREAD);
-  if (!busio) {
     return false;
   }
 
@@ -807,9 +794,10 @@ int Adafruit_LSM6DS::accelerationAvailable(void) {
 int Adafruit_LSM6DS::readAcceleration(float &x, float &y, float &z) {
   int16_t data[3];
 
-  busio->setAddress(LSM6DS_OUTX_L_A);
+  Adafruit_BusIO_Register accel_data = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_OUTX_L_A, 6);
 
-  if (!busio->read((uint8_t *)data, sizeof(data))) {
+  if (!accel_data.read((uint8_t *)data, sizeof(data))) {
     x = y = z = NAN;
     return 0;
   }
@@ -851,9 +839,10 @@ int Adafruit_LSM6DS::gyroscopeAvailable(void) {
 int Adafruit_LSM6DS::readGyroscope(float &x, float &y, float &z) {
   int16_t data[3];
 
-  busio->setAddress(LSM6DS_OUTX_L_G);
+  Adafruit_BusIO_Register gyro_data = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_OUTX_L_G, 6);
 
-  if (!busio->read((uint8_t *)data, sizeof(data))) {
+  if (!gyro_data.read((uint8_t *)data, sizeof(data))) {
     x = y = z = NAN;
     return 0;
   }
