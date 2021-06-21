@@ -35,6 +35,15 @@
 
 #include "Adafruit_LSM6DS.h"
 
+static const float _data_rate_arr[] = {
+    [LSM6DS_RATE_SHUTDOWN] = 0.0f,    [LSM6DS_RATE_12_5_HZ] = 12.5f,
+    [LSM6DS_RATE_26_HZ] = 26.0f,      [LSM6DS_RATE_52_HZ] = 52.0f,
+    [LSM6DS_RATE_104_HZ] = 104.0f,    [LSM6DS_RATE_208_HZ] = 208.0f,
+    [LSM6DS_RATE_416_HZ] = 416.0f,    [LSM6DS_RATE_833_HZ] = 833.0f,
+    [LSM6DS_RATE_1_66K_HZ] = 1660.0f, [LSM6DS_RATE_3_33K_HZ] = 3330.0f,
+    [LSM6DS_RATE_6_66K_HZ] = 6660.0f,
+};
+
 /*!
  *    @brief  Instantiates a new LSM6DS class
  */
@@ -52,7 +61,25 @@ Adafruit_LSM6DS::~Adafruit_LSM6DS(void) {
  *   @param sensor_id Optional unique ID for the sensor set
  *   @returns True if chip identified and initialized
  */
-bool Adafruit_LSM6DS::_init(int32_t sensor_id) { return false; };
+bool Adafruit_LSM6DS::_init(int32_t sensor_id) {
+  (void)sensor_id;
+
+  // Enable accelerometer with 104 Hz data rate, 4G
+  setAccelDataRate(LSM6DS_RATE_104_HZ);
+  setAccelRange(LSM6DS_ACCEL_RANGE_4_G);
+
+  // Enable gyro with 104 Hz data rate, 2000 dps
+  setGyroDataRate(LSM6DS_RATE_104_HZ);
+  setGyroRange(LSM6DS_GYRO_RANGE_2000_DPS);
+
+  delay(10);
+
+  temp_sensor = new Adafruit_LSM6DS_Temp(this);
+  accel_sensor = new Adafruit_LSM6DS_Accelerometer(this);
+  gyro_sensor = new Adafruit_LSM6DS_Gyro(this);
+
+  return false;
+};
 
 /*!
  *    @brief  Read chip identification register
@@ -61,11 +88,20 @@ bool Adafruit_LSM6DS::_init(int32_t sensor_id) { return false; };
 uint8_t Adafruit_LSM6DS::chipID(void) {
   Adafruit_BusIO_Register chip_id = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_WHOAMI);
-
   // Serial.print("Read ID 0x"); Serial.println(chip_id.read(), HEX);
 
   // make sure we're talking to the right chip
   return chip_id.read();
+}
+
+/*!
+ *    @brief  Read Status register
+ *    @returns 8 Bit value from Status register
+ */
+uint8_t Adafruit_LSM6DS::status(void) {
+  Adafruit_BusIO_Register status_reg = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_STATUS_REG);
+  return status_reg.read();
 }
 
 /*!
@@ -144,6 +180,7 @@ bool Adafruit_LSM6DS::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
   if (!spi_dev->begin()) {
     return false;
   }
+
   return _init(sensor_id);
 }
 
@@ -160,7 +197,8 @@ void Adafruit_LSM6DS::reset(void) {
   Adafruit_BusIO_RegisterBits sw_reset =
       Adafruit_BusIO_RegisterBits(&ctrl3, 1, 0);
 
-  Adafruit_BusIO_RegisterBits boot = Adafruit_BusIO_RegisterBits(&ctrl3, 1, 7);
+  // Adafruit_BusIO_RegisterBits boot = Adafruit_BusIO_RegisterBits(&ctrl3, 1,
+  // 7);
 
   sw_reset.write(true);
 
@@ -725,4 +763,94 @@ uint16_t Adafruit_LSM6DS::readPedometer(void) {
   Adafruit_BusIO_Register steps_reg = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_STEPCOUNTER, 2);
   return steps_reg.read();
+}
+
+/**************************************************************************/
+/*!
+    @brief Gets the accelerometer data rate.
+    @returns The data rate in float
+*/
+float Adafruit_LSM6DS::accelerationSampleRate(void) {
+  return _data_rate_arr[this->getAccelDataRate()];
+}
+
+/**************************************************************************/
+/*!
+    @brief Check for available data from accelerometer
+    @returns 1 if available, 0 if not
+*/
+int Adafruit_LSM6DS::accelerationAvailable(void) {
+  return (this->status() & 0x01) ? 1 : 0;
+}
+
+/**************************************************************************/
+/*!
+    @brief Read accelerometer data
+    @param x reference to x axis
+    @param y reference to y axis
+    @param z reference to z axis
+    @returns 1 if success, 0 if not
+*/
+int Adafruit_LSM6DS::readAcceleration(float &x, float &y, float &z) {
+  int16_t data[3];
+
+  Adafruit_BusIO_Register accel_data = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_OUTX_L_A, 6);
+
+  if (!accel_data.read((uint8_t *)data, sizeof(data))) {
+    x = y = z = NAN;
+    return 0;
+  }
+
+  // scale to range of -4 – 4
+  x = data[0] * 4.0 / 32768.0;
+  y = data[1] * 4.0 / 32768.0;
+  z = data[2] * 4.0 / 32768.0;
+
+  return 1;
+}
+
+/**************************************************************************/
+/*!
+    @brief Get the gyroscope data rate.
+    @returns The data rate in float
+*/
+float Adafruit_LSM6DS::gyroscopeSampleRate(void) {
+  return _data_rate_arr[this->getGyroDataRate()];
+}
+
+/**************************************************************************/
+/*!
+    @brief Check for available data from gyroscope
+    @returns 1 if available, 0 if not
+*/
+int Adafruit_LSM6DS::gyroscopeAvailable(void) {
+  return (this->status() & 0x02) ? 1 : 0;
+}
+
+/**************************************************************************/
+/*!
+    @brief Read gyroscope data
+    @param x reference to x axis
+    @param y reference to y axis
+    @param z reference to z axis
+    @returns 1 if success, 0 if not
+*/
+int Adafruit_LSM6DS::readGyroscope(float &x, float &y, float &z) {
+  int16_t data[3];
+
+  Adafruit_BusIO_Register gyro_data = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_OUTX_L_G, 6);
+
+  if (!gyro_data.read((uint8_t *)data, sizeof(data))) {
+    x = y = z = NAN;
+    return 0;
+  }
+
+  // scale to range of -2000 – 2000
+  x = data[0] * 2000.0 / 32768.0;
+  y = data[1] * 2000.0 / 32768.0;
+  z = data[2] * 2000.0 / 32768.0;
+
+  return 1;
 }

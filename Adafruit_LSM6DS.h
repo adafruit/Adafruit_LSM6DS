@@ -32,6 +32,7 @@
 #define LSM6DS_CTRL8_XL 0x17       ///< High and low pass for accel
 #define LSM6DS_CTRL10_C 0x19       ///< Main configuration register
 #define LSM6DS_WAKEUP_SRC 0x1B     ///< Why we woke up
+#define LSM6DS_STATUS_REG 0X1E     ///< Status register
 #define LSM6DS_OUT_TEMP_L 0x20     ///< First data register (temperature low)
 #define LSM6DS_OUTX_L_G 0x22       ///< First gyro data register
 #define LSM6DS_OUTX_L_A 0x28       ///< First accel data register
@@ -138,7 +139,7 @@ private:
 class Adafruit_LSM6DS {
 public:
   Adafruit_LSM6DS();
-  ~Adafruit_LSM6DS();
+  virtual ~Adafruit_LSM6DS();
 
   bool begin_I2C(uint8_t i2c_addr = LSM6DS_I2CADDR_DEFAULT,
                  TwoWire *wire = &Wire, int32_t sensorID = 0);
@@ -175,6 +176,16 @@ public:
   void enablePedometer(bool enable);
   void resetPedometer(void);
   uint16_t readPedometer(void);
+
+  // Arduino compatible API
+  int readAcceleration(float &x, float &y, float &z);
+  float accelerationSampleRate(void);
+  int accelerationAvailable(void);
+
+  int readGyroscope(float &x, float &y, float &z);
+  float gyroscopeSampleRate(void);
+  int gyroscopeAvailable(void);
+
   int16_t rawAccX, ///< Last reading's raw accelerometer X axis
       rawAccY,     ///< Last reading's raw accelerometer Y axis
       rawAccZ,     ///< Last reading's raw accelerometer Z axis
@@ -195,7 +206,8 @@ protected:
       gyroX,         ///< Last reading's gyro X axis in rad/s
       gyroY,         ///< Last reading's gyro Y axis in rad/s
       gyroZ;         ///< Last reading's gyro Z axis in rad/s
-  uint8_t chipID();
+  uint8_t chipID(void);
+  uint8_t status(void);
   virtual void _read(void);
   virtual bool _init(int32_t sensor_id);
 

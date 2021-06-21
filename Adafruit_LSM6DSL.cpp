@@ -28,15 +28,8 @@ bool Adafruit_LSM6DSL::_init(int32_t sensor_id) {
 
   reset();
 
-  // enable accelerometer and gyro by setting the data rate to non-zero
-  setAccelDataRate(LSM6DS_RATE_104_HZ);
-  setGyroDataRate(LSM6DS_RATE_104_HZ);
-
-  delay(10);
-
-  temp_sensor = new Adafruit_LSM6DS_Temp(this);
-  accel_sensor = new Adafruit_LSM6DS_Accelerometer(this);
-  gyro_sensor = new Adafruit_LSM6DS_Gyro(this);
+  // call base class _init()
+  Adafruit_LSM6DS::_init(sensor_id);
 
   return true;
 }
