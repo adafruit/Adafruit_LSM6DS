@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['spi_5fdev',['spi_dev',['../class_adafruit___l_s_m6_d_s.html#a2d9e507868ab5a040da97cbfe6a14315',1,'Adafruit_LSM6DS']]]
+  ['temp_5fsensor',['temp_sensor',['../class_adafruit___l_s_m6_d_s.html#a0f6efe7ac16022a96a0920ac1a3bf175',1,'Adafruit_LSM6DS']]],
+  ['temperature',['temperature',['../class_adafruit___l_s_m6_d_s.html#a288fdae09a43a72907dd408d467929c4',1,'Adafruit_LSM6DS']]]
 ];
