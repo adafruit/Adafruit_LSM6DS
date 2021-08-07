@@ -456,7 +456,7 @@ void Adafruit_LSM6DS::_read(void) {
   data_reg.read(buffer, 14);
 
   rawTemp = buffer[1] << 8 | buffer[0];
-  temperature = (rawTemp / 256.0) + 25.0;
+  temperature = (rawTemp / 16.0) + 25.0;
 
   rawGyroX = buffer[3] << 8 | buffer[2];
   rawGyroY = buffer[5] << 8 | buffer[4];
