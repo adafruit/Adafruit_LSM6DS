@@ -218,6 +218,8 @@ protected:
   Adafruit_I2CDevice *i2c_dev = NULL; ///< Pointer to I2C bus interface
   Adafruit_SPIDevice *spi_dev = NULL; ///< Pointer to SPI bus interface
 
+  float temperature_sensitivity =
+      256.0; ///< Temp sensor sensitivity in LSB/degC
   Adafruit_LSM6DS_Temp *temp_sensor = NULL; ///< Temp sensor data object
   Adafruit_LSM6DS_Accelerometer *accel_sensor =
       NULL;                                 ///< Accelerometer data object
