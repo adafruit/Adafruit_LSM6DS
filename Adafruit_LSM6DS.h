@@ -208,7 +208,7 @@ protected:
       gyroZ;         ///< Last reading's gyro Z axis in rad/s
   uint8_t chipID(void);
   uint8_t status(void);
-  virtual void _read(void);
+  virtual bool _read(void);
   virtual bool _init(int32_t sensor_id);
 
   uint16_t _sensorid_accel, ///< ID number for accelerometer

@@ -245,13 +245,15 @@ Adafruit_Sensor *Adafruit_LSM6DS::getGyroSensor(void) { return gyro_sensor; }
             Pointer to an Adafruit Unified sensor_event_t object to be filled
             with temperature event data.
 
-    @return True on successful read
+    @return True on successful read; if false the data obtained are invalid
 */
 /**************************************************************************/
 bool Adafruit_LSM6DS::getEvent(sensors_event_t *accel, sensors_event_t *gyro,
                                sensors_event_t *temp) {
   uint32_t t = millis();
-  _read();
+  if(!_read()){
+    return false;
+  }
 
   // use helpers to fill in the events
   fillAccelEvent(accel, t);
@@ -445,15 +447,18 @@ void Adafruit_LSM6DS::highPassFilter(bool filter_enabled,
 /******************* Adafruit_Sensor functions *****************/
 /*!
  *     @brief  Updates the measurement data for all sensors simultaneously
+ *     @return true on successful read, if false the data obtained are invalid
  */
 /**************************************************************************/
-void Adafruit_LSM6DS::_read(void) {
+bool Adafruit_LSM6DS::_read(void) {
   // get raw readings
   Adafruit_BusIO_Register data_reg = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_OUT_TEMP_L, 14);
 
   uint8_t buffer[14];
-  data_reg.read(buffer, 14);
+  if(!data_reg.read(buffer, 14)){
+    return false;
+  }
 
   rawTemp = buffer[1] << 8 | buffer[0];
   temperature = (rawTemp / temperature_sensitivity) + 25.0;
@@ -499,6 +504,8 @@ void Adafruit_LSM6DS::_read(void) {
   accX = rawAccX * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
   accY = rawAccY * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
   accZ = rawAccZ * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
+
+  return true;
 }
 
 /**************************************************************************/
@@ -587,11 +594,13 @@ void Adafruit_LSM6DS_Gyro::getSensor(sensor_t *sensor) {
 /*!
     @brief  Gets the gyroscope as a standard sensor event
     @param  event Sensor event object that will be populated
-    @returns True
+    @returns true on successful read; if false the data obtained are invalid
 */
 /**************************************************************************/
 bool Adafruit_LSM6DS_Gyro::getEvent(sensors_event_t *event) {
-  _theLSM6DS->_read();
+  if (!_theLSM6DS->_read()){
+    return false;
+  }
   _theLSM6DS->fillGyroEvent(event, millis());
 
   return true;
@@ -622,11 +631,13 @@ void Adafruit_LSM6DS_Accelerometer::getSensor(sensor_t *sensor) {
 /*!
     @brief  Gets the accelerometer as a standard sensor event
     @param  event Sensor event object that will be populated
-    @returns True
+    @returns true on successful read; if false the data obtained are invalid
 */
 /**************************************************************************/
 bool Adafruit_LSM6DS_Accelerometer::getEvent(sensors_event_t *event) {
-  _theLSM6DS->_read();
+  if(!_theLSM6DS->_read()){
+    return false;
+  }
   _theLSM6DS->fillAccelEvent(event, millis());
 
   return true;
@@ -657,11 +668,13 @@ void Adafruit_LSM6DS_Temp::getSensor(sensor_t *sensor) {
 /*!
     @brief  Gets the temperature as a standard sensor event
     @param  event Sensor event object that will be populated
-    @returns True
+    @returns true on successful read; if false the data obtained are invalid
 */
 /**************************************************************************/
 bool Adafruit_LSM6DS_Temp::getEvent(sensors_event_t *event) {
-  _theLSM6DS->_read();
+  if(!_theLSM6DS->_read()){
+    return false;
+  }
   _theLSM6DS->fillTempEvent(event, millis());
 
   return true;

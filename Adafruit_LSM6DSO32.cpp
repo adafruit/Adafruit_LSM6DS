@@ -57,13 +57,15 @@ bool Adafruit_LSM6DSO32::_init(int32_t sensor_id) {
  */
 /**************************************************************************/
 // works for now, should refactor
-void Adafruit_LSM6DSO32::_read(void) {
+bool Adafruit_LSM6DSO32::_read(void) {
   // get raw readings
   Adafruit_BusIO_Register data_reg = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_OUT_TEMP_L, 14);
 
   uint8_t buffer[14];
-  data_reg.read(buffer, 14);
+  if (!data_reg.read(buffer, 14)){
+    return false;
+  }
 
   rawTemp = buffer[1] << 8 | buffer[0];
   temperature = (rawTemp / 256.0) + 25.0;
@@ -108,6 +110,8 @@ void Adafruit_LSM6DSO32::_read(void) {
   accX = rawAccX * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
   accY = rawAccY * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
   accZ = rawAccZ * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
+
+  return true;
 }
 
 /**************************************************************************/
