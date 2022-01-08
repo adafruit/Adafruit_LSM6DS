@@ -142,19 +142,20 @@ boolean Adafruit_LSM6DS::begin_I2C(uint8_t i2c_address, TwoWire *wire,
  *    @brief  Sets up the hardware and initializes hardware SPI
  *    @param  cs_pin The arduino pin # connected to chip select
  *    @param  theSPI The SPI object to be used for SPI connections.
+ *    @param  frequency The SPI bus frequency
  *    @param  sensor_id
  *            The user-defined ID to differentiate different sensors
  *    @return True if initialization was successful, otherwise false.
  */
 bool Adafruit_LSM6DS::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
-                                int32_t sensor_id) {
+                                uint32_t frequency, int32_t sensor_id) {
   i2c_dev = NULL;
 
   if (spi_dev) {
     delete spi_dev; // remove old interface
   }
   spi_dev = new Adafruit_SPIDevice(cs_pin,
-                                   1000000,               // frequency
+                                   frequency,             // frequency
                                    SPI_BITORDER_MSBFIRST, // bit order
                                    SPI_MODE0,             // data mode
                                    theSPI);
@@ -171,19 +172,21 @@ bool Adafruit_LSM6DS::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
  *    @param  sck_pin The arduino pin # connected to SPI clock
  *    @param  miso_pin The arduino pin # connected to SPI MISO
  *    @param  mosi_pin The arduino pin # connected to SPI MOSI
+ *    @param  frequency The SPI bus frequency
  *    @param  sensor_id
  *            The user-defined ID to differentiate different sensors
  *    @return True if initialization was successful, otherwise false.
  */
 bool Adafruit_LSM6DS::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
-                                int8_t mosi_pin, int32_t sensor_id) {
+                                int8_t mosi_pin, uint32_t frequency,
+                                int32_t sensor_id) {
   i2c_dev = NULL;
 
   if (spi_dev) {
     delete spi_dev; // remove old interface
   }
   spi_dev = new Adafruit_SPIDevice(cs_pin, sck_pin, miso_pin, mosi_pin,
-                                   1000000,               // frequency
+                                   frequency,             // frequency
                                    SPI_BITORDER_MSBFIRST, // bit order
                                    SPI_MODE0);            // data mode
   if (!spi_dev->begin()) {

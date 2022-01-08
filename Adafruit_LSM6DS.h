@@ -144,9 +144,11 @@ public:
   bool begin_I2C(uint8_t i2c_addr = LSM6DS_I2CADDR_DEFAULT,
                  TwoWire *wire = &Wire, int32_t sensorID = 0);
 
-  bool begin_SPI(uint8_t cs_pin, SPIClass *theSPI = &SPI, int32_t sensorID = 0);
+  bool begin_SPI(uint8_t cs_pin, SPIClass *theSPI = &SPI,
+                 uint32_t frequency = 1000000, int32_t sensorID = 0);
   bool begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
-                 int8_t mosi_pin, int32_t sensorID = 0);
+                 int8_t mosi_pin, uint32_t frequency = 1000000,
+                 int32_t sensorID = 0);
 
   bool getEvent(sensors_event_t *accel, sensors_event_t *gyro,
                 sensors_event_t *temp);
