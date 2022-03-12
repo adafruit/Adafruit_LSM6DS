@@ -82,7 +82,7 @@ bool Adafruit_LSM6DS::_init(int32_t sensor_id) {
     delete accel_sensor;
   if (gyro_sensor)
     delete gyro_sensor;
-    
+
   temp_sensor = new Adafruit_LSM6DS_Temp(this);
   accel_sensor = new Adafruit_LSM6DS_Accelerometer(this);
   gyro_sensor = new Adafruit_LSM6DS_Gyro(this);
