@@ -708,8 +708,8 @@ void Adafruit_LSM6DS::enablePedometer(bool enable) {
     @param thresh The threshold (sensitivity)
 */
 /**************************************************************************/
-void Adafruit_LSM6DS::enableWakeup(bool enable, uint8_t duration = 0,
-                                   uint8_t thresh = 20) {
+void Adafruit_LSM6DS::enableWakeup(bool enable, uint8_t duration,
+                                   uint8_t thresh) {
   // enable or disable functionality
   Adafruit_BusIO_Register tapcfg = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_TAP_CFG);
@@ -746,6 +746,26 @@ bool Adafruit_LSM6DS::awake(void) {
   Adafruit_BusIO_RegisterBits wake_evt =
       Adafruit_BusIO_RegisterBits(&wakesrc, 1, 3);
   return wake_evt.read();
+}
+
+/**************************************************************************/
+/*!
+    @brief Simple shake detection. Must call enableWakeup() first.
+    @returns True if shake (wake) detected, otherwise false.
+*/
+/**************************************************************************/
+bool Adafruit_LSM6DS::shake(void) {
+  Adafruit_BusIO_Register tapcfg = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_TAP_CFG);
+  Adafruit_BusIO_RegisterBits slope_en =
+      Adafruit_BusIO_RegisterBits(&tapcfg, 1, 4);
+  Adafruit_BusIO_RegisterBits timer_en =
+      Adafruit_BusIO_RegisterBits(&tapcfg, 1, 7);
+  // only check if enabled
+  if (slope_en.read() && timer_en.read()) {
+    return awake();
+  }
+  return false;
 }
 
 /**************************************************************************/
