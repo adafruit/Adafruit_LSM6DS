@@ -170,8 +170,9 @@ public:
   void configInt2(bool drdy_temp, bool drdy_g, bool drdy_xl);
   void highPassFilter(bool enabled, lsm6ds_hp_filter_t filter);
 
-  void enableWakeup(bool enable, uint8_t duration, uint8_t thresh);
+  void enableWakeup(bool enable, uint8_t duration = 0, uint8_t thresh = 20);
   bool awake(void);
+  bool shake(void);
 
   void enablePedometer(bool enable);
   void resetPedometer(void);
