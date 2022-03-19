@@ -151,12 +151,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a0f64a353d6f7f28f2479bf49d91bf2b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#a0f64a353d6f7f28f2479bf49d91bf2b0">highPassFilter</a> (bool enabled, <a class="el" href="_adafruit___l_s_m6_d_s_8h.html#a5e23f7c84bc532bcb082422f4ad9ec63">lsm6ds_hp_filter_t</a> filter)</td></tr>
 <tr class="memdesc:a0f64a353d6f7f28f2479bf49d91bf2b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables the high pass filter and/or slope filter.  <a href="#a0f64a353d6f7f28f2479bf49d91bf2b0">More...</a><br /></td></tr>
 <tr class="separator:a0f64a353d6f7f28f2479bf49d91bf2b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6dff11953542dccd0cc5a101f486c110"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#a6dff11953542dccd0cc5a101f486c110">enableWakeup</a> (bool enable, uint8_t duration, uint8_t thresh)</td></tr>
-<tr class="memdesc:a6dff11953542dccd0cc5a101f486c110"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables and disables the wakeup function.  <a href="#a6dff11953542dccd0cc5a101f486c110">More...</a><br /></td></tr>
-<tr class="separator:a6dff11953542dccd0cc5a101f486c110"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea3d2f66d222a1cf881c27273c8d5505"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#aea3d2f66d222a1cf881c27273c8d5505">enableWakeup</a> (bool enable, uint8_t duration=0, uint8_t thresh=20)</td></tr>
+<tr class="memdesc:aea3d2f66d222a1cf881c27273c8d5505"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables and disables the wakeup function.  <a href="#aea3d2f66d222a1cf881c27273c8d5505">More...</a><br /></td></tr>
+<tr class="separator:aea3d2f66d222a1cf881c27273c8d5505"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1c5cd8f419e37ecb17b637b26d1cafe"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#af1c5cd8f419e37ecb17b637b26d1cafe">awake</a> (void)</td></tr>
 <tr class="memdesc:af1c5cd8f419e37ecb17b637b26d1cafe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks interrupt register to see if we have a wake signal.  <a href="#af1c5cd8f419e37ecb17b637b26d1cafe">More...</a><br /></td></tr>
 <tr class="separator:af1c5cd8f419e37ecb17b637b26d1cafe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44a7fa75565e81c06a203fb2ff37e21b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#a44a7fa75565e81c06a203fb2ff37e21b">shake</a> (void)</td></tr>
+<tr class="memdesc:a44a7fa75565e81c06a203fb2ff37e21b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple shake detection. Must call <a class="el" href="class_adafruit___l_s_m6_d_s.html#aea3d2f66d222a1cf881c27273c8d5505" title="Enables and disables the wakeup function. ">enableWakeup()</a> first.  <a href="#a44a7fa75565e81c06a203fb2ff37e21b">More...</a><br /></td></tr>
+<tr class="separator:a44a7fa75565e81c06a203fb2ff37e21b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a99ae12559e61d1cafa34bf2610ee6bd6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#a99ae12559e61d1cafa34bf2610ee6bd6">enablePedometer</a> (bool enable)</td></tr>
 <tr class="memdesc:a99ae12559e61d1cafa34bf2610ee6bd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables and disables the pedometer function.  <a href="#a99ae12559e61d1cafa34bf2610ee6bd6">More...</a><br /></td></tr>
 <tr class="separator:a99ae12559e61d1cafa34bf2610ee6bd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -877,8 +880,8 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a6dff11953542dccd0cc5a101f486c110"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6dff11953542dccd0cc5a101f486c110">&#9670;&nbsp;</a></span>enableWakeup()</h2>
+<a id="aea3d2f66d222a1cf881c27273c8d5505"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea3d2f66d222a1cf881c27273c8d5505">&#9670;&nbsp;</a></span>enableWakeup()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -939,6 +942,27 @@ Friends</h2></td></tr>
 
 <p>Checks interrupt register to see if we have a wake signal. </p>
 <dl class="section return"><dt>Returns</dt><dd>True if wake event bit is set in WAKEUP_SRC (cleared on read) </dd></dl>
+
+</div>
+</div>
+<a id="a44a7fa75565e81c06a203fb2ff37e21b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44a7fa75565e81c06a203fb2ff37e21b">&#9670;&nbsp;</a></span>shake()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Adafruit_LSM6DS::shake </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Simple shake detection. Must call <a class="el" href="class_adafruit___l_s_m6_d_s.html#aea3d2f66d222a1cf881c27273c8d5505" title="Enables and disables the wakeup function. ">enableWakeup()</a> first. </p>
+<dl class="section return"><dt>Returns</dt><dd>True if shake (wake) detected, otherwise false. </dd></dl>
 
 </div>
 </div>
