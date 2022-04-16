@@ -366,7 +366,6 @@ void Adafruit_LSM6DS::setAccelRange(lsm6ds_accel_range_t new_range) {
       Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
 
   accel_range.write(new_range);
-  delay(20);
 }
 
 /**************************************************************************/
@@ -432,7 +431,6 @@ void Adafruit_LSM6DS::setGyroRange(lsm6ds_gyro_range_t new_range) {
       Adafruit_BusIO_RegisterBits(&ctrl2, 4, 0);
 
   gyro_range.write(new_range);
-  delay(20);
 }
 
 /**************************************************************************/
