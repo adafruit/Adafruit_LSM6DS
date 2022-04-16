@@ -52,10 +52,7 @@ Adafruit_LSM6DS::Adafruit_LSM6DS(void) {}
 /*!
  *    @brief  Cleans up the LSM6DS
  */
-Adafruit_LSM6DS::~Adafruit_LSM6DS(void) {
-  if (temp_sensor)
-    delete temp_sensor;
-}
+Adafruit_LSM6DS::~Adafruit_LSM6DS(void) { delete temp_sensor; }
 
 /*!  @brief  Unique subclass initializer post i2c/spi init
  *   @param sensor_id Optional unique ID for the sensor set
@@ -74,14 +71,10 @@ bool Adafruit_LSM6DS::_init(int32_t sensor_id) {
 
   delay(10);
 
-  // Check for and delete objects to avoid repeated memory allocations
-  // if sensor is reinitialized
-  if (temp_sensor)
-    delete temp_sensor;
-  if (accel_sensor)
-    delete accel_sensor;
-  if (gyro_sensor)
-    delete gyro_sensor;
+  // delete objects if sensor is reinitialized
+  delete temp_sensor;
+  delete accel_sensor;
+  delete gyro_sensor;
 
   temp_sensor = new Adafruit_LSM6DS_Temp(this);
   accel_sensor = new Adafruit_LSM6DS_Accelerometer(this);
@@ -125,9 +118,7 @@ uint8_t Adafruit_LSM6DS::status(void) {
  */
 boolean Adafruit_LSM6DS::begin_I2C(uint8_t i2c_address, TwoWire *wire,
                                    int32_t sensor_id) {
-  if (i2c_dev) {
-    delete i2c_dev; // remove old interface
-  }
+  delete i2c_dev; // remove old interface
 
   i2c_dev = new Adafruit_I2CDevice(i2c_address, wire);
 
@@ -151,9 +142,8 @@ bool Adafruit_LSM6DS::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
                                 uint32_t frequency, int32_t sensor_id) {
   i2c_dev = NULL;
 
-  if (spi_dev) {
-    delete spi_dev; // remove old interface
-  }
+  delete spi_dev; // remove old interface
+
   spi_dev = new Adafruit_SPIDevice(cs_pin,
                                    frequency,             // frequency
                                    SPI_BITORDER_MSBFIRST, // bit order
@@ -182,9 +172,8 @@ bool Adafruit_LSM6DS::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
                                 int32_t sensor_id) {
   i2c_dev = NULL;
 
-  if (spi_dev) {
-    delete spi_dev; // remove old interface
-  }
+  delete spi_dev; // remove old interface
+
   spi_dev = new Adafruit_SPIDevice(cs_pin, sck_pin, miso_pin, mosi_pin,
                                    frequency,             // frequency
                                    SPI_BITORDER_MSBFIRST, // bit order
