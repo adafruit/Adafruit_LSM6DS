@@ -350,7 +350,9 @@ lsm6ds_accel_range_t Adafruit_LSM6DS::getAccelRange(void) {
   Adafruit_BusIO_RegisterBits accel_range =
       Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
 
-  return (lsm6ds_accel_range_t)accel_range.read();
+  accelRangeBuffered = (lsm6ds_accel_range_t)accel_range.read();
+
+  return accelRangeBuffered;
 }
 /**************************************************************************/
 /*!
@@ -366,6 +368,8 @@ void Adafruit_LSM6DS::setAccelRange(lsm6ds_accel_range_t new_range) {
       Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
 
   accel_range.write(new_range);
+
+  accelRangeBuffered = new_range;
 }
 
 /**************************************************************************/
@@ -414,7 +418,9 @@ lsm6ds_gyro_range_t Adafruit_LSM6DS::getGyroRange(void) {
   Adafruit_BusIO_RegisterBits gyro_range =
       Adafruit_BusIO_RegisterBits(&ctrl2, 4, 0);
 
-  return (lsm6ds_gyro_range_t)gyro_range.read();
+  gyroRangeBuffered = (lsm6ds_gyro_range_t)gyro_range.read();
+
+  return gyroRangeBuffered;
 }
 
 /**************************************************************************/
@@ -431,6 +437,8 @@ void Adafruit_LSM6DS::setGyroRange(lsm6ds_gyro_range_t new_range) {
       Adafruit_BusIO_RegisterBits(&ctrl2, 4, 0);
 
   gyro_range.write(new_range);
+
+  gyroRangeBuffered = new_range;
 }
 
 /**************************************************************************/
@@ -476,35 +484,47 @@ void Adafruit_LSM6DS::_read(void) {
   rawAccY = buffer[11] << 8 | buffer[10];
   rawAccZ = buffer[13] << 8 | buffer[12];
 
-  lsm6ds_gyro_range_t gyro_range = getGyroRange();
   float gyro_scale = 1; // range is in milli-dps per bit!
-  if (gyro_range == ISM330DHCX_GYRO_RANGE_4000_DPS)
+  switch (gyroRangeBuffered) {
+  case ISM330DHCX_GYRO_RANGE_4000_DPS:
     gyro_scale = 140.0;
-  if (gyro_range == LSM6DS_GYRO_RANGE_2000_DPS)
+    break;
+  case LSM6DS_GYRO_RANGE_2000_DPS:
     gyro_scale = 70.0;
-  if (gyro_range == LSM6DS_GYRO_RANGE_1000_DPS)
+    break;
+  case LSM6DS_GYRO_RANGE_1000_DPS:
     gyro_scale = 35.0;
-  if (gyro_range == LSM6DS_GYRO_RANGE_500_DPS)
+    break;
+  case LSM6DS_GYRO_RANGE_500_DPS:
     gyro_scale = 17.50;
-  if (gyro_range == LSM6DS_GYRO_RANGE_250_DPS)
+    break;
+  case LSM6DS_GYRO_RANGE_250_DPS:
     gyro_scale = 8.75;
-  if (gyro_range == LSM6DS_GYRO_RANGE_125_DPS)
+    break;
+  case LSM6DS_GYRO_RANGE_125_DPS:
     gyro_scale = 4.375;
+    break;
+  }
 
   gyroX = rawGyroX * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
   gyroY = rawGyroY * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
   gyroZ = rawGyroZ * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
 
-  lsm6ds_accel_range_t accel_range = getAccelRange();
   float accel_scale = 1; // range is in milli-g per bit!
-  if (accel_range == LSM6DS_ACCEL_RANGE_16_G)
+  switch (accelRangeBuffered) {
+  case LSM6DS_ACCEL_RANGE_16_G:
     accel_scale = 0.488;
-  if (accel_range == LSM6DS_ACCEL_RANGE_8_G)
+    break;
+  case LSM6DS_ACCEL_RANGE_8_G:
     accel_scale = 0.244;
-  if (accel_range == LSM6DS_ACCEL_RANGE_4_G)
+    break;
+  case LSM6DS_ACCEL_RANGE_4_G:
     accel_scale = 0.122;
-  if (accel_range == LSM6DS_ACCEL_RANGE_2_G)
+    break;
+  case LSM6DS_ACCEL_RANGE_2_G:
     accel_scale = 0.061;
+    break;
+  }
 
   accX = rawAccX * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
   accY = rawAccY * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;

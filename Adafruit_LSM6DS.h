@@ -228,6 +228,11 @@ protected:
       NULL;                                 ///< Accelerometer data object
   Adafruit_LSM6DS_Gyro *gyro_sensor = NULL; ///< Gyro data object
 
+  //! buffer for the accelerometer range
+  lsm6ds_accel_range_t accelRangeBuffered = LSM6DS_ACCEL_RANGE_2_G;
+  //! buffer for the gyroscope range
+  lsm6ds_gyro_range_t gyroRangeBuffered = LSM6DS_GYRO_RANGE_250_DPS;
+
 private:
   friend class Adafruit_LSM6DS_Temp; ///< Gives access to private members to
                                      ///< Temp data object
