@@ -139,7 +139,7 @@ boolean Adafruit_LSM6DS::begin_I2C(uint8_t i2c_address, TwoWire *wire,
  *    @return True if initialization was successful, otherwise false.
  */
 bool Adafruit_LSM6DS::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
-                                uint32_t frequency, int32_t sensor_id) {
+                                int32_t sensor_id, uint32_t frequency) {
   i2c_dev = NULL;
 
   delete spi_dev; // remove old interface
@@ -168,8 +168,8 @@ bool Adafruit_LSM6DS::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
  *    @return True if initialization was successful, otherwise false.
  */
 bool Adafruit_LSM6DS::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
-                                int8_t mosi_pin, uint32_t frequency,
-                                int32_t sensor_id) {
+                                int8_t mosi_pin, int32_t sensor_id,
+                                uint32_t frequency) {
   i2c_dev = NULL;
 
   delete spi_dev; // remove old interface
