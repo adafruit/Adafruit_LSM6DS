@@ -52,10 +52,7 @@ Adafruit_LSM6DS::Adafruit_LSM6DS(void) {}
 /*!
  *    @brief  Cleans up the LSM6DS
  */
-Adafruit_LSM6DS::~Adafruit_LSM6DS(void) {
-  if (temp_sensor)
-    delete temp_sensor;
-}
+Adafruit_LSM6DS::~Adafruit_LSM6DS(void) { delete temp_sensor; }
 
 /*!  @brief  Unique subclass initializer post i2c/spi init
  *   @param sensor_id Optional unique ID for the sensor set
@@ -74,14 +71,10 @@ bool Adafruit_LSM6DS::_init(int32_t sensor_id) {
 
   delay(10);
 
-  // Check for and delete objects to avoid repeated memory allocations
-  // if sensor is reinitialized
-  if (temp_sensor)
-    delete temp_sensor;
-  if (accel_sensor)
-    delete accel_sensor;
-  if (gyro_sensor)
-    delete gyro_sensor;
+  // delete objects if sensor is reinitialized
+  delete temp_sensor;
+  delete accel_sensor;
+  delete gyro_sensor;
 
   temp_sensor = new Adafruit_LSM6DS_Temp(this);
   accel_sensor = new Adafruit_LSM6DS_Accelerometer(this);
@@ -125,9 +118,7 @@ uint8_t Adafruit_LSM6DS::status(void) {
  */
 boolean Adafruit_LSM6DS::begin_I2C(uint8_t i2c_address, TwoWire *wire,
                                    int32_t sensor_id) {
-  if (i2c_dev) {
-    delete i2c_dev; // remove old interface
-  }
+  delete i2c_dev; // remove old interface
 
   i2c_dev = new Adafruit_I2CDevice(i2c_address, wire);
 
@@ -142,19 +133,19 @@ boolean Adafruit_LSM6DS::begin_I2C(uint8_t i2c_address, TwoWire *wire,
  *    @brief  Sets up the hardware and initializes hardware SPI
  *    @param  cs_pin The arduino pin # connected to chip select
  *    @param  theSPI The SPI object to be used for SPI connections.
+ *    @param  frequency The SPI bus frequency
  *    @param  sensor_id
  *            The user-defined ID to differentiate different sensors
  *    @return True if initialization was successful, otherwise false.
  */
 bool Adafruit_LSM6DS::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
-                                int32_t sensor_id) {
+                                int32_t sensor_id, uint32_t frequency) {
   i2c_dev = NULL;
 
-  if (spi_dev) {
-    delete spi_dev; // remove old interface
-  }
+  delete spi_dev; // remove old interface
+
   spi_dev = new Adafruit_SPIDevice(cs_pin,
-                                   1000000,               // frequency
+                                   frequency,             // frequency
                                    SPI_BITORDER_MSBFIRST, // bit order
                                    SPI_MODE0,             // data mode
                                    theSPI);
@@ -171,19 +162,20 @@ bool Adafruit_LSM6DS::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
  *    @param  sck_pin The arduino pin # connected to SPI clock
  *    @param  miso_pin The arduino pin # connected to SPI MISO
  *    @param  mosi_pin The arduino pin # connected to SPI MOSI
+ *    @param  frequency The SPI bus frequency
  *    @param  sensor_id
  *            The user-defined ID to differentiate different sensors
  *    @return True if initialization was successful, otherwise false.
  */
 bool Adafruit_LSM6DS::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
-                                int8_t mosi_pin, int32_t sensor_id) {
+                                int8_t mosi_pin, int32_t sensor_id,
+                                uint32_t frequency) {
   i2c_dev = NULL;
 
-  if (spi_dev) {
-    delete spi_dev; // remove old interface
-  }
+  delete spi_dev; // remove old interface
+
   spi_dev = new Adafruit_SPIDevice(cs_pin, sck_pin, miso_pin, mosi_pin,
-                                   1000000,               // frequency
+                                   frequency,             // frequency
                                    SPI_BITORDER_MSBFIRST, // bit order
                                    SPI_MODE0);            // data mode
   if (!spi_dev->begin()) {
@@ -347,7 +339,9 @@ lsm6ds_accel_range_t Adafruit_LSM6DS::getAccelRange(void) {
   Adafruit_BusIO_RegisterBits accel_range =
       Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
 
-  return (lsm6ds_accel_range_t)accel_range.read();
+  accelRangeBuffered = (lsm6ds_accel_range_t)accel_range.read();
+
+  return accelRangeBuffered;
 }
 /**************************************************************************/
 /*!
@@ -363,7 +357,8 @@ void Adafruit_LSM6DS::setAccelRange(lsm6ds_accel_range_t new_range) {
       Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
 
   accel_range.write(new_range);
-  delay(20);
+
+  accelRangeBuffered = new_range;
 }
 
 /**************************************************************************/
@@ -412,7 +407,9 @@ lsm6ds_gyro_range_t Adafruit_LSM6DS::getGyroRange(void) {
   Adafruit_BusIO_RegisterBits gyro_range =
       Adafruit_BusIO_RegisterBits(&ctrl2, 4, 0);
 
-  return (lsm6ds_gyro_range_t)gyro_range.read();
+  gyroRangeBuffered = (lsm6ds_gyro_range_t)gyro_range.read();
+
+  return gyroRangeBuffered;
 }
 
 /**************************************************************************/
@@ -429,7 +426,8 @@ void Adafruit_LSM6DS::setGyroRange(lsm6ds_gyro_range_t new_range) {
       Adafruit_BusIO_RegisterBits(&ctrl2, 4, 0);
 
   gyro_range.write(new_range);
-  delay(20);
+
+  gyroRangeBuffered = new_range;
 }
 
 /**************************************************************************/
@@ -475,35 +473,47 @@ void Adafruit_LSM6DS::_read(void) {
   rawAccY = buffer[11] << 8 | buffer[10];
   rawAccZ = buffer[13] << 8 | buffer[12];
 
-  lsm6ds_gyro_range_t gyro_range = getGyroRange();
   float gyro_scale = 1; // range is in milli-dps per bit!
-  if (gyro_range == ISM330DHCX_GYRO_RANGE_4000_DPS)
+  switch (gyroRangeBuffered) {
+  case ISM330DHCX_GYRO_RANGE_4000_DPS:
     gyro_scale = 140.0;
-  if (gyro_range == LSM6DS_GYRO_RANGE_2000_DPS)
+    break;
+  case LSM6DS_GYRO_RANGE_2000_DPS:
     gyro_scale = 70.0;
-  if (gyro_range == LSM6DS_GYRO_RANGE_1000_DPS)
+    break;
+  case LSM6DS_GYRO_RANGE_1000_DPS:
     gyro_scale = 35.0;
-  if (gyro_range == LSM6DS_GYRO_RANGE_500_DPS)
+    break;
+  case LSM6DS_GYRO_RANGE_500_DPS:
     gyro_scale = 17.50;
-  if (gyro_range == LSM6DS_GYRO_RANGE_250_DPS)
+    break;
+  case LSM6DS_GYRO_RANGE_250_DPS:
     gyro_scale = 8.75;
-  if (gyro_range == LSM6DS_GYRO_RANGE_125_DPS)
+    break;
+  case LSM6DS_GYRO_RANGE_125_DPS:
     gyro_scale = 4.375;
+    break;
+  }
 
   gyroX = rawGyroX * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
   gyroY = rawGyroY * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
   gyroZ = rawGyroZ * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
 
-  lsm6ds_accel_range_t accel_range = getAccelRange();
   float accel_scale = 1; // range is in milli-g per bit!
-  if (accel_range == LSM6DS_ACCEL_RANGE_16_G)
+  switch (accelRangeBuffered) {
+  case LSM6DS_ACCEL_RANGE_16_G:
     accel_scale = 0.488;
-  if (accel_range == LSM6DS_ACCEL_RANGE_8_G)
+    break;
+  case LSM6DS_ACCEL_RANGE_8_G:
     accel_scale = 0.244;
-  if (accel_range == LSM6DS_ACCEL_RANGE_4_G)
+    break;
+  case LSM6DS_ACCEL_RANGE_4_G:
     accel_scale = 0.122;
-  if (accel_range == LSM6DS_ACCEL_RANGE_2_G)
+    break;
+  case LSM6DS_ACCEL_RANGE_2_G:
     accel_scale = 0.061;
+    break;
+  }
 
   accX = rawAccX * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
   accY = rawAccY * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;

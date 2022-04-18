@@ -144,9 +144,11 @@ public:
   bool begin_I2C(uint8_t i2c_addr = LSM6DS_I2CADDR_DEFAULT,
                  TwoWire *wire = &Wire, int32_t sensorID = 0);
 
-  bool begin_SPI(uint8_t cs_pin, SPIClass *theSPI = &SPI, int32_t sensorID = 0);
+  bool begin_SPI(uint8_t cs_pin, SPIClass *theSPI = &SPI, int32_t sensorID = 0,
+                 uint32_t frequency = 1000000);
   bool begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
-                 int8_t mosi_pin, int32_t sensorID = 0);
+                 int8_t mosi_pin, int32_t sensorID = 0,
+                 uint32_t frequency = 1000000);
 
   bool getEvent(sensors_event_t *accel, sensors_event_t *gyro,
                 sensors_event_t *temp);
@@ -225,6 +227,11 @@ protected:
   Adafruit_LSM6DS_Accelerometer *accel_sensor =
       NULL;                                 ///< Accelerometer data object
   Adafruit_LSM6DS_Gyro *gyro_sensor = NULL; ///< Gyro data object
+
+  //! buffer for the accelerometer range
+  lsm6ds_accel_range_t accelRangeBuffered = LSM6DS_ACCEL_RANGE_2_G;
+  //! buffer for the gyroscope range
+  lsm6ds_gyro_range_t gyroRangeBuffered = LSM6DS_GYRO_RANGE_250_DPS;
 
 private:
   friend class Adafruit_LSM6DS_Temp; ///< Gives access to private members to
