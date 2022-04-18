@@ -102,12 +102,12 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memitem:a95312ec3370e42b23aa5c7bf40f8b94a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#a95312ec3370e42b23aa5c7bf40f8b94a">begin_I2C</a> (uint8_t i2c_addr=<a class="el" href="_adafruit___l_s_m6_d_s_8h.html#aec1f236619ebdffda3f11f879675d588">LSM6DS_I2CADDR_DEFAULT</a>, TwoWire *wire=&amp;Wire, int32_t sensorID=0)</td></tr>
 <tr class="memdesc:a95312ec3370e42b23aa5c7bf40f8b94a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets up the hardware and initializes I2C.  <a href="#a95312ec3370e42b23aa5c7bf40f8b94a">More...</a><br /></td></tr>
 <tr class="separator:a95312ec3370e42b23aa5c7bf40f8b94a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9857831ed74ce4ebdfc04799c678b92f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#a9857831ed74ce4ebdfc04799c678b92f">begin_SPI</a> (uint8_t cs_pin, SPIClass *theSPI=&amp;SPI, int32_t sensorID=0)</td></tr>
-<tr class="memdesc:a9857831ed74ce4ebdfc04799c678b92f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets up the hardware and initializes hardware SPI.  <a href="#a9857831ed74ce4ebdfc04799c678b92f">More...</a><br /></td></tr>
-<tr class="separator:a9857831ed74ce4ebdfc04799c678b92f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07705c4368889069c9ef55884fe96b4f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#a07705c4368889069c9ef55884fe96b4f">begin_SPI</a> (int8_t cs_pin, int8_t sck_pin, int8_t miso_pin, int8_t mosi_pin, int32_t sensorID=0)</td></tr>
-<tr class="memdesc:a07705c4368889069c9ef55884fe96b4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets up the hardware and initializes software SPI.  <a href="#a07705c4368889069c9ef55884fe96b4f">More...</a><br /></td></tr>
-<tr class="separator:a07705c4368889069c9ef55884fe96b4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1d858128c2ceb9dc0a38cf7cbf3605d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#ad1d858128c2ceb9dc0a38cf7cbf3605d">begin_SPI</a> (uint8_t cs_pin, SPIClass *theSPI=&amp;SPI, int32_t sensorID=0, uint32_t frequency=1000000)</td></tr>
+<tr class="memdesc:ad1d858128c2ceb9dc0a38cf7cbf3605d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets up the hardware and initializes hardware SPI.  <a href="#ad1d858128c2ceb9dc0a38cf7cbf3605d">More...</a><br /></td></tr>
+<tr class="separator:ad1d858128c2ceb9dc0a38cf7cbf3605d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6acb505429301dc94443adbb75fe2ba"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#ad6acb505429301dc94443adbb75fe2ba">begin_SPI</a> (int8_t cs_pin, int8_t sck_pin, int8_t miso_pin, int8_t mosi_pin, int32_t sensorID=0, uint32_t frequency=1000000)</td></tr>
+<tr class="memdesc:ad6acb505429301dc94443adbb75fe2ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets up the hardware and initializes software SPI.  <a href="#ad6acb505429301dc94443adbb75fe2ba">More...</a><br /></td></tr>
+<tr class="separator:ad6acb505429301dc94443adbb75fe2ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a692b5e2ef941aa5a9fa1fe816db9e161"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#a692b5e2ef941aa5a9fa1fe816db9e161">getEvent</a> (sensors_event_t *accel, sensors_event_t *gyro, sensors_event_t *temp)</td></tr>
 <tr class="memdesc:a692b5e2ef941aa5a9fa1fe816db9e161"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the most recent sensor event, Adafruit Unified Sensor format.  <a href="#a692b5e2ef941aa5a9fa1fe816db9e161">More...</a><br /></td></tr>
 <tr class="separator:a692b5e2ef941aa5a9fa1fe816db9e161"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -309,6 +309,14 @@ Adafruit_SPIDevice *&#160;</td><td class="memItemRight" valign="bottom"><a class
 <a class="el" href="class_adafruit___l_s_m6_d_s___gyro.html">Adafruit_LSM6DS_Gyro</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#a453e98c9f7629f7f72b6399e80cb0d9a">gyro_sensor</a> = NULL</td></tr>
 <tr class="memdesc:a453e98c9f7629f7f72b6399e80cb0d9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gyro data object. <br /></td></tr>
 <tr class="separator:a453e98c9f7629f7f72b6399e80cb0d9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd288241c48dc7f951af2547b783de21"><td class="memItemLeft" align="right" valign="top"><a id="abd288241c48dc7f951af2547b783de21"></a>
+<a class="el" href="_adafruit___l_s_m6_d_s_8h.html#ac89a3e47800e1fe72344880b46ea5ca7">lsm6ds_accel_range_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#abd288241c48dc7f951af2547b783de21">accelRangeBuffered</a> = LSM6DS_ACCEL_RANGE_2_G</td></tr>
+<tr class="memdesc:abd288241c48dc7f951af2547b783de21"><td class="mdescLeft">&#160;</td><td class="mdescRight">buffer for the accelerometer range <br /></td></tr>
+<tr class="separator:abd288241c48dc7f951af2547b783de21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada63c5a7150c4337165fa1ad862fc33c"><td class="memItemLeft" align="right" valign="top"><a id="ada63c5a7150c4337165fa1ad862fc33c"></a>
+<a class="el" href="_adafruit___l_s_m6_d_s_8h.html#a5a92a19cbb6a60ecf7f7679e405db675">lsm6ds_gyro_range_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___l_s_m6_d_s.html#ada63c5a7150c4337165fa1ad862fc33c">gyroRangeBuffered</a> = LSM6DS_GYRO_RANGE_250_DPS</td></tr>
+<tr class="memdesc:ada63c5a7150c4337165fa1ad862fc33c"><td class="mdescLeft">&#160;</td><td class="mdescRight">buffer for the gyroscope range <br /></td></tr>
+<tr class="separator:ada63c5a7150c4337165fa1ad862fc33c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -367,8 +375,8 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a9857831ed74ce4ebdfc04799c678b92f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9857831ed74ce4ebdfc04799c678b92f">&#9670;&nbsp;</a></span>begin_SPI() <span class="overload">[1/2]</span></h2>
+<a id="ad1d858128c2ceb9dc0a38cf7cbf3605d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad1d858128c2ceb9dc0a38cf7cbf3605d">&#9670;&nbsp;</a></span>begin_SPI() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -389,7 +397,13 @@ Friends</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int32_t&#160;</td>
-          <td class="paramname"><em>sensor_id</em> = <code>0</code>&#160;</td>
+          <td class="paramname"><em>sensor_id</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>frequency</em> = <code>1000000</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -404,6 +418,7 @@ Friends</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">cs_pin</td><td>The arduino pin # connected to chip select </td></tr>
     <tr><td class="paramname">theSPI</td><td>The SPI object to be used for SPI connections. </td></tr>
+    <tr><td class="paramname">frequency</td><td>The SPI bus frequency </td></tr>
     <tr><td class="paramname">sensor_id</td><td>The user-defined ID to differentiate different sensors </td></tr>
   </table>
   </dd>
@@ -412,8 +427,8 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a07705c4368889069c9ef55884fe96b4f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a07705c4368889069c9ef55884fe96b4f">&#9670;&nbsp;</a></span>begin_SPI() <span class="overload">[2/2]</span></h2>
+<a id="ad6acb505429301dc94443adbb75fe2ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6acb505429301dc94443adbb75fe2ba">&#9670;&nbsp;</a></span>begin_SPI() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -446,7 +461,13 @@ Friends</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int32_t&#160;</td>
-          <td class="paramname"><em>sensor_id</em> = <code>0</code>&#160;</td>
+          <td class="paramname"><em>sensor_id</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>frequency</em> = <code>1000000</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -463,6 +484,7 @@ Friends</h2></td></tr>
     <tr><td class="paramname">sck_pin</td><td>The arduino pin # connected to SPI clock </td></tr>
     <tr><td class="paramname">miso_pin</td><td>The arduino pin # connected to SPI MISO </td></tr>
     <tr><td class="paramname">mosi_pin</td><td>The arduino pin # connected to SPI MOSI </td></tr>
+    <tr><td class="paramname">frequency</td><td>The SPI bus frequency </td></tr>
     <tr><td class="paramname">sensor_id</td><td>The user-defined ID to differentiate different sensors </td></tr>
   </table>
   </dd>
