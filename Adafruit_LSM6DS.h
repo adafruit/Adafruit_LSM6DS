@@ -197,11 +197,6 @@ public:
       rawGyroY,    ///< Last reading's raw gyro Y axis
       rawGyroZ;    ///< Last reading's raw gyro Z axis
 
-  Adafruit_Sensor *getTemperatureSensor(void);
-  Adafruit_Sensor *getAccelerometerSensor(void);
-  Adafruit_Sensor *getGyroSensor(void);
-
-protected:
   float temperature, ///< Last reading's temperature (C)
       accX,          ///< Last reading's accelerometer X axis m/s^2
       accY,          ///< Last reading's accelerometer Y axis m/s^2
@@ -209,6 +204,12 @@ protected:
       gyroX,         ///< Last reading's gyro X axis in rad/s
       gyroY,         ///< Last reading's gyro Y axis in rad/s
       gyroZ;         ///< Last reading's gyro Z axis in rad/s
+
+  Adafruit_Sensor *getTemperatureSensor(void);
+  Adafruit_Sensor *getAccelerometerSensor(void);
+  Adafruit_Sensor *getGyroSensor(void);
+
+protected:
   uint8_t chipID(void);
   uint8_t status(void);
   virtual void _read(void);
