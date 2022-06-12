@@ -3,7 +3,7 @@
  *  @file Adafruit_LSM6DS3TRC.cpp Adafruit LSM6DS3TR-C 6-DoF Accelerometer
  *  and Gyroscope library
  *
- *  Adapted by Eugene Anikin for Adafruit Industries
+ *  Written by ladyada for Adafruit Industries
  * 	BSD (see license.txt)
  */
 
