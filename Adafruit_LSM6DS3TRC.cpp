@@ -34,7 +34,6 @@ bool Adafruit_LSM6DS3TRC::_init(int32_t sensor_id) {
   return true;
 }
 
-
 /**************************************************************************/
 /*!
     @brief Enables and disables the pedometer function
