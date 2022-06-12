@@ -34,6 +34,7 @@ public:
   ~Adafruit_LSM6DS3TRC(){};
 
   void enableI2CMasterPullups(bool enable_pullups);
+  void enablePedometer(bool enable);
 
 private:
   bool _init(int32_t sensor_id);

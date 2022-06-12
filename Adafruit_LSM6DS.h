@@ -25,7 +25,7 @@
 #define LSM6DS_FUNC_CFG_ACCESS 0x1 ///< Enable embedded functions register
 #define LSM6DS_INT1_CTRL 0x0D      ///< Interrupt control for INT 1
 #define LSM6DS_INT2_CTRL 0x0E      ///< Interrupt control for INT 2
-#define LSM6DS_WHOAMI 0xF          ///< Chip ID register
+#define LSM6DS_WHOAMI 0x0F         ///< Chip ID register
 #define LSM6DS_CTRL1_XL 0x10       ///< Main accelerometer config register
 #define LSM6DS_CTRL2_G 0x11        ///< Main gyro config register
 #define LSM6DS_CTRL3_C 0x12        ///< Main configuration register

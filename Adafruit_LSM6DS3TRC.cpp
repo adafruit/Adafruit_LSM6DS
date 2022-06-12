@@ -34,6 +34,29 @@ bool Adafruit_LSM6DS3TRC::_init(int32_t sensor_id) {
   return true;
 }
 
+
+/**************************************************************************/
+/*!
+    @brief Enables and disables the pedometer function
+    @param enable True to turn on the pedometer function, false to turn off
+*/
+/**************************************************************************/
+void Adafruit_LSM6DS3TRC::enablePedometer(bool enable) {
+  // enable or disable functionality
+  Adafruit_BusIO_Register ctrl10 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL10_C);
+
+  Adafruit_BusIO_RegisterBits ped_en =
+      Adafruit_BusIO_RegisterBits(&ctrl10, 1, 4);
+  ped_en.write(enable);
+
+  Adafruit_BusIO_RegisterBits func_en =
+      Adafruit_BusIO_RegisterBits(&ctrl10, 1, 2);
+  func_en.write(enable);
+
+  resetPedometer();
+}
+
 /**************************************************************************/
 /*!
     @brief Enables and disables the I2C master bus pulllups.
