@@ -1,9 +1,11 @@
 // Demo for getting individual unified sensor data from the LSM6DS series
 
-// Can change this to be LSM6DSOX or whatveer ya like
+// Can change this to be LSM6DSOX or whatever ya like
 #include <Adafruit_LSM6DS33.h>
+#include <Adafruit_LSM6DS3TRC.h> 
 
-Adafruit_LSM6DS33 lsm6ds;
+Adafruit_LSM6DS33 lsm6ds; // can use any LSM6DS/ISM330 family chip!
+//Adafruit_LSM6DS3TRC lsm6ds; // uncomment to use LSM6DS3TR-C
 Adafruit_Sensor *lsm_temp, *lsm_accel, *lsm_gyro;
 
 void setup(void) {
