@@ -1,8 +1,10 @@
 // Basic demo for accelerometer/gyro readings from Adafruit LSM6DS33
 
 #include <Adafruit_LSM6DS33.h> 
+#include <Adafruit_LSM6DS3TRC.h> 
 
 Adafruit_LSM6DS33 lsm; // can use any LSM6DS/ISM330 family chip!
+//Adafruit_LSM6DS3TRC lsm; // uncomment to use LSM6DS3TR-C
 
 // For SPI mode, we need a CS pin
 #define LSM_CS 10
@@ -22,13 +24,13 @@ void setup(void) {
   if (!lsm.begin_I2C()) {
     // if (!lsm.begin_SPI(LSM_CS)) {
     // if (!lsm.begin_SPI(LSM_CS, LSM_SCK, LSM_MISO, LSM_MOSI)) {
-    Serial.println("Failed to find LSM6DS33 chip");
+    Serial.println("Failed to find LSM6DS chip");
     while (1) {
       delay(10);
     }
   }
 
-  Serial.println("LSM6DS33 Found!");
+  Serial.println("LSM6DS Found!");
 
   // Set to 2G range and 26 Hz update rate
   lsm.setAccelRange(LSM6DS_ACCEL_RANGE_2_G);
@@ -40,6 +42,7 @@ void setup(void) {
   lsm.configInt1(false, false, false, true);
 
   // turn it on!
+  Serial.println("Enable ped");
   lsm.enablePedometer(true);
 }
 
