@@ -546,6 +546,7 @@ void Adafruit_LSM6DS::configIntOutputs(bool active_low, bool open_drain) {
     @param drdy_xl true to output the data ready accelerometer interrupt
     @param step_detect true to output the step detection interrupt (default off)
     @param wakeup true to output the wake up interrupt (default off)
+    @param tilt true to output the tilt interrupt (default off)
 */
 void Adafruit_LSM6DS::configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl,
                                  bool step_detect, bool wakeup, bool tilt) {
