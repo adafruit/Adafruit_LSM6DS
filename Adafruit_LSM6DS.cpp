@@ -798,7 +798,6 @@ bool Adafruit_LSM6DS::tilt(void) {
   return tilt_ia.read();
 }
 
-
 /**************************************************************************/
 /*!
     @brief Reset the pedometer count
