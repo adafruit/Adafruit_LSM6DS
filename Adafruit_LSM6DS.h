@@ -37,7 +37,7 @@
 #define LSM6DS_OUTX_L_G 0x22       ///< First gyro data register
 #define LSM6DS_OUTX_L_A 0x28       ///< First accel data register
 #define LSM6DS_STEPCOUNTER 0x4B    ///< 16-bit step counter
-#define LSM6DS_FUNC_SRC 0x53        ///< Significant motion, tilt, step source
+#define LSM6DS_FUNC_SRC 0x53       ///< Significant motion, tilt, step source
 #define LSM6DS_TAP_CFG 0x58        ///< Tap/pedometer configuration
 #define LSM6DS_WAKEUP_THS                                                      \
   0x5B ///< Single and double-tap function threshold register
