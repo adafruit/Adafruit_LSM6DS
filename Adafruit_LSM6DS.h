@@ -169,7 +169,8 @@ public:
   void reset(void);
   void configIntOutputs(bool active_low, bool open_drain);
   void configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl,
-                  bool step_detect = false, bool wakeup = false, bool tilt = false);
+                  bool step_detect = false, bool wakeup = false,
+                  bool tilt = false);
   void configInt2(bool drdy_temp, bool drdy_g, bool drdy_xl);
   void highPassFilter(bool enabled, lsm6ds_hp_filter_t filter);
 
