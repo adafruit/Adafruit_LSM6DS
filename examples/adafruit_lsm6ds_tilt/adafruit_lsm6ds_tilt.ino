@@ -33,7 +33,7 @@ void setup(void) {
 
   Serial.println("LSM6DS Found!");
 
-  // enable shake detection
+  // enable tilt detection
   lsm6ds.enableWakeup(true);
   lsm6ds.enablePedometer(true);
 }
