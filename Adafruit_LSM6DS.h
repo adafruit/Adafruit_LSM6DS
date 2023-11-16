@@ -85,6 +85,15 @@ typedef enum hpf_range {
   LSM6DS_HPF_ODR_DIV_400 = 3,
 } lsm6ds_hp_filter_t;
 
+/** the selector for the _read method */
+typedef enum read_selector {
+  LSM6DS_READ_TYPE_ACC_GYRO_TEMP,
+  LSM6DS_READ_TYPE_ACC_GYRO,
+  LSM6DS_READ_TYPE_ACC,
+  LSM6DS_READ_TYPE_GYRO,
+  LSM6DS_READ_TYPE_TEMP
+} read_selector_t;
+
 class Adafruit_LSM6DS;
 
 /** Adafruit Unified Sensor interface for temperature component of LSM6DS */
@@ -189,6 +198,9 @@ public:
   float gyroscopeSampleRate(void);
   int gyroscopeAvailable(void);
 
+  int readAccelerometerGyroscope(float &accX, float &accY, float &accZ,
+                                 float &gyroX, float &gyroY, float &gyroZ);
+
   int16_t rawAccX, ///< Last reading's raw accelerometer X axis
       rawAccY,     ///< Last reading's raw accelerometer Y axis
       rawAccZ,     ///< Last reading's raw accelerometer Z axis
@@ -212,8 +224,8 @@ public:
 protected:
   uint8_t chipID(void);
   uint8_t status(void);
-  virtual void _read(void);
   virtual bool _init(int32_t sensor_id);
+  virtual int _read(read_selector_t type = LSM6DS_READ_TYPE_ACC_GYRO_TEMP);
 
   uint16_t _sensorid_accel, ///< ID number for accelerometer
       _sensorid_gyro,       ///< ID number for gyro
@@ -230,9 +242,12 @@ protected:
   Adafruit_LSM6DS_Gyro *gyro_sensor = NULL; ///< Gyro data object
 
   //! buffer for the accelerometer range
-  lsm6ds_accel_range_t accelRangeBuffered = LSM6DS_ACCEL_RANGE_2_G;
+  lsm6ds_accel_range_t accelRangeBuffered = LSM6DS_ACCEL_RANGE_4_G;
   //! buffer for the gyroscope range
-  lsm6ds_gyro_range_t gyroRangeBuffered = LSM6DS_GYRO_RANGE_250_DPS;
+  lsm6ds_gyro_range_t gyroRangeBuffered = LSM6DS_GYRO_RANGE_2000_DPS;
+
+  virtual void convertRawAccelerometerValues();
+  virtual void convertRawGyroscopeValues();
 
 private:
   friend class Adafruit_LSM6DS_Temp; ///< Gives access to private members to

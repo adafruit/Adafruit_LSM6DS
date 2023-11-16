@@ -40,7 +40,8 @@ public:
 
   lsm6dso32_accel_range_t getAccelRange(void);
   void setAccelRange(lsm6dso32_accel_range_t new_range);
-  void _read(void);
+
+  virtual void convertRawAccelerometerValues() override;
 
 private:
   bool _init(int32_t sensor_id);
