@@ -546,9 +546,10 @@ void Adafruit_LSM6DS::configIntOutputs(bool active_low, bool open_drain) {
     @param drdy_xl true to output the data ready accelerometer interrupt
     @param step_detect true to output the step detection interrupt (default off)
     @param wakeup true to output the wake up interrupt (default off)
+    @param tilt true to output the tilt interrupt (default off)
 */
 void Adafruit_LSM6DS::configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl,
-                                 bool step_detect, bool wakeup) {
+                                 bool step_detect, bool wakeup, bool tilt) {
 
   Adafruit_BusIO_Register int1_ctrl = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_INT1_CTRL);
@@ -558,6 +559,8 @@ void Adafruit_LSM6DS::configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl,
 
   Adafruit_BusIO_Register md1cfg = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_MD1_CFG);
+  Adafruit_BusIO_RegisterBits ti = Adafruit_BusIO_RegisterBits(&md1cfg, 1, 1);
+  ti.write(tilt);
 
   Adafruit_BusIO_RegisterBits wu = Adafruit_BusIO_RegisterBits(&md1cfg, 1, 5);
   wu.write(wakeup);
@@ -725,9 +728,12 @@ void Adafruit_LSM6DS::enableWakeup(bool enable, uint8_t duration,
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_TAP_CFG);
   Adafruit_BusIO_RegisterBits slope_en =
       Adafruit_BusIO_RegisterBits(&tapcfg, 1, 4);
+  Adafruit_BusIO_RegisterBits tilt_en =
+      Adafruit_BusIO_RegisterBits(&tapcfg, 1, 5);
   Adafruit_BusIO_RegisterBits timer_en =
       Adafruit_BusIO_RegisterBits(&tapcfg, 1, 7);
   slope_en.write(enable);
+  tilt_en.write(enable);
   timer_en.write(enable);
   if (enable) {
     Adafruit_BusIO_Register wake_dur = Adafruit_BusIO_Register(
@@ -776,6 +782,20 @@ bool Adafruit_LSM6DS::shake(void) {
     return awake();
   }
   return false;
+}
+
+/**************************************************************************/
+/*!
+    @brief Tilt detection. Call enableWakeup() and enablePedometer() first.
+    @returns True if tilt detected, otherwise false.
+*/
+/**************************************************************************/
+bool Adafruit_LSM6DS::tilt(void) {
+  Adafruit_BusIO_Register funcsrc = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FUNC_SRC);
+  Adafruit_BusIO_RegisterBits tilt_ia =
+      Adafruit_BusIO_RegisterBits(&funcsrc, 1, 5);
+  return tilt_ia.read();
 }
 
 /**************************************************************************/
