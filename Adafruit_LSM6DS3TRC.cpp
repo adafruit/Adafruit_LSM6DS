@@ -31,6 +31,13 @@ bool Adafruit_LSM6DS3TRC::_init(int32_t sensor_id) {
   // call base class _init()
   Adafruit_LSM6DS::_init(sensor_id);
 
+  // set the Block Data Update bit
+  // this prevents MSB/LSB data registers from being updated until both are read
+  Adafruit_BusIO_Register ctrl3 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL3_C);
+  Adafruit_BusIO_RegisterBits bdu = Adafruit_BusIO_RegisterBits(&ctrl3, 1, 6);
+  bdu.write(1);
+
   return true;
 }
 
