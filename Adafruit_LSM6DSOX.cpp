@@ -32,6 +32,7 @@ bool Adafruit_LSM6DSOX::_init(int32_t sensor_id) {
   reset();
 
   // Block Data Update
+  // this prevents MSB/LSB data registers from being updated until both are read
   Adafruit_BusIO_Register ctrl3 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL3_C);
   Adafruit_BusIO_RegisterBits bdu = Adafruit_BusIO_RegisterBits(&ctrl3, 1, 6);
