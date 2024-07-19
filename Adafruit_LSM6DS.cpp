@@ -80,7 +80,7 @@ bool Adafruit_LSM6DS::_init(int32_t sensor_id) {
   accel_sensor = new Adafruit_LSM6DS_Accelerometer(this);
   gyro_sensor = new Adafruit_LSM6DS_Gyro(this);
 
-  return false;
+  return true;
 };
 
 /*!
