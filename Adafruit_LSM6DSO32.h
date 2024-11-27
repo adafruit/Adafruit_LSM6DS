@@ -40,7 +40,7 @@ public:
 
   lsm6dso32_accel_range_t getAccelRange(void);
   void setAccelRange(lsm6dso32_accel_range_t new_range);
-  void _read(void);
+  bool _read(void);
 
 private:
   bool _init(int32_t sensor_id);
