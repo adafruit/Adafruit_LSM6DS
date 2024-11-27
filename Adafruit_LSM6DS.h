@@ -133,8 +133,9 @@ private:
 };
 
 /*!
- *    @brief  Class that stores state and functions for interacting with
- *            the LSM6DS I2C Accel/Gyro
+ *    @brief  Base class for use with LSM6DS series acclerometer gyro sensors
+ * from STMicroelectronics. DO NOT USE DIRECTLY. Specific sensor variants should
+ * be subclassed as needed.
  */
 class Adafruit_LSM6DS {
 public:
