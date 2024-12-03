@@ -235,6 +235,9 @@ protected:
   //! buffer for the gyroscope range
   lsm6ds_gyro_range_t gyroRangeBuffered = LSM6DS_GYRO_RANGE_250_DPS;
 
+  virtual void convertRawAccelerometerValues();
+  virtual void convertRawGyroscopeValues();
+
 private:
   friend class Adafruit_LSM6DS_Temp; ///< Gives access to private members to
                                      ///< Temp data object
