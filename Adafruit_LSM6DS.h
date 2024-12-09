@@ -37,6 +37,7 @@
 #define LSM6DS_OUTX_L_G 0x22       ///< First gyro data register
 #define LSM6DS_OUTX_L_A 0x28       ///< First accel data register
 #define LSM6DS_STEPCOUNTER 0x4B    ///< 16-bit step counter
+#define LSM6DS_FUNC_SRC 0x53       ///< Significant motion, tilt, step source
 #define LSM6DS_TAP_CFG 0x58        ///< Tap/pedometer configuration
 #define LSM6DS_WAKEUP_THS                                                      \
   0x5B ///< Single and double-tap function threshold register
@@ -169,13 +170,15 @@ public:
   void reset(void);
   void configIntOutputs(bool active_low, bool open_drain);
   void configInt1(bool drdy_temp, bool drdy_g, bool drdy_xl,
-                  bool step_detect = false, bool wakeup = false);
+                  bool step_detect = false, bool wakeup = false,
+                  bool tilt = false);
   void configInt2(bool drdy_temp, bool drdy_g, bool drdy_xl);
   void highPassFilter(bool enabled, lsm6ds_hp_filter_t filter);
 
   void enableWakeup(bool enable, uint8_t duration = 0, uint8_t thresh = 20);
   bool awake(void);
   bool shake(void);
+  bool tilt(void);
 
   void enablePedometer(bool enable);
   void resetPedometer(void);
