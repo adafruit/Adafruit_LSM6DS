@@ -252,7 +252,9 @@ Adafruit_Sensor *Adafruit_LSM6DS::getGyroSensor(void) { return gyro_sensor; }
 bool Adafruit_LSM6DS::getEvent(sensors_event_t *accel, sensors_event_t *gyro,
                                sensors_event_t *temp) {
   uint32_t t = millis();
-  _read();
+  if (!_read(LSM6DS_READ_TYPE_ACC_GYRO_TEMP)) {
+    return false;
+  }
 
   // use helpers to fill in the events
   fillAccelEvent(accel, t);
@@ -452,72 +454,78 @@ void Adafruit_LSM6DS::highPassFilter(bool filter_enabled,
 /******************* Adafruit_Sensor functions *****************/
 /*!
  *     @brief  Updates the measurement data for all sensors simultaneously
+ *     @param selector the selector for which data to read
+ *     @returns 1 if success, 0 if not
  */
 /**************************************************************************/
-void Adafruit_LSM6DS::_read(void) {
-  // get raw readings
-  Adafruit_BusIO_Register data_reg = Adafruit_BusIO_Register(
-      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_OUT_TEMP_L, 14);
-
+int Adafruit_LSM6DS::_read(read_selector_t selector) {
   uint8_t buffer[14];
-  data_reg.read(buffer, 14);
 
-  rawTemp = buffer[1] << 8 | buffer[0];
-  temperature = (rawTemp / temperature_sensitivity) + 25.0;
+  constexpr uint8_t registersAndNum[] = {
+      LSM6DS_OUT_TEMP_L, 14, LSM6DS_OUTX_L_G,   12, LSM6DS_OUTX_L_G, 6,
+      LSM6DS_OUTX_L_A,   6,  LSM6DS_OUT_TEMP_L, 2};
 
-  rawGyroX = buffer[3] << 8 | buffer[2];
-  rawGyroY = buffer[5] << 8 | buffer[4];
-  rawGyroZ = buffer[7] << 8 | buffer[6];
+  Adafruit_BusIO_Register data_reg = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, registersAndNum[selector * 2],
+      registersAndNum[selector * 2 + 1]);
 
-  rawAccX = buffer[9] << 8 | buffer[8];
-  rawAccY = buffer[11] << 8 | buffer[10];
-  rawAccZ = buffer[13] << 8 | buffer[12];
-
-  float gyro_scale = 1; // range is in milli-dps per bit!
-  switch (gyroRangeBuffered) {
-  case ISM330DHCX_GYRO_RANGE_4000_DPS:
-    gyro_scale = 140.0;
-    break;
-  case LSM6DS_GYRO_RANGE_2000_DPS:
-    gyro_scale = 70.0;
-    break;
-  case LSM6DS_GYRO_RANGE_1000_DPS:
-    gyro_scale = 35.0;
-    break;
-  case LSM6DS_GYRO_RANGE_500_DPS:
-    gyro_scale = 17.50;
-    break;
-  case LSM6DS_GYRO_RANGE_250_DPS:
-    gyro_scale = 8.75;
-    break;
-  case LSM6DS_GYRO_RANGE_125_DPS:
-    gyro_scale = 4.375;
-    break;
+  if (!data_reg.read(buffer, registersAndNum[selector * 2 + 1])) {
+    return 0;
   }
 
-  gyroX = rawGyroX * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
-  gyroY = rawGyroY * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
-  gyroZ = rawGyroZ * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
+  switch (selector) {
+  case LSM6DS_READ_TYPE_ACC_GYRO_TEMP: {
+    rawTemp = buffer[1] << 8 | buffer[0];
+    temperature = (rawTemp / temperature_sensitivity) + 25.0;
 
-  float accel_scale = 1; // range is in milli-g per bit!
-  switch (accelRangeBuffered) {
-  case LSM6DS_ACCEL_RANGE_16_G:
-    accel_scale = 0.488;
-    break;
-  case LSM6DS_ACCEL_RANGE_8_G:
-    accel_scale = 0.244;
-    break;
-  case LSM6DS_ACCEL_RANGE_4_G:
-    accel_scale = 0.122;
-    break;
-  case LSM6DS_ACCEL_RANGE_2_G:
-    accel_scale = 0.061;
-    break;
+    rawGyroX = buffer[3] << 8 | buffer[2];
+    rawGyroY = buffer[5] << 8 | buffer[4];
+    rawGyroZ = buffer[7] << 8 | buffer[6];
+
+    rawAccX = buffer[9] << 8 | buffer[8];
+    rawAccY = buffer[11] << 8 | buffer[10];
+    rawAccZ = buffer[13] << 8 | buffer[12];
+
+    convertRawAccelerometerValues();
+    convertRawGyroscopeValues();
+  } break;
+
+  case LSM6DS_READ_TYPE_ACC_GYRO: {
+    rawGyroX = buffer[1] << 8 | buffer[0];
+    rawGyroY = buffer[3] << 8 | buffer[2];
+    rawGyroZ = buffer[5] << 8 | buffer[4];
+
+    rawAccX = buffer[7] << 8 | buffer[6];
+    rawAccY = buffer[9] << 8 | buffer[8];
+    rawAccZ = buffer[11] << 8 | buffer[10];
+
+    convertRawAccelerometerValues();
+    convertRawGyroscopeValues();
+  } break;
+
+  case LSM6DS_READ_TYPE_GYRO: {
+    rawGyroX = buffer[1] << 8 | buffer[0];
+    rawGyroY = buffer[3] << 8 | buffer[2];
+    rawGyroZ = buffer[5] << 8 | buffer[4];
+
+    convertRawGyroscopeValues();
+  } break;
+
+  case LSM6DS_READ_TYPE_ACC: {
+    rawAccX = buffer[1] << 8 | buffer[0];
+    rawAccY = buffer[3] << 8 | buffer[2];
+    rawAccZ = buffer[5] << 8 | buffer[4];
+
+    convertRawAccelerometerValues();
+  } break;
+
+  case LSM6DS_READ_TYPE_TEMP: {
+    rawTemp = buffer[1] << 8 | buffer[0];
+    temperature = (rawTemp / temperature_sensitivity) + 25.0;
+  } break;
   }
 
-  accX = rawAccX * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
-  accY = rawAccY * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
-  accZ = rawAccZ * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
+  return 1;
 }
 
 /**************************************************************************/
@@ -610,7 +618,9 @@ void Adafruit_LSM6DS_Gyro::getSensor(sensor_t *sensor) {
 */
 /**************************************************************************/
 bool Adafruit_LSM6DS_Gyro::getEvent(sensors_event_t *event) {
-  _theLSM6DS->_read();
+  if (!_theLSM6DS->_read(LSM6DS_READ_TYPE_GYRO)) {
+    return false;
+  }
   _theLSM6DS->fillGyroEvent(event, millis());
 
   return true;
@@ -645,7 +655,9 @@ void Adafruit_LSM6DS_Accelerometer::getSensor(sensor_t *sensor) {
 */
 /**************************************************************************/
 bool Adafruit_LSM6DS_Accelerometer::getEvent(sensors_event_t *event) {
-  _theLSM6DS->_read();
+  if (!_theLSM6DS->_read(LSM6DS_READ_TYPE_ACC)) {
+    return false;
+  }
   _theLSM6DS->fillAccelEvent(event, millis());
 
   return true;
@@ -680,7 +692,9 @@ void Adafruit_LSM6DS_Temp::getSensor(sensor_t *sensor) {
 */
 /**************************************************************************/
 bool Adafruit_LSM6DS_Temp::getEvent(sensors_event_t *event) {
-  _theLSM6DS->_read();
+  if (!_theLSM6DS->_read(LSM6DS_READ_TYPE_TEMP)) {
+    return false;
+  }
   _theLSM6DS->fillTempEvent(event, millis());
 
   return true;
@@ -831,20 +845,13 @@ int Adafruit_LSM6DS::accelerationAvailable(void) {
     @returns 1 if success, 0 if not
 */
 int Adafruit_LSM6DS::readAcceleration(float &x, float &y, float &z) {
-  int16_t data[3];
-
-  Adafruit_BusIO_Register accel_data = Adafruit_BusIO_Register(
-      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_OUTX_L_A, 6);
-
-  if (!accel_data.read((uint8_t *)data, sizeof(data))) {
-    x = y = z = NAN;
+  if (!_read(LSM6DS_READ_TYPE_ACC)) {
     return 0;
   }
 
-  // scale to range of -4 – 4
-  x = data[0] * 4.0 / 32768.0;
-  y = data[1] * 4.0 / 32768.0;
-  z = data[2] * 4.0 / 32768.0;
+  x = accX;
+  y = accY;
+  z = accZ;
 
   return 1;
 }
@@ -876,20 +883,99 @@ int Adafruit_LSM6DS::gyroscopeAvailable(void) {
     @returns 1 if success, 0 if not
 */
 int Adafruit_LSM6DS::readGyroscope(float &x, float &y, float &z) {
-  int16_t data[3];
-
-  Adafruit_BusIO_Register gyro_data = Adafruit_BusIO_Register(
-      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_OUTX_L_G, 6);
-
-  if (!gyro_data.read((uint8_t *)data, sizeof(data))) {
-    x = y = z = NAN;
+  if (!_read(LSM6DS_READ_TYPE_GYRO)) {
     return 0;
   }
 
-  // scale to range of -2000 – 2000
-  x = data[0] * 2000.0 / 32768.0;
-  y = data[1] * 2000.0 / 32768.0;
-  z = data[2] * 2000.0 / 32768.0;
+  x = gyroX;
+  y = gyroY;
+  z = gyroZ;
 
   return 1;
+}
+
+/**************************************************************************/
+/*!
+ *  @brief Read gyroscope and accelerometer data
+ *  @param accX reference to x axis for the accelerometer data
+ *  @param accY reference to y axis for the accelerometer data
+ *  @param accZ reference to z axis for the accelerometer data
+ *  @param gyroX reference to x axis for the gyroscope data
+ *  @param gyroY reference to y axis for the gyroscope data
+ *  @param gyroZ reference to z axis for the gyroscope data
+ *  @returns 1 if success, 0 if not
+ */
+int Adafruit_LSM6DS::readAccelerometerGyroscope(float &accX, float &accY,
+                                                float &accZ, float &gyroX,
+                                                float &gyroY, float &gyroZ) {
+  if (!_read(LSM6DS_READ_TYPE_ACC_GYRO)) {
+    return 0;
+  }
+
+  accX = this->accX;
+  accY = this->accY;
+  accZ = this->accZ;
+  gyroX = this->gyroX;
+  gyroY = this->gyroY;
+  gyroZ = this->gyroZ;
+
+  return 1;
+}
+
+/**************************************************************************/
+/*!
+ *  @brief convert raw gyroscope data
+ */
+void Adafruit_LSM6DS::convertRawGyroscopeValues() {
+  float gyro_scale = 1; // range is in milli-dps per bit!
+  switch (gyroRangeBuffered) {
+  case ISM330DHCX_GYRO_RANGE_4000_DPS:
+    gyro_scale = 140.0;
+    break;
+  case LSM6DS_GYRO_RANGE_2000_DPS:
+    gyro_scale = 70.0;
+    break;
+  case LSM6DS_GYRO_RANGE_1000_DPS:
+    gyro_scale = 35.0;
+    break;
+  case LSM6DS_GYRO_RANGE_500_DPS:
+    gyro_scale = 17.50;
+    break;
+  case LSM6DS_GYRO_RANGE_250_DPS:
+    gyro_scale = 8.75;
+    break;
+  case LSM6DS_GYRO_RANGE_125_DPS:
+    gyro_scale = 4.375;
+    break;
+  }
+
+  gyroX = rawGyroX * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
+  gyroY = rawGyroY * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
+  gyroZ = rawGyroZ * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
+}
+
+/**************************************************************************/
+/*!
+ *  @brief convert raw accelerometer data
+ */
+void Adafruit_LSM6DS::convertRawAccelerometerValues() {
+  float accel_scale = 1; // range is in milli-g per bit!
+  switch (accelRangeBuffered) {
+  case LSM6DS_ACCEL_RANGE_16_G:
+    accel_scale = 0.488;
+    break;
+  case LSM6DS_ACCEL_RANGE_8_G:
+    accel_scale = 0.244;
+    break;
+  case LSM6DS_ACCEL_RANGE_4_G:
+    accel_scale = 0.122;
+    break;
+  case LSM6DS_ACCEL_RANGE_2_G:
+    accel_scale = 0.061;
+    break;
+  }
+
+  accX = rawAccX * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
+  accY = rawAccY * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
+  accZ = rawAccZ * accel_scale * SENSORS_GRAVITY_STANDARD / 1000;
 }
