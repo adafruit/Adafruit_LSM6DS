@@ -22,7 +22,7 @@
 
 #define LSM6DS_I2CADDR_DEFAULT 0x6A ///< LSM6DS default i2c address
 
-#define LSM6DS_FUNC_CFG_ACCESS 0x1 ///< Enable embedded functions register
+#define LSM6DS_FUNC_CFG_ACCESS 0x1 ///< Enable embedded functions access register
 #define LSM6DS_INT1_CTRL 0x0D      ///< Interrupt control for INT 1
 #define LSM6DS_INT2_CTRL 0x0E      ///< Interrupt control for INT 2
 #define LSM6DS_WHOAMI 0x0F         ///< Chip ID register
@@ -38,11 +38,19 @@
 #define LSM6DS_OUTX_L_A 0x28       ///< First accel data register
 #define LSM6DS_STEPCOUNTER 0x4B    ///< 16-bit step counter
 #define LSM6DS_TAP_CFG 0x58        ///< Tap/pedometer configuration
-#define LSM6DS_WAKEUP_THS                                                      \
-  0x5B ///< Single and double-tap function threshold register
-#define LSM6DS_WAKEUP_DUR                                                      \
-  0x5C ///< Free-fall, wakeup, timestamp and sleep mode duration
-#define LSM6DS_MD1_CFG 0x5E ///< Functions routing on INT1 register
+#define LSM6DS_WAKEUP_THS 0x5B     ///< Single and double-tap function threshold register
+#define LSM6DS_WAKEUP_DUR 0x5C     ///< Free-fall, wakeup, timestamp and sleep mode duration
+#define LSM6DS_MD1_CFG 0x5E        ///< Functions routing on INT1 register
+#define LSM6DS_EMB_FUNC_FIFO_CFG 0x44   //enable routing embedded functions to Fifo (pedometer only for non-V chips)
+#define LSM6DS_FIFO_CTRL1 0x07          //Fifo watermark
+#define LSM6DS_FIFO_CTRL2 0x08          //Fifo config
+#define LSM6DS_FIFO_CTRL3 0x09          //Fifo batch data rates
+#define LSM6DS_FIFO_CTRL4 0x0A          //Fifo decimation, mode
+#define LSM6DS_COUNTER_BDR_REG1 0x0B    //Fifo batch data controls + 2 high bits of threshold
+#define LSM6DS_COUNTER_BDR_REG2 0x0C    //Fifo batch data threshold
+#define LSM6DS_FIFO_STATUS1 0x3A        //Fifo quantity (lower 8 bits)
+#define LSM6DS_FIFO_STATUS2 0x3B        //Fifo status and bits 9:8 of quantity
+#define LSM6DS_FIFO_DATA_OUT_TAG 0x78   //First byte of Fifo output registers (7 bytes)
 
 /** The accelerometer data rate */
 typedef enum data_rate {
@@ -84,6 +92,57 @@ typedef enum hpf_range {
   LSM6DS_HPF_ODR_DIV_9 = 2,
   LSM6DS_HPF_ODR_DIV_400 = 3,
 } lsm6ds_hp_filter_t;
+
+/** The fifo tags */
+typedef enum fifo_tag {
+  LSM6_FIFO_TAG_EMPTY,
+  LSM6_FIFO_TAG_GYRO,
+  LSM6_FIFO_TAG_ACCEL,
+  LSM6_FIFO_TAG_TEMP,
+  LSM6_FIFO_TAG_TIME,
+  LSM6_FIFO_TAG_CFG_CHANGE,
+  LSM6_FIFO_TAG_ACCEL_NC_T_2,   //datasheet gives no clues on what these "NC" and "xC" tags mean
+  LSM6_FIFO_TAG_ACCEL_NC_T_1,
+  LSM6_FIFO_TAG_ACCEL_2xC,
+  LSM6_FIFO_TAG_ACCEL_3xC,
+  LSM6_FIFO_TAG_GYRO_NC_T_2,
+  LSM6_FIFO_TAG_GYRO_NC_T_1,
+  LSM6_FIFO_TAG_GYRO_2xC,
+  LSM6_FIFO_TAG_GYRO_3xC,
+  LSM6_FIFO_TAG_SENSOR_0,    //sensor hub
+  LSM6_FIFO_TAG_SENSOR_1,
+  LSM6_FIFO_TAG_SENSOR_2,
+  LSM6_FIFO_TAG_SENSOR_3,
+  LSM6_FIFO_TAG_STEP,       
+  //skip a lot of numbers - step was 0x12
+  LSM6_FIFO_TAG_SENSOR_NACK = 0x19  
+} lsm6_fifo_tag_t;
+
+/** The fifo modes */
+typedef enum fifo_mode {
+  LSM6_FIFO_MODE_BYPASS,
+  LSM6_FIFO_MODE_FIFO,
+  LSM6_FIFO_MODE_CONTINUOUSWTM_TO_FULL,
+  LSM6_FIFO_MODE_CONTINUOUS_TO_FIFO,
+  LSM6_FIFO_MODE_BYPASS_TO_CONTINUOUS,
+  LSM6_FIFO_MODE_RESERVED,
+  LSM6_FIFO_MODE_CONTINUOUS,
+  LSM6_FIFO_MODE_BYPASS_TO_FIFO
+} lsm6_fifo_mode_t;
+
+/** fifo timestamp decimation (divides highest rate of gyro or accel) */
+typedef enum fifo_dec_ts {
+  LSM6_FIFO_DEC_TS_SHUTDOWN,
+  LSM6_FIFO_DEC_TS_1,
+  LSM6_FIFO_DEC_TS_8,
+  LSM6_FIFO_DEC_TS_32
+} lsm6_fifo_dec_ts_t;
+
+/** Sensor used as batch trigger for Counter_BDR */
+typedef enum fifo_batch_trig {
+  LSM6_FIFO_BATCH_TRIG_ACCEL,
+  LSM6_FIFO_BATCH_TRIG_GYRO
+} lsm6_fifo_batch_trig_t;
 
 class Adafruit_LSM6DS;
 
@@ -210,12 +269,30 @@ public:
   Adafruit_Sensor *getAccelerometerSensor(void);
   Adafruit_Sensor *getGyroSensor(void);
 
+  //Fifo
+  lsm6_fifo_tag_t parseFifoTag(uint16_t x) {return((lsm6_fifo_tag_t)((x & 0b11111000) >> 3));}
+  uint8_t parseFifoTimeSlot(uint16_t x) {return((x & 0b110) >> 1);}
+  uint8_t getFifoStatus(); //status bits only
+  int getFifoAvailable(); //number of entries available to read
+  bool getFifo(uint8_t *data); //the actual tagged data
+  void configFifoInt1(bool threshold = false, bool overflow = false, bool full = false, bool batch = false); //threshold interrupt when there are N sensor readings in the fifo, batch interrupt when there are N readings of one sensor out of accel/gyro/EIS gyro/High-G accel, not counting the other data in the fifo
+  void configFifoInt2(bool threshold = false, bool overflow = false, bool full = false, bool batch = false); 
+  void setFifoAccelRate(lsm6ds_data_rate_t data_rate);
+  void setFifoGyroRate(lsm6ds_data_rate_t data_rate);
+  void setFifoTempRate(lsm6ds_data_rate_t data_rate); //temperature can only use the 3 slowest rates 1.6Hz, 12.5Hz, 52Hz. LSM6DS_RATE_SHUTDOWN for no temperature in fifo.
+  void setFifoTSDec(lsm6_fifo_dec_ts_t dec); //divides the rate of accel or gyro
+  void setFifoMode(lsm6_fifo_mode_t mode);
+  void setFifoWatermark(uint8_t wtm);
+  void setFifoCounterBDR(lsm6_fifo_batch_trig_t trig, uint16_t threshold);
+  void setFifoEmbFunc(bool stepCounter = false);
+
 protected:
   uint8_t chipID(void);
   uint8_t status(void);
   virtual void _read(void);
   virtual void _readFast(void);
   virtual bool _init(int32_t sensor_id);
+  void funcCfgAccess(bool embFunc = false, bool sHub = false);
 
   uint16_t _sensorid_accel, ///< ID number for accelerometer
       _sensorid_gyro,       ///< ID number for gyro

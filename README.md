@@ -7,6 +7,7 @@ Tested and works great with the Adafruit LSM6DSOX Breakout Board
 
 Updated for LSM6DSV320 and all other LSM6DSV... variants. These chips have a different pinout to the others
 and either a "dual channel" or a complete second "high G" accelerometer in the package.
+They also have "sensor fusion low power" (SFLP) to combine accelerometer and gyro into a single orientation solution.
 
 This chip uses I2C to communicate, 2 pins are required to interface
 

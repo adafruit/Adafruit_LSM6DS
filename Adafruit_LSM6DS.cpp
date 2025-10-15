@@ -459,6 +459,32 @@ void Adafruit_LSM6DS::setGyroRange(lsm6ds_gyro_range_t new_range) {
 
 /**************************************************************************/
 /*!
+    @brief Enable or disable access to the overlapping registers
+	       *May only turn on one at a time.*
+		   Functions using these should set this back to default afterwards.
+		   Note the LSM6DSM and LSM6DSOP don't have the sensor hub
+		   and a few chips have some additional OIS registers that aren't
+		   implemented in this library yet.
+    @param embFunc True enable access to the embedded functions
+    @param sHub True enable access to the sensor hub configuration
+*/
+void Adafruit_LSM6DS::funcCfgAccess(bool embFunc, bool sHub) {
+  Adafruit_BusIO_Register funcCFG = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FUNC_CFG_ACCESS);
+
+  //bit positions
+  const int EMB_FUNC_REG_ACCESS = 7;
+  const int SHUB_REG_ACCESS = 6;
+
+  uint32_t val = 0; //only the first 8 bits of this value will be written
+  if(embFunc) bitSet(val, EMB_FUNC_REG_ACCESS);
+  if(sHub) bitSet(val, SHUB_REG_ACCESS);
+
+  funcCFG.write(val);
+}
+
+/**************************************************************************/
+/*!
     @brief Enables the high pass filter and/or slope filter
     @param filter_enabled Whether to enable the slope filter (see datasheet)
     @param filter The lsm6ds_hp_filter_t that sets the data rate divisor
@@ -923,3 +949,277 @@ int Adafruit_LSM6DS::readGyroscope(float &x, float &y, float &z) {
 
   return 1;
 }
+
+
+/****************************************************************
+  F I F O
+****************************************************************/
+
+/**************************************************************************/
+/*!
+    @brief Read Fifo status byte
+    @returns 8-bits of status: watermark reached, overrun, full
+*/
+uint8_t Adafruit_LSM6DS::getFifoStatus() {
+
+  Adafruit_BusIO_Register status2 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FIFO_STATUS2);
+
+  return status2.read();
+}
+
+/**************************************************************************/
+/*!
+    @brief Fifo data available
+    @returns Number of entries available to read
+*/
+int Adafruit_LSM6DS::getFifoAvailable() { 
+
+  Adafruit_BusIO_Register status1 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FIFO_STATUS1);
+  Adafruit_BusIO_Register status2 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FIFO_STATUS2);
+  Adafruit_BusIO_RegisterBits highBits =
+      Adafruit_BusIO_RegisterBits(&status2, 2, 0);
+
+  int out = status1.read(); //get the lower bits
+  out += highBits.read() << 8; //8th+9th bits are in status2 register
+  
+  return out;
+}
+
+/**************************************************************************/
+/*!
+    @brief Read one item from the Fifo
+    @param data pointer to buffer at least 7 bytes wide
+    @returns true if read
+*/
+bool Adafruit_LSM6DS::getFifo(uint8_t *data) {
+  Adafruit_BusIO_Register fifo_data = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FIFO_DATA_OUT_TAG, 7);
+
+  return fifo_data.read(data, 7);
+}
+
+
+/**************************************************************************/
+/*!
+    @brief Configure interrupt pin 1 fifo options
+    @param threshold true for interrupt on watermark threshold reached
+    @param overflow true for interrupt on overflow of entire Fifo
+    @param full true if the next data item is going to fill the Fifo
+    @param batch true if the counter_BDR threshold reached
+*/
+void Adafruit_LSM6DS::configFifoInt1(bool threshold, bool overflow, bool full, bool batch) {
+	//threshold interrupt when there are M sensor readings in the fifo, 
+	//batch interrupt when there are N readings of one sensor out of accel/gyro, not counting the other data in the fifo
+  Adafruit_BusIO_Register int1_ctrl = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_INT1_CTRL);
+
+  Adafruit_BusIO_RegisterBits cnt_bdr =
+      Adafruit_BusIO_RegisterBits(&int1_ctrl, 1, 6);
+  Adafruit_BusIO_RegisterBits fifo_full =
+      Adafruit_BusIO_RegisterBits(&int1_ctrl, 1, 5);
+  Adafruit_BusIO_RegisterBits fifo_ovr =
+      Adafruit_BusIO_RegisterBits(&int1_ctrl, 1, 4);
+  Adafruit_BusIO_RegisterBits fifo_th =
+      Adafruit_BusIO_RegisterBits(&int1_ctrl, 1, 3);
+
+  cnt_bdr.write(batch);
+  fifo_full.write(full);
+  fifo_ovr.write(overflow);
+  fifo_th.write(threshold);
+}
+
+/**************************************************************************/
+/*!
+    @brief Configure interrupt pin 2 fifo options
+    @param threshold true for interrupt on watermark threshold reached
+    @param overflow true for interrupt on overflow of entire Fifo
+    @param full true if the next data item is going to fill the Fifo
+    @param batch true if the counter_BDR threshold reached
+*/
+void Adafruit_LSM6DS::configFifoInt2(bool threshold, bool overflow, bool full, bool batch) {
+	//threshold interrupt when there are M sensor readings in the fifo, 
+	//batch interrupt when there are N readings of one sensor out of accel/gyro, not counting the other data in the fifo
+  Adafruit_BusIO_Register int2_ctrl = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_INT2_CTRL);
+
+  Adafruit_BusIO_RegisterBits cnt_bdr =
+      Adafruit_BusIO_RegisterBits(&int2_ctrl, 1, 6);
+  Adafruit_BusIO_RegisterBits fifo_full =
+      Adafruit_BusIO_RegisterBits(&int2_ctrl, 1, 5);
+  Adafruit_BusIO_RegisterBits fifo_ovr =
+      Adafruit_BusIO_RegisterBits(&int2_ctrl, 1, 4);
+  Adafruit_BusIO_RegisterBits fifo_th =
+      Adafruit_BusIO_RegisterBits(&int2_ctrl, 1, 3);
+
+  cnt_bdr.write(batch);
+  fifo_full.write(full);
+  fifo_ovr.write(overflow);
+  fifo_th.write(threshold);
+}
+
+/**************************************************************************/
+/*!
+    @brief Set the rate of accelerometer data recorded to the Fifo
+    @param  data_rate
+            The the accelerometer data rate. Must be a `lsm6ds_data_rate_t`.
+*/
+void Adafruit_LSM6DS::setFifoAccelRate(lsm6ds_data_rate_t data_rate) {
+  Adafruit_BusIO_Register fifo_ctrl3 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FIFO_CTRL3);
+
+  Adafruit_BusIO_RegisterBits accel_data_rate =
+      Adafruit_BusIO_RegisterBits(&fifo_ctrl3, 4, 0);
+
+  accel_data_rate.write(data_rate);
+}
+
+
+/**************************************************************************/
+/*!
+    @brief Set the rate of gyro data recorded to the Fifo
+    @param  data_rate
+            The the gyro data rate. Must be a `lsm6ds_data_rate_t`.
+*/
+void Adafruit_LSM6DS::setFifoGyroRate(lsm6ds_data_rate_t data_rate) {
+  Adafruit_BusIO_Register fifo_ctrl3 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FIFO_CTRL3);
+
+  Adafruit_BusIO_RegisterBits gyro_data_rate =
+      Adafruit_BusIO_RegisterBits(&fifo_ctrl3, 4, 4);
+
+  gyro_data_rate.write(data_rate);
+}
+
+
+/**************************************************************************/
+/*!
+    @brief Set the rate of temperature data recorded to the Fifo
+    @param  data_rate
+            The the temperature data rate. Must be one of the first 4 `lsm6ds_data_rate_t` (0 to 52Hz).
+*/
+void Adafruit_LSM6DS::setFifoTempRate(lsm6ds_data_rate_t data_rate) {
+  Adafruit_BusIO_Register fifo_ctrl4 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FIFO_CTRL4);
+
+  Adafruit_BusIO_RegisterBits temp_data_rate =
+      Adafruit_BusIO_RegisterBits(&fifo_ctrl4, 2, 4);
+
+  temp_data_rate.write(data_rate);
+}
+
+/**************************************************************************/
+/*!
+    @brief Set the rate of timestamps data recorded to the Fifo
+			Side effect: always sets the timestamp register to running state
+			(each click is 25us plus or minus the freq_fine adjustment)
+    @param  dec
+            The the decimation factor: 0 (do not record) 1, 8, 32
+*/
+void Adafruit_LSM6DS::setFifoTSDec(lsm6_fifo_dec_ts_t dec) {
+  Adafruit_BusIO_Register fifo_ctrl4 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FIFO_CTRL4);
+
+  Adafruit_BusIO_RegisterBits dec_ts =
+      Adafruit_BusIO_RegisterBits(&fifo_ctrl4, 2, 6);
+
+  dec_ts.write(dec);
+
+  //turn on the timestamp counter 
+
+  Adafruit_BusIO_Register ctrl10_c = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL10_C);
+
+  Adafruit_BusIO_RegisterBits timestamp_en =
+      Adafruit_BusIO_RegisterBits(&ctrl10_c, 1, 5);
+
+  timestamp_en.write(1);
+}
+
+/**************************************************************************/
+/*!
+    @brief Set the fifo mode
+    @param  mode
+            The the mode 0b000 - 0b111
+*/
+void Adafruit_LSM6DS::setFifoMode(lsm6_fifo_mode_t mode) {
+  Adafruit_BusIO_Register fifo_ctrl4 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FIFO_CTRL4);
+
+  Adafruit_BusIO_RegisterBits fifo_mode =
+      Adafruit_BusIO_RegisterBits(&fifo_ctrl4, 3, 0);
+
+  fifo_mode.write(mode);
+}
+
+/**************************************************************************/
+/*!
+    @brief Set the fifo watermark threshold level
+    @param wtm Number of fifo items to trigger watermark interrupt MAX 511
+*/
+void Adafruit_LSM6DS::setFifoWatermark(uint8_t wtm) {
+  Adafruit_BusIO_Register fifo_ctrl1 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FIFO_CTRL1);
+  Adafruit_BusIO_Register fifo_ctrl2 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FIFO_CTRL2);
+
+  Adafruit_BusIO_RegisterBits high_bits =
+      Adafruit_BusIO_RegisterBits(&fifo_ctrl2, 1, 0);
+
+  high_bits.write(wtm >> 8);
+  fifo_ctrl1.write(wtm & 0xFF);
+}
+
+
+/**************************************************************************/
+/*!
+    @brief Set the batch data rate for the fifo
+    @param  trig The triggering sensor to count for the batch 0=accel 1=gyro
+	@param threshold The number of batches to raise the interrupt (max 2055)
+*/
+void Adafruit_LSM6DS::setFifoCounterBDR(lsm6_fifo_batch_trig_t trig, uint16_t threshold) {
+  Adafruit_BusIO_Register reg1 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_COUNTER_BDR_REG1);
+  Adafruit_BusIO_Register reg2 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_COUNTER_BDR_REG2);
+
+  Adafruit_BusIO_RegisterBits trig_counter_bdr =
+      Adafruit_BusIO_RegisterBits(&reg1, 1, 5);
+
+  trig_counter_bdr.write(trig);
+
+  Adafruit_BusIO_RegisterBits high_bits =
+      Adafruit_BusIO_RegisterBits(&reg1, 3, 0);
+
+  high_bits.write(threshold >> 8);
+  reg2.write(threshold & 0xFF);
+
+}
+
+/**************************************************************************/
+/*!
+    @brief Configure embedded functions going into Fifo
+	       The only embedded function on these chips is the pedometer
+    @param stepCounter True to record pedometer step counter
+*/
+void Adafruit_LSM6DS::setFifoEmbFunc(bool stepCounter) {
+  //first tell it that we will be talking to the embedded functions registers
+  funcCfgAccess(true);
+
+  Adafruit_BusIO_Register fifo_en_a = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_EMB_FUNC_FIFO_CFG);
+
+  Adafruit_BusIO_RegisterBits step_en =
+      Adafruit_BusIO_RegisterBits(&fifo_en_a, 1, 6);
+
+  step_en.write(stepCounter);
+
+  //last, reset the config functions access to default state
+  funcCfgAccess();
+}
+
+/****************************************************************
+  end  F I F O
+****************************************************************/
