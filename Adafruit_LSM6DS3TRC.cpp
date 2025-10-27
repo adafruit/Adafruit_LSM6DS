@@ -31,13 +31,6 @@ bool Adafruit_LSM6DS3TRC::_init(int32_t sensor_id) {
   // call base class _init()
   Adafruit_LSM6DS::_init(sensor_id);
 
-  // set the Block Data Update bit
-  // this prevents MSB/LSB data registers from being updated until both are read
-  Adafruit_BusIO_Register ctrl3 = Adafruit_BusIO_Register(
-      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL3_C);
-  Adafruit_BusIO_RegisterBits bdu = Adafruit_BusIO_RegisterBits(&ctrl3, 1, 6);
-  bdu.write(1);
-
   return true;
 }
 
@@ -70,7 +63,7 @@ void Adafruit_LSM6DS3TRC::enablePedometer(bool enable) {
 */
 void Adafruit_LSM6DS3TRC::enableI2CMasterPullups(bool enable_pullups) {
   Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
-      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS3TRC_MASTER_CONFIG);
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSL_MASTER_CONFIG);
   Adafruit_BusIO_RegisterBits i2c_master_pu_en =
       Adafruit_BusIO_RegisterBits(&master_config, 1, 3);
 

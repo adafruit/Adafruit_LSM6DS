@@ -5,6 +5,13 @@ This is the Adafruit LSM6DS 6-DoF Accelerometer and Gyroscope Sensor Library for
 Tested and works great with the Adafruit LSM6DSOX Breakout Board 
 [<img src="assets/board.jpg?raw=true" width="500px">](https://www.adafruit.com/products/4438)
 
+Updated for LSM6DSV320 and all other LSM6DSV... variants. These chips have a different pinout to the others
+and either a "dual channel" or a complete second "high G" accelerometer in the package.
+They also have "sensor fusion low power" (SFLP) to combine accelerometer and gyro into a single orientation solution.
+
+Updated for FIFO on all chips with "standard FIFO". Seems like a few (maybe older) part numbers use a different kind of FIFO. 
+
+Updated for Sensor Hub on all chips which have this function. Only two part numbers in the LSM6 family don't have sensor hub.
 
 This chip uses I2C to communicate, 2 pins are required to interface
 

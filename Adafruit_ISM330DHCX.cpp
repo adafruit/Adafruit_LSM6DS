@@ -18,6 +18,10 @@
 Adafruit_ISM330DHCX::Adafruit_ISM330DHCX(void) {}
 
 bool Adafruit_ISM330DHCX::_init(int32_t sensor_id) {
+  // Might have been stopped in a strange state, reset the register access to
+  // default state
+  funcCfgAccess();
+
   // make sure we're talking to the right chip
   if (chipID() != ISM330DHCX_CHIP_ID) {
     return false;
@@ -30,13 +34,6 @@ bool Adafruit_ISM330DHCX::_init(int32_t sensor_id) {
 
   // call base class _init()
   Adafruit_LSM6DS::_init(sensor_id);
-
-  // set the Block Data Update bit
-  // this prevents MSB/LSB data registers from being updated until both are read
-  Adafruit_BusIO_Register ctrl3 = Adafruit_BusIO_Register(
-      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL3_C);
-  Adafruit_BusIO_RegisterBits bdu = Adafruit_BusIO_RegisterBits(&ctrl3, 1, 6);
-  bdu.write(1);
 
   return true;
 }

@@ -18,6 +18,10 @@
 Adafruit_LSM6DSL::Adafruit_LSM6DSL(void) {}
 
 bool Adafruit_LSM6DSL::_init(int32_t sensor_id) {
+  // Might have been stopped in a strange state, reset the register access to
+  // default state
+  funcCfgAccess();
+
   // make sure we're talking to the right chip
   if (chipID() != LSM6DSL_CHIP_ID) {
     return false;
