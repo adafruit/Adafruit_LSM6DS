@@ -82,6 +82,7 @@
 #define LSM6DSV_CTRL1 0x10           ///< Accelerometer mode and data rate
 #define LSM6DSV_CTRL2 0x11           ///< Gyro mode and data rate
 #define LSM6DSV_CTRL3 0x12           ///< Not used: software reset, reboot, block-update mode, block-read mode
+#define LSM6DSV_CTRL4 0x13           ///< Advanced interrupt pin controls
 #define LSM6DSV_CTRL6 0x15           ///< location of the gyro control register for LPF+range
 #define LSM6DSV_CTRL7 0x16           ///< location of the interrupt-enable for high-G and Gyro LPF enable
 #define LSM6DSV_CTRL8 0x17           ///< Accelerometer range and low/high pass
@@ -122,6 +123,23 @@
 #define LSM6DSV_COUNTER_BDR_REG1 0x0B //batch data rate counter settings
 #define LSM6DSV_COUNTER_BDR_REG2 0x0B //batch data rate counter threshold
 #define LSM6DSV_FIFO_DATA_OUT_TAG 0x78 //Start of Fifo output data bytes
+#define LSM6DSV_SENSOR_HUB_1   0x02 //sensor hub first data byte (in the sensor hub register bank selected by func_cfg_access)
+#define LSM6DSV_MASTER_CONFIG  0x14 //sensor hub I2C master
+#define LSM6DSV_SLV0_ADD       0x15 //sensor hub slave chip address
+#define LSM6DSV_SLV0_SUBADD    0x16 //sensor hub slave register address
+#define LSM6DSV_SLV0_CONFIG    0x17 //sensor hub slave config
+#define LSM6DSV_SLV1_ADD       0x18 //sensor hub slave chip address
+#define LSM6DSV_SLV1_SUBADD    0x19 //sensor hub slave register address
+#define LSM6DSV_SLV1_CONFIG    0x1A //sensor hub slave config
+#define LSM6DSV_SLV2_ADD       0x1B //sensor hub slave chip address
+#define LSM6DSV_SLV2_SUBADD    0x1C //sensor hub slave register address
+#define LSM6DSV_SLV2_CONFIG    0x1D //sensor hub slave config
+#define LSM6DSV_SLV3_ADD       0x1E //sensor hub slave chip address
+#define LSM6DSV_SLV3_SUBADD    0x1F //sensor hub slave register address
+#define LSM6DSV_SLV3_CONFIG    0x20 //sensor hub slave config
+#define LSM6DSV_DATAWRITE_SLV0 0x21 //sensor hub data byte to write to slave 0
+#define LSM6DSV_STATUS_MASTER  0x22 //Sensor hub status (use the duplicate instead)
+#define LSM6DSV_STATUS_MASTER_MAINPAGE  0x48 //Sensor hub status - duplicate register in main page of registers
 
 /** The accel or gyro data rate - note the gyro can't do 1.875Hz */
 typedef enum data_rate {
@@ -397,6 +415,9 @@ public:
   void configIntOutputs(bool active_low, bool open_drain, uint8_t drive_strength = 0b11);
   void configInt1(bool drdy_g, bool drdy_xl);
   void configInt2(bool drdy_g, bool drdy_xl);
+  void configIntOpenDrain(bool OD = false) {};
+  void configInt2OnInt1(bool allOn1 = false) {};
+  void configInt2InHigh(bool activeHigh = false); 
   virtual void enableHighG(bool en);
   void accelHighPassFilter(bool enabled, lsm6dsv_filter_t filter);
   void accelLowPassFilter(bool enabled, lsm6dsv_filter_t filter);
@@ -489,6 +510,23 @@ public:
   void setFifoWatermark(uint8_t wtm);
   void setFifoCounterBDR(lsm6_fifo_batch_trig_t trig, uint16_t threshold);
   void setFifoEmbFunc(bool sflpGame = false, bool sflpGravity = false, bool sflpGBias = false, bool stepCounter = false, bool mlc = false);
+
+  //Sensor Hub
+  bool sHubConcluded(); //true when the "end operation" bit is set in status_master
+  bool sHubWriteOnceDone(); //true when the write-once operation has been done (status_master)
+  uint8_t sHubSlaveNAK(); //4 bits representing slave NAK status (status_master)
+  void sHubConfigResetMaster(bool resetMaster = false);
+  void sHubConfigWriteOnce(bool writeOnce = false);
+  void sHubConfigStartConfig(bool startConfig = false);  //true for INT2 pin, false for accel/gyro trigger
+  void sHubConfigPassThrough(bool passThrough = false);
+  void sHubConfigPullUp(bool pullUp = false);
+  void sHubConfigMasterOn(bool masterOn = false);
+  void sHubConfigCountSensors(int countSensors = 0);
+  int sHubGetCountSensors(); 
+  void sHubSensor(int sensorNumber, uint8_t addr, bool readBit, uint8_t subAddr, int numReadOperations, bool enableFifo = false, uint8_t sHubODR = 0);
+  //sensor number 0-3. Only sensor 0 has the ODR setting (12.5-104Hz) 
+  void sHubDataWrite(uint8_t data); //single byte of data to write to sensor 0 (usually used for write-once to send one byte to the sensor)
+  bool sHubData(uint8_t data[], size_t numBytes); //read bytes from the sensor hub registers (max 18) 
 
 protected:
   uint8_t chipID(void);

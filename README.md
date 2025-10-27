@@ -9,6 +9,10 @@ Updated for LSM6DSV320 and all other LSM6DSV... variants. These chips have a dif
 and either a "dual channel" or a complete second "high G" accelerometer in the package.
 They also have "sensor fusion low power" (SFLP) to combine accelerometer and gyro into a single orientation solution.
 
+Updated for FIFO on all chips with "standard FIFO". Seems like a few (maybe older) part numbers use a different kind of FIFO. 
+
+Updated for Sensor Hub on all chips which have this function. Only two part numbers in the LSM6 family don't have sensor hub.
+
 This chip uses I2C to communicate, 2 pins are required to interface
 
 Adafruit invests time and resources providing this open source code, please support Adafruit and open-source hardware by purchasing products from Adafruit!

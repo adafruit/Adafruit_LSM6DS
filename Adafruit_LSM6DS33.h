@@ -24,7 +24,7 @@
 
 /*!
  *    @brief  Class that stores state and functions for interacting with
- *            the LSM6DS33 I2C Digital Potentiometer
+ *            the LSM6DS33 Accelerometer and Gyroscope
  */
 class Adafruit_LSM6DS33 : public Adafruit_LSM6DS {
 public:
@@ -51,6 +51,23 @@ private:
   using Adafruit_LSM6DS::setFifoWatermark;
   using Adafruit_LSM6DS::setFifoCounterBDR;
   using Adafruit_LSM6DS::setFifoEmbFunc;
+
+  //No sensor hub for the LSM6DS33 (the only other chip which lacks this feature is the LSM6DSOP)
+  //De-implement the hub by hiding the base class methods.
+  using Adafruit_LSM6DS::sHubConcluded;
+  using Adafruit_LSM6DS::sHubWriteOnceDone;
+  using Adafruit_LSM6DS::sHubSlaveNAK;
+  using Adafruit_LSM6DS::sHubConfigResetMaster;
+  using Adafruit_LSM6DS::sHubConfigWriteOnce;
+  using Adafruit_LSM6DS::sHubConfigStartConfig;
+  using Adafruit_LSM6DS::sHubConfigPassThrough;
+  using Adafruit_LSM6DS::sHubConfigPullUp;
+  using Adafruit_LSM6DS::sHubConfigMasterOn;
+  using Adafruit_LSM6DS::sHubConfigCountSensors;
+  using Adafruit_LSM6DS::sHubGetCountSensors;
+  using Adafruit_LSM6DS::sHubSensor;
+  using Adafruit_LSM6DS::sHubDataWrite;
+  using Adafruit_LSM6DS::sHubData;
 
 };
 

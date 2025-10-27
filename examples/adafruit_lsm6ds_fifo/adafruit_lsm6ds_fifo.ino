@@ -13,8 +13,10 @@
    Fifo is in Continuous mode
    Watermark is set to 1 and that's routed to INT1 pin so any data in the Fifo will assert the interrupt
 
-   Timestamp in Fifo has fixed resolution of 25us or 21.7us (plus or minus FREQ_FINE adjustment)
+   Timestamp in Fifo has fixed resolution of 25us or 21.7us depending on the chip (plus or minus FREQ_FINE adjustment)
    The timestamp has 32 bits, so it's only occupying the first two words in the Fifo.
+   The last 16 bits of the timestamp contains the Fifo (batch) data rates selected for the sensors plus other flags.
+   The exact mapping of these is available in https://www.st.com/resource/en/application_note/an5922-lsm6dsv-6axis-imu-with-embedded-sensor-fusion-i3c-oiseis-for-smart-applications-stmicroelectronics.pdf
 
    Because the Fifo can contain any type of data, you need to read the tag to understand what the
    data is and how to convert from the raw 16-bit numbers to a useful unit of measure. The
@@ -23,7 +25,7 @@
 
    Circuit: Any ISM330 or LSM6 chip connected to I2C, except LSM6DS3... or LSM6DSL as their Fifo's aren't implemented.
 */
-#define myWire Wire  //for processors like Teensy, there may be more than one I2C bus, select it here
+#define myWire Wire1  //for processors like Teensy, there may be more than one I2C bus, select it here
 
 const bool debug = true; //turn this on for detailed display of time taken to do each task
 

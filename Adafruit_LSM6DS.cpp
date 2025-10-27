@@ -28,8 +28,9 @@
  * 	@section  HISTORY
  *
  *     v1.0 - First release
- *     v1.1 - M Sandercock
- *            Increase I2C bus speed to 400mHz
+ *     v4.7.0 - this is the version number found in the library.properties
+ *     v4.8.0 - Add "V" chips such as LSM6DSV320, add SFLP from V chips, add
+ Fifo, add sensor hub
  */
 
 #include "Arduino.h"
@@ -54,7 +55,9 @@ Adafruit_LSM6DS::Adafruit_LSM6DS(void) {}
 /*!
  *    @brief  Cleans up the LSM6DS
  */
-Adafruit_LSM6DS::~Adafruit_LSM6DS(void) { delete temp_sensor; }
+Adafruit_LSM6DS::~Adafruit_LSM6DS(void) {
+  delete temp_sensor;
+}
 
 /*!  @brief  Unique subclass initializer post i2c/spi init
  *   @param sensor_id Optional unique ID for the sensor set
@@ -128,7 +131,7 @@ boolean Adafruit_LSM6DS::begin_I2C(uint8_t i2c_address, TwoWire *wire,
     return false;
   }
 
-  i2c_dev->setSpeed(400000); //crank it up to max "normal I2C" speed 400kHz
+  i2c_dev->setSpeed(400000); // crank it up to max "normal I2C" speed 400kHz
 
   return _init(sensor_id);
 }
@@ -233,7 +236,9 @@ Adafruit_Sensor *Adafruit_LSM6DS::getAccelerometerSensor(void) {
     @brief  Gets an Adafruit Unified Sensor object for the gyro sensor component
     @return Adafruit_Sensor pointer to gyro sensor
  */
-Adafruit_Sensor *Adafruit_LSM6DS::getGyroSensor(void) { return gyro_sensor; }
+Adafruit_Sensor *Adafruit_LSM6DS::getGyroSensor(void) {
+  return gyro_sensor;
+}
 
 /**************************************************************************/
 /*!
@@ -266,7 +271,8 @@ bool Adafruit_LSM6DS::getEvent(sensors_event_t *accel, sensors_event_t *gyro,
 }
 /**************************************************************************/
 /*!
-    @brief  Gets the most recent accel+gyro event, Adafruit Unified Sensor format
+    @brief  Gets the most recent accel+gyro event, Adafruit Unified Sensor
+   format
     @param  accel
             Pointer to an Adafruit Unified sensor_event_t object to be filled
             with acceleration event data.
@@ -460,11 +466,11 @@ void Adafruit_LSM6DS::setGyroRange(lsm6ds_gyro_range_t new_range) {
 /**************************************************************************/
 /*!
     @brief Enable or disable access to the overlapping registers
-	       *May only turn on one at a time.*
-		   Functions using these should set this back to default afterwards.
-		   Note the LSM6DSM and LSM6DSOP don't have the sensor hub
-		   and a few chips have some additional OIS registers that aren't
-		   implemented in this library yet.
+               *May only turn on one at a time.*
+                   Functions using these should set this back to default
+   afterwards. Note the LSM6DSM and LSM6DSOP don't have the sensor hub and a few
+   chips have some additional OIS registers that aren't implemented in this
+   library yet.
     @param embFunc True enable access to the embedded functions
     @param sHub True enable access to the sensor hub configuration
 */
@@ -472,13 +478,13 @@ void Adafruit_LSM6DS::funcCfgAccess(bool embFunc, bool sHub) {
   Adafruit_BusIO_Register funcCFG = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FUNC_CFG_ACCESS);
 
-  //bit positions
+  // bit positions
   const int EMB_FUNC_REG_ACCESS = 7;
   const int SHUB_REG_ACCESS = 6;
 
-  uint32_t val = 0; //only the first 8 bits of this value will be written
-  if(embFunc) bitSet(val, EMB_FUNC_REG_ACCESS);
-  if(sHub) bitSet(val, SHUB_REG_ACCESS);
+  uint32_t val = 0; // only the first 8 bits of this value will be written
+  if (embFunc) bitSet(val, EMB_FUNC_REG_ACCESS);
+  if (sHub) bitSet(val, SHUB_REG_ACCESS);
 
   funcCFG.write(val);
 }
@@ -508,7 +514,8 @@ void Adafruit_LSM6DS::highPassFilter(bool filter_enabled,
  */
 /**************************************************************************/
 void Adafruit_LSM6DS::_readFast(void) {
-	_read(); //in this lower class, this is just a placeholder. Will be replaced at higher level if required
+  _read(); // in this lower class, this is just a placeholder. Will be replaced
+           // at higher level if required
 }
 void Adafruit_LSM6DS::_read(void) {
   // get raw readings
@@ -635,6 +642,41 @@ void Adafruit_LSM6DS::configInt2(bool drdy_temp, bool drdy_g, bool drdy_xl) {
       Adafruit_BusIO_RegisterBits(&int2_ctrl, 3, 0);
 
   int2_drdy_bits.write((drdy_temp << 2) | (drdy_g << 1) | drdy_xl);
+}
+
+/**************************************************************************/
+/*!
+    @brief Sets the open drain or push-pull mode on INT1 and INT2 pins
+                        Using INT2 as an input for sensor hub requires open
+   drain mode but then if you're also using INT1 as an output, it will need a
+   pullup or set the Arduino pinMode to INPUT_PULLUP.
+    @param OD True for open-drain, False for push-pull (default)
+*/
+void Adafruit_LSM6DS::configIntOpenDrain(bool OD) {
+
+  Adafruit_BusIO_Register ctrl3 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL3_C);
+
+  Adafruit_BusIO_RegisterBits pp_od = Adafruit_BusIO_RegisterBits(&ctrl3, 1, 4);
+
+  pp_od.write(OD);
+}
+
+/**************************************************************************/
+/*!
+    @brief Select all interrupts on INT1
+    @param allOn1 True for all interrupts on int1, false for normal operation
+   (default)
+*/
+void Adafruit_LSM6DS::configInt2OnInt1(bool allOn1) {
+
+  Adafruit_BusIO_Register ctrl4 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL4_C);
+
+  Adafruit_BusIO_RegisterBits int_on_int1 =
+      Adafruit_BusIO_RegisterBits(&ctrl4, 1, 5);
+
+  int_on_int1.write(allOn1);
 }
 
 /**************************************************************************/
@@ -950,7 +992,6 @@ int Adafruit_LSM6DS::readGyroscope(float &x, float &y, float &z) {
   return 1;
 }
 
-
 /****************************************************************
   F I F O
 ****************************************************************/
@@ -973,34 +1014,43 @@ uint8_t Adafruit_LSM6DS::getFifoStatus() {
     @brief Fifo data available
     @returns Number of entries available to read
 */
-int Adafruit_LSM6DS::getFifoAvailable() { 
+int Adafruit_LSM6DS::getFifoAvailable() {
 
   Adafruit_BusIO_Register status1 = Adafruit_BusIO_Register(
-      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FIFO_STATUS1);
-  Adafruit_BusIO_Register status2 = Adafruit_BusIO_Register(
-      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FIFO_STATUS2);
-  Adafruit_BusIO_RegisterBits highBits =
-      Adafruit_BusIO_RegisterBits(&status2, 2, 0);
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FIFO_STATUS1, 2);
 
-  int out = status1.read(); //get the lower bits
-  out += highBits.read() << 8; //8th+9th bits are in status2 register
-  
+  // Various chips have 9, 10, 11 bit width on their Fifo counter.
+  // The ones with less memory specify the un-used bits are always zero.
+  int out = status1.read() & 0b11111111111;
+
   return out;
 }
 
 /**************************************************************************/
 /*!
-    @brief Read one item from the Fifo
-    @param data pointer to buffer at least 7 bytes wide
-    @returns true if read
+    @brief Read one item or many items from the Fifo
+    If more than 1 item, uses the "wraparound" feature by just continuing
+        to read without sending a bus stop signal.
+        **Currently should not be used to read more than 4 due to
+        the 33rd byte getting dropped by the lower I2C functions.**
+    @param data pointer to buffer at least 7 * count bytes wide
+    @param count maximum number of Fifo entries to read, if available
+    @returns number of Fifo items read
 */
-bool Adafruit_LSM6DS::getFifo(uint8_t *data) {
-  Adafruit_BusIO_Register fifo_data = Adafruit_BusIO_Register(
-      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_FIFO_DATA_OUT_TAG, 7);
+size_t Adafruit_LSM6DS::getFifo(uint8_t *data, size_t count) {
+  const size_t fifoWidth = 7; // bytes per Fifo read
 
-  return fifo_data.read(data, 7);
+  // Do this a slightly-dumb way by just requesting 7*count
+  // bytes and don't attempt to stop early if the fifo runs empty
+
+  Adafruit_BusIO_Register fifo_data =
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD,
+                              LSM6DS_FIFO_DATA_OUT_TAG, fifoWidth * count);
+
+  fifo_data.read(data, fifoWidth * count);
+
+  return count;
 }
-
 
 /**************************************************************************/
 /*!
@@ -1010,9 +1060,11 @@ bool Adafruit_LSM6DS::getFifo(uint8_t *data) {
     @param full true if the next data item is going to fill the Fifo
     @param batch true if the counter_BDR threshold reached
 */
-void Adafruit_LSM6DS::configFifoInt1(bool threshold, bool overflow, bool full, bool batch) {
-	//threshold interrupt when there are M sensor readings in the fifo, 
-	//batch interrupt when there are N readings of one sensor out of accel/gyro, not counting the other data in the fifo
+void Adafruit_LSM6DS::configFifoInt1(bool threshold, bool overflow, bool full,
+                                     bool batch) {
+  // threshold interrupt when there are M sensor readings in the fifo,
+  // batch interrupt when there are N readings of one sensor out of accel/gyro,
+  // not counting the other data in the fifo
   Adafruit_BusIO_Register int1_ctrl = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_INT1_CTRL);
 
@@ -1039,9 +1091,11 @@ void Adafruit_LSM6DS::configFifoInt1(bool threshold, bool overflow, bool full, b
     @param full true if the next data item is going to fill the Fifo
     @param batch true if the counter_BDR threshold reached
 */
-void Adafruit_LSM6DS::configFifoInt2(bool threshold, bool overflow, bool full, bool batch) {
-	//threshold interrupt when there are M sensor readings in the fifo, 
-	//batch interrupt when there are N readings of one sensor out of accel/gyro, not counting the other data in the fifo
+void Adafruit_LSM6DS::configFifoInt2(bool threshold, bool overflow, bool full,
+                                     bool batch) {
+  // threshold interrupt when there are M sensor readings in the fifo,
+  // batch interrupt when there are N readings of one sensor out of accel/gyro,
+  // not counting the other data in the fifo
   Adafruit_BusIO_Register int2_ctrl = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_INT2_CTRL);
 
@@ -1076,7 +1130,6 @@ void Adafruit_LSM6DS::setFifoAccelRate(lsm6ds_data_rate_t data_rate) {
   accel_data_rate.write(data_rate);
 }
 
-
 /**************************************************************************/
 /*!
     @brief Set the rate of gyro data recorded to the Fifo
@@ -1093,12 +1146,12 @@ void Adafruit_LSM6DS::setFifoGyroRate(lsm6ds_data_rate_t data_rate) {
   gyro_data_rate.write(data_rate);
 }
 
-
 /**************************************************************************/
 /*!
     @brief Set the rate of temperature data recorded to the Fifo
     @param  data_rate
-            The the temperature data rate. Must be one of the first 4 `lsm6ds_data_rate_t` (0 to 52Hz).
+            The the temperature data rate. Must be one of the first 4
+   `lsm6ds_data_rate_t` (0 to 52Hz).
 */
 void Adafruit_LSM6DS::setFifoTempRate(lsm6ds_data_rate_t data_rate) {
   Adafruit_BusIO_Register fifo_ctrl4 = Adafruit_BusIO_Register(
@@ -1113,8 +1166,8 @@ void Adafruit_LSM6DS::setFifoTempRate(lsm6ds_data_rate_t data_rate) {
 /**************************************************************************/
 /*!
     @brief Set the rate of timestamps data recorded to the Fifo
-			Side effect: always sets the timestamp register to running state
-			(each click is 25us plus or minus the freq_fine adjustment)
+                        Side effect: always sets the timestamp register to
+   running state (each click is 25us plus or minus the freq_fine adjustment)
     @param  dec
             The the decimation factor: 0 (do not record) 1, 8, 32
 */
@@ -1127,7 +1180,7 @@ void Adafruit_LSM6DS::setFifoTSDec(lsm6_fifo_dec_ts_t dec) {
 
   dec_ts.write(dec);
 
-  //turn on the timestamp counter 
+  // turn on the timestamp counter
 
   Adafruit_BusIO_Register ctrl10_c = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL10_C);
@@ -1172,14 +1225,14 @@ void Adafruit_LSM6DS::setFifoWatermark(uint8_t wtm) {
   fifo_ctrl1.write(wtm & 0xFF);
 }
 
-
 /**************************************************************************/
 /*!
     @brief Set the batch data rate for the fifo
     @param  trig The triggering sensor to count for the batch 0=accel 1=gyro
-	@param threshold The number of batches to raise the interrupt (max 2055)
+        @param threshold The number of batches to raise the interrupt (max 2055)
 */
-void Adafruit_LSM6DS::setFifoCounterBDR(lsm6_fifo_batch_trig_t trig, uint16_t threshold) {
+void Adafruit_LSM6DS::setFifoCounterBDR(lsm6_fifo_batch_trig_t trig,
+                                        uint16_t threshold) {
   Adafruit_BusIO_Register reg1 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_COUNTER_BDR_REG1);
   Adafruit_BusIO_Register reg2 = Adafruit_BusIO_Register(
@@ -1195,17 +1248,16 @@ void Adafruit_LSM6DS::setFifoCounterBDR(lsm6_fifo_batch_trig_t trig, uint16_t th
 
   high_bits.write(threshold >> 8);
   reg2.write(threshold & 0xFF);
-
 }
 
 /**************************************************************************/
 /*!
     @brief Configure embedded functions going into Fifo
-	       The only embedded function on these chips is the pedometer
+               The only embedded function on these chips is the pedometer
     @param stepCounter True to record pedometer step counter
 */
 void Adafruit_LSM6DS::setFifoEmbFunc(bool stepCounter) {
-  //first tell it that we will be talking to the embedded functions registers
+  // first tell it that we will be talking to the embedded functions registers
   funcCfgAccess(true);
 
   Adafruit_BusIO_Register fifo_en_a = Adafruit_BusIO_Register(
@@ -1216,10 +1268,410 @@ void Adafruit_LSM6DS::setFifoEmbFunc(bool stepCounter) {
 
   step_en.write(stepCounter);
 
-  //last, reset the config functions access to default state
+  // last, reset the config functions access to default state
   funcCfgAccess();
 }
 
 /****************************************************************
   end  F I F O
+****************************************************************/
+
+/****************************************************************
+  Sensor Hub
+  Don't attempt to use these on chips without sensor hub: LSM6DSOP and LSM6DS33
+****************************************************************/
+
+/**************************************************************************/
+/*!
+    @brief Check if sensor hub operation completed
+                        Read this first as any read of this register will reset
+   this bit for the next cycle. In fact, that's the only way to reset this bit.
+    @returns True when the "end operation" bit is set in status_master_mainpage
+*/
+bool Adafruit_LSM6DS::sHubConcluded() {
+  Adafruit_BusIO_Register status_master = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_STATUS_MASTER_MAINPAGE);
+
+  Adafruit_BusIO_RegisterBits shub_endop =
+      Adafruit_BusIO_RegisterBits(&status_master, 1, 0);
+
+  return shub_endop.read();
+}
+
+/**************************************************************************/
+/*!
+    @brief Check if sensor hub write-once is done
+    @returns True when the "wr once done" bit is set in status_master_mainpage
+*/
+bool Adafruit_LSM6DS::sHubWriteOnceDone() {
+  Adafruit_BusIO_Register status_master = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_STATUS_MASTER_MAINPAGE);
+
+  Adafruit_BusIO_RegisterBits wr_done =
+      Adafruit_BusIO_RegisterBits(&status_master, 1, 7);
+
+  return wr_done.read();
+}
+
+/**************************************************************************/
+/*!
+    @brief Check sensor hub NAKs
+    @returns 4 bits representing slave NAK status (status_master_mainpage)
+*/
+uint8_t Adafruit_LSM6DS::sHubSlaveNAK() {
+  Adafruit_BusIO_Register status_master = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_STATUS_MASTER);
+
+  Adafruit_BusIO_RegisterBits nak_bits =
+      Adafruit_BusIO_RegisterBits(&status_master, 4, 3);
+
+  return nak_bits.read();
+}
+
+/**************************************************************************/
+/*!
+    @brief Reset the I2C master
+               To perform a reset you must turn this bit on, then off
+    @param resetMaster True to assert the reset master bit
+*/
+void Adafruit_LSM6DS::sHubConfigResetMaster(bool resetMaster) {
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_MASTER_CONFIG);
+
+  Adafruit_BusIO_RegisterBits reset_master =
+      Adafruit_BusIO_RegisterBits(&master_config, 1, 7);
+
+  reset_master.write(resetMaster);
+
+  // last, reset the register access to default state
+  funcCfgAccess();
+}
+
+/**************************************************************************/
+/*!
+    @brief Set the write-once bit
+               Turns itself off automatically once the wite was written?
+                   Check that write was done with .sHubWriteOnceDone()
+    @param writeOnce True to assert the write-once bit
+*/
+void Adafruit_LSM6DS::sHubConfigWriteOnce(bool writeOnce) {
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_MASTER_CONFIG);
+
+  Adafruit_BusIO_RegisterBits wr =
+      Adafruit_BusIO_RegisterBits(&master_config, 1, 6);
+
+  wr.write(writeOnce);
+
+  // last, reset the register access to default state
+  funcCfgAccess();
+}
+
+/**************************************************************************/
+/*!
+    @brief Set the start config bit for sensor hub
+    @param startConfig True to select the INT2 pin as the start signal, false
+   for accel/gyro trigger
+*/
+void Adafruit_LSM6DS::sHubConfigStartConfig(bool startConfig) {
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_MASTER_CONFIG);
+
+  Adafruit_BusIO_RegisterBits sc =
+      Adafruit_BusIO_RegisterBits(&master_config, 1, 5);
+
+  sc.write(startConfig);
+
+  // last, reset the register access to default state
+  funcCfgAccess();
+}
+
+/**************************************************************************/
+/*!
+    @brief Set the sensor hub passthrough mode
+    @param passThrough True to passthrough, false for normal operation
+*/
+void Adafruit_LSM6DS::sHubConfigPassThrough(bool passThrough) {
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_MASTER_CONFIG);
+
+  Adafruit_BusIO_RegisterBits ptm =
+      Adafruit_BusIO_RegisterBits(&master_config, 1, 4);
+
+  ptm.write(passThrough);
+
+  // last, reset the register access to default state
+  funcCfgAccess();
+}
+
+/**************************************************************************/
+/*!
+    @brief Set the sensor hub I2C pullups
+    @param pullUp True for active pullpus on the second I2C
+*/
+void Adafruit_LSM6DS::sHubConfigPullUp(bool pullUp) {
+  Adafruit_BusIO_Register master_cfg = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_MASTER_CONFIG);
+
+  Adafruit_BusIO_RegisterBits shub_pu =
+      Adafruit_BusIO_RegisterBits(&master_cfg, 1, 3);
+
+  shub_pu.write(pullUp);
+}
+
+/**************************************************************************/
+/*!
+    @brief Turn on the master control for the auxiliary I2C
+   This part gets really weird. Read:
+   https://www.st.com/resource/en/application_note/an5922-lsm6dsv-6axis-imu-with-embedded-sensor-fusion-i3c-oiseis-for-smart-applications-stmicroelectronics.pdf
+   Look at page 73 (also appears on page 80 and 81). In order for the active I2C
+   master to READ data from any sensor, the WRITE_ONCE bit must be set. The
+   sensor's R/W bit is set to 1 to read, so there's no danger of accidentally
+   writing but why set WRITE_ONCE for reading? This little detail doesn't appear
+   in the datasheet for any LSM6 sensor, only in this app note.
+    @param masterOn True to enable
+*/
+void Adafruit_LSM6DS::sHubConfigMasterOn(bool masterOn) {
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_MASTER_CONFIG);
+
+  Adafruit_BusIO_RegisterBits master_on =
+      Adafruit_BusIO_RegisterBits(&master_config, 1, 2);
+
+  master_on.write(masterOn);
+
+  sHubConfigWriteOnce(masterOn);
+  // ConfigWriteOnce has already reset the register access to default state
+}
+
+/**************************************************************************/
+/*!
+    @brief Set the number of sensors to be read by the sensor hub
+    @param countSensors 0-4
+*/
+void Adafruit_LSM6DS::sHubConfigCountSensors(int countSensors) {
+  if (countSensors <= 0) {
+    // zero is a special case - need to turn off the master to get this result
+    sHubConfigMasterOn(false);
+
+  } else {
+    // tell it that we will be talking to the sensor hub registers
+    funcCfgAccess(false, true);
+
+    Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
+        i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_MASTER_CONFIG);
+
+    Adafruit_BusIO_RegisterBits aux_sen =
+        Adafruit_BusIO_RegisterBits(&master_config, 2, 0);
+
+    aux_sen.write(countSensors - 1); // register uses 0-3 to represent 1-4
+
+    // reset the register access to default state
+    funcCfgAccess();
+  }
+}
+
+/**************************************************************************/
+/*!
+    @brief Get the number of sensors to be read by the sensor hub
+    @returns Count of sensors 0 - 4
+*/
+int Adafruit_LSM6DS::sHubGetCountSensors() {
+  // Zero is a special case, when master is off
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_MASTER_CONFIG);
+
+  Adafruit_BusIO_RegisterBits m_o =
+      Adafruit_BusIO_RegisterBits(&master_config, 1, 5);
+
+  bool masterOn = m_o.read();
+
+  Adafruit_BusIO_RegisterBits aux_sen =
+      Adafruit_BusIO_RegisterBits(&master_config, 2, 0);
+
+  int val = aux_sen.read();
+
+  // reset the register access to default state
+  funcCfgAccess();
+
+  if (masterOn) {
+    // stored values 0-3 represent 1-4 sensors
+    return val + 1;
+  } else {
+    // master was off
+    return 0;
+  }
+}
+
+/**************************************************************************/
+/*!
+    @brief Sensor hub settings for one sensor (0-3)
+    @param sensorNumber 0-3 the sensor you wish to configure
+        @param addr I2C address of the sensor chip (the 7-bit address without
+   the read/write bit)
+        @param readBit True to enable reading - you always want this to be true
+   except in special cases of writing to sensor0
+        @param subAddr register address on the sensor
+        @param numReadOperations Number of bytes to read from the sensor
+        @param enableFifo Output routed to Fifo (leave at false if no Fifo)
+        @param sHubODR Output Data Rate - see the datasheet for your chip for
+   valid values, only applied to sensor 0
+*/
+void Adafruit_LSM6DS::sHubSensor(int sensorNumber, uint8_t addr, bool readBit,
+                                 uint8_t subAddr, int numReadOperations,
+                                 bool enableFifo, uint8_t sHubODR) {
+  const bool debug = false;
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  sensorNumber = constrain(sensorNumber, 0, 3);
+  int offset = 3 * sensorNumber; // register offset to step into the
+                                 // configuration registers for each sensor
+
+  Adafruit_BusIO_Register SLV_ADD = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_SLV0_ADD + offset);
+
+  Adafruit_BusIO_RegisterBits addr_bits =
+      Adafruit_BusIO_RegisterBits(&SLV_ADD, 7, 1);
+
+  addr_bits.write(addr);
+
+  Adafruit_BusIO_RegisterBits rw_bit =
+      Adafruit_BusIO_RegisterBits(&SLV_ADD, 1, 0);
+
+  rw_bit.write(readBit);
+
+  Adafruit_BusIO_Register SLV_SUBADD = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_SLV0_SUBADD + offset);
+
+  SLV_SUBADD.write(subAddr);
+
+  Adafruit_BusIO_Register SLV_CONFIG = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_SLV0_CONFIG + offset);
+
+  Adafruit_BusIO_RegisterBits numOps =
+      Adafruit_BusIO_RegisterBits(&SLV_CONFIG, 3, 0);
+
+  numOps.write(numReadOperations);
+
+  Adafruit_BusIO_RegisterBits fifo_batch =
+      Adafruit_BusIO_RegisterBits(&SLV_CONFIG, 1, 3);
+
+  fifo_batch.write(enableFifo);
+
+  if (debug) {
+    Serial.print("configured sensor ");
+    Serial.print(sensorNumber);
+    Serial.print(" Address 0x");
+    Serial.print(addr_bits.read(), HEX);
+    if (rw_bit.read()) Serial.print(" read");
+    else
+      Serial.print(" write");
+    Serial.print(" register 0x");
+    Serial.print(SLV_SUBADD.read(), HEX);
+    Serial.print(" read operations:");
+    Serial.print(numOps.read());
+    if (fifo_batch.read()) Serial.print(" routed to fifo");
+    else
+      Serial.print(" no fifo");
+    Serial.println();
+  }
+
+  // output data rate is only set on sensor 0
+  if (sensorNumber == 0) {
+    Adafruit_BusIO_RegisterBits odr =
+        Adafruit_BusIO_RegisterBits(&SLV_CONFIG, 2, 6);
+
+    odr.write(sHubODR);
+    if (debug) Serial.print("Sensor 0 set output data rate to ");
+    if (debug) Serial.println(sHubODR);
+  }
+
+  // last, reset the register access to default state
+  funcCfgAccess();
+}
+
+/**************************************************************************/
+/*!
+    @brief Load the data-write register for sending to sensor 0
+               Usually used for write-once to send a byte to the sensor.
+    @param data Single byte to write
+*/
+void Adafruit_LSM6DS::sHubDataWrite(uint8_t data) {
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  Adafruit_BusIO_Register datawrite = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_DATAWRITE_SLV0);
+
+  datawrite.write(data);
+
+  // last, reset the register access to default state
+  funcCfgAccess();
+}
+
+/**************************************************************************/
+/*!
+    @brief Read bytes from the sensor hub registers (max 18)
+               Since sensor outputs are always stacked starting at position 1
+                   this will always start reading from position 1
+    @param *data Pointer to byte buffer to write data
+        @param numBytes Number of bytes to be read (max 18)
+        @returns true if read was successful
+*/
+bool Adafruit_LSM6DS::sHubData(uint8_t data[], size_t numBytes) {
+  const bool debug = false;
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  Adafruit_BusIO_Register sensor_hub_1 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_SENSOR_HUB_1, 18);
+
+  if (debug) Serial.print("sHubData() fetching from address 0x");
+  if (debug) Serial.print(LSM6DS_SENSOR_HUB_1, HEX);
+  if (debug) Serial.print(" for ");
+  if (debug) Serial.print(constrain(numBytes, 0, 18));
+  if (debug) Serial.print(" bytes");
+  if (debug) Serial.println();
+
+  bool result = sensor_hub_1.read(
+      data, constrain(numBytes, 0,
+                      18)); // makes no sense to read 0 bytes but we'll allow it
+
+  if (debug) {
+    for (int i = 0; i < numBytes; i++) {
+      Serial.print(" 0x");
+      if (data[i] < 0x10) Serial.print("0");
+      Serial.print(data[i], HEX);
+    }
+    Serial.println();
+  }
+
+  if (debug && !result) Serial.println("data got a false from read");
+
+  // last, reset the register access to default state
+  funcCfgAccess();
+
+  return result;
+}
+/****************************************************************
+  end  Sensor Hub
 ****************************************************************/

@@ -1,4 +1,3 @@
-
 /*!
  *  @file Adafruit_LSM6DSV.cpp Adafruit LSM6DS 9-DoF Accelerometer
  *  and Gyroscope library
@@ -41,8 +40,7 @@ static const float _data_rate_arr[] = {
     [LSM6DSV_RATE_120_HZ] = 120.0f,    [LSM6DSV_RATE_240_HZ] = 240.0f,
     [LSM6DSV_RATE_480_HZ] = 480.0f,    [LSM6DSV_RATE_960_HZ] = 960.0f,
     [LSM6DSV_RATE_1_92K_HZ] = 1920.0f, [LSM6DSV_RATE_3_84K_HZ] = 3840.0f,
-    [LSM6DSV_RATE_7_68K_HZ] = 7680.0f
-};
+    [LSM6DSV_RATE_7_68K_HZ] = 7680.0f};
 
 /*!
  *    @brief  Instantiates a new LSM6DSV class
@@ -52,8 +50,8 @@ Adafruit_LSM6DSV::Adafruit_LSM6DSV(void) {}
 /*!
  *    @brief  Cleans up the LSM6DSV
  */
-Adafruit_LSM6DSV::~Adafruit_LSM6DSV(void) { 
-  delete temp_sensor; 
+Adafruit_LSM6DSV::~Adafruit_LSM6DSV(void) {
+  delete temp_sensor;
   delete accel_sensor;
   delete gyro_sensor;
   delete high_g_sensor;
@@ -70,9 +68,7 @@ bool Adafruit_LSM6DSV::_init(int32_t sensor_id) {
   _sensorid_temp = sensor_id + 2;
   _sensorid_high_g = sensor_id + 3;
 
-
   reset();
-
 
   // Enable accelerometer with 120 Hz data rate, 4G
   setAccelDataRate(LSM6DSV_RATE_120_HZ);
@@ -82,7 +78,7 @@ bool Adafruit_LSM6DSV::_init(int32_t sensor_id) {
   setGyroDataRate(LSM6DSV_RATE_120_HZ);
   setGyroRange(LSM6DSV_GYRO_RANGE_2000_DPS);
 
-  //enable high-g outputs
+  // enable high-g outputs
   enableHighG(true);
 
   delay(10);
@@ -108,7 +104,7 @@ bool Adafruit_LSM6DSV::_init(int32_t sensor_id) {
 uint8_t Adafruit_LSM6DSV::chipID(void) {
   Adafruit_BusIO_Register chip_id = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_WHOAMI);
-  //Serial.print("Read ID 0x"); Serial.println(chip_id.read(), HEX);
+  // Serial.print("Read ID 0x"); Serial.println(chip_id.read(), HEX);
 
   return chip_id.read();
 }
@@ -123,7 +119,6 @@ uint8_t Adafruit_LSM6DSV::status(void) {
   return status_reg.read();
 }
 
-
 /*!
  *    @brief  Sets up the hardware and initializes I2C
  *    @param  i2c_address
@@ -135,18 +130,17 @@ uint8_t Adafruit_LSM6DSV::status(void) {
  *    @return True if initialization was successful, otherwise false.
  */
 boolean Adafruit_LSM6DSV::begin_I2C(uint8_t i2c_address, TwoWire *wire,
-                                   int32_t sensor_id) {
+                                    int32_t sensor_id) {
   delete i2c_dev; // remove old interface
-
 
   i2c_dev = new Adafruit_I2CDevice(i2c_address, wire);
 
   if (!i2c_dev->begin()) {
-    //Serial.println("No I2C device at the given address");
+    // Serial.println("No I2C device at the given address");
     return false;
   }
 
-  i2c_dev->setSpeed(400000); //crank it up to max "normal I2C" speed 400kHz
+  i2c_dev->setSpeed(400000); // crank it up to max "normal I2C" speed 400kHz
 
   return _init(sensor_id);
 }
@@ -161,7 +155,7 @@ boolean Adafruit_LSM6DSV::begin_I2C(uint8_t i2c_address, TwoWire *wire,
  *    @return True if initialization was successful, otherwise false.
  */
 bool Adafruit_LSM6DSV::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
-                                int32_t sensor_id, uint32_t frequency) {
+                                 int32_t sensor_id, uint32_t frequency) {
   i2c_dev = NULL;
 
   delete spi_dev; // remove old interface
@@ -190,8 +184,8 @@ bool Adafruit_LSM6DSV::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
  *    @return True if initialization was successful, otherwise false.
  */
 bool Adafruit_LSM6DSV::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
-                                int8_t mosi_pin, int32_t sensor_id,
-                                uint32_t frequency) {
+                                 int8_t mosi_pin, int32_t sensor_id,
+                                 uint32_t frequency) {
   i2c_dev = NULL;
 
   delete spi_dev; // remove old interface
@@ -212,19 +206,20 @@ bool Adafruit_LSM6DSV::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
     @brief Resets the sensor to its power-on state, clearing all registers and
    memory
 
-   If you aren't talking to a LSM6DS chip then you can get stuck here as maybe the
-   bit can be set but then won't un-set itself to show that the reset is done.
-   Use a 1-second timeout to get un-stuck. Maybe return an error code?
+   If you aren't talking to a LSM6DS chip then you can get stuck here as maybe
+   the bit can be set but then won't un-set itself to show that the reset is
+   done. Use a 1-second timeout to get un-stuck. Maybe return an error code?
 */
 void Adafruit_LSM6DSV::reset(void) {
 
-  //It is possible for the embedded functions access bit to be set (we interrupted it in the middle of an operation)
-  //and this is very persistent. When that is enabled, then you can't access the CFG3 register to do a master reset.
-  //So the first step in bringing it back from a random position is to turn that off. 
-  //Since we're there already, we'll do a SW_POR (software power-on reset? Global reset?) on the embedded functions too.
+  // It is possible for the embedded functions access bit to be set (we
+  // interrupted it in the middle of an operation) and this is very persistent.
+  // When that is enabled, then you can't access the CFG3 register to do a
+  // master reset. So the first step in bringing it back from a random position
+  // is to turn that off. Since we're there already, we'll do a SW_POR (software
+  // power-on reset? Global reset?) on the embedded functions too.
   funcCfgAccess(false, false, false, true);
-  delay(1); //Wait for the reset? Datasheet doesn't say.
-
+  delay(1); // Wait for the reset? Datasheet doesn't say.
 
   Adafruit_BusIO_Register ctrl3 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_CTRL3);
@@ -237,8 +232,7 @@ void Adafruit_LSM6DSV::reset(void) {
   unsigned long start = millis();
   while (sw_reset.read() && millis() - start < 1000) {
     delay(1);
-  } 
-
+  }
 }
 
 /*!
@@ -262,16 +256,17 @@ Adafruit_Sensor *Adafruit_LSM6DSV::getAccelerometerSensor(void) {
     @brief  Gets an Adafruit Unified Sensor object for the gyro sensor component
     @return Adafruit_Sensor pointer to gyro sensor
  */
-Adafruit_Sensor *Adafruit_LSM6DSV::getGyroSensor(void) { 
-  return gyro_sensor; 
+Adafruit_Sensor *Adafruit_LSM6DSV::getGyroSensor(void) {
+  return gyro_sensor;
 }
 
 /*!
-    @brief  Gets an Adafruit Unified Sensor object for the high-g sensor component
+    @brief  Gets an Adafruit Unified Sensor object for the high-g sensor
+   component
     @return Adafruit_Sensor pointer to high-g sensor
  */
-Adafruit_Sensor *Adafruit_LSM6DSV::getHighGSensor(void) { 
-  return high_g_sensor; 
+Adafruit_Sensor *Adafruit_LSM6DSV::getHighGSensor(void) {
+  return high_g_sensor;
 }
 
 /**************************************************************************/
@@ -293,7 +288,7 @@ Adafruit_Sensor *Adafruit_LSM6DSV::getHighGSensor(void) {
 */
 /**************************************************************************/
 bool Adafruit_LSM6DSV::getEvent(sensors_event_t *accel, sensors_event_t *gyro,
-                               sensors_event_t *temp) {
+                                sensors_event_t *temp) {
   uint32_t t = millis();
   _read();
 
@@ -305,7 +300,8 @@ bool Adafruit_LSM6DSV::getEvent(sensors_event_t *accel, sensors_event_t *gyro,
 }
 /**************************************************************************/
 /*!
-    @brief  Gets the most recent accel+gyro event, Adafruit Unified Sensor format
+    @brief  Gets the most recent accel+gyro event, Adafruit Unified Sensor
+   format
     @param  accel
             Pointer to an Adafruit Unified sensor_event_t object to be filled
             with acceleration event data.
@@ -349,10 +345,8 @@ bool Adafruit_LSM6DSV::getEvent(sensors_event_t *accel, sensors_event_t *gyro) {
     @return True on successful read
 */
 /**************************************************************************/
-bool Adafruit_LSM6DSV::getEvent(sensors_event_t *accel, 
-                               sensors_event_t *gyro,
-                               sensors_event_t *temp,
-                               sensors_event_t *highG) {
+bool Adafruit_LSM6DSV::getEvent(sensors_event_t *accel, sensors_event_t *gyro,
+                                sensors_event_t *temp, sensors_event_t *highG) {
   uint32_t t = millis();
   _read();
 
@@ -365,9 +359,10 @@ bool Adafruit_LSM6DSV::getEvent(sensors_event_t *accel,
 }
 
 /**************************************************************************/
-//Helpers for events
+// Helpers for events
 /**************************************************************************/
-void Adafruit_LSM6DSV::fillTempEvent(sensors_event_t *temp, uint32_t timestamp) {
+void Adafruit_LSM6DSV::fillTempEvent(sensors_event_t *temp,
+                                     uint32_t timestamp) {
   memset(temp, 0, sizeof(sensors_event_t));
   temp->version = sizeof(sensors_event_t);
   temp->sensor_id = _sensorid_temp;
@@ -376,7 +371,8 @@ void Adafruit_LSM6DSV::fillTempEvent(sensors_event_t *temp, uint32_t timestamp) 
   temp->temperature = temperature;
 }
 
-void Adafruit_LSM6DSV::fillGyroEvent(sensors_event_t *gyro, uint32_t timestamp) {
+void Adafruit_LSM6DSV::fillGyroEvent(sensors_event_t *gyro,
+                                     uint32_t timestamp) {
   memset(gyro, 0, sizeof(sensors_event_t));
   gyro->version = 1;
   gyro->sensor_id = _sensorid_gyro;
@@ -387,7 +383,8 @@ void Adafruit_LSM6DSV::fillGyroEvent(sensors_event_t *gyro, uint32_t timestamp) 
   gyro->gyro.z = gyroZ * SENSORS_DPS_TO_RADS;
 }
 
-void Adafruit_LSM6DSV::fillAccelEvent(sensors_event_t *accel, uint32_t timestamp) {
+void Adafruit_LSM6DSV::fillAccelEvent(sensors_event_t *accel,
+                                      uint32_t timestamp) {
   memset(accel, 0, sizeof(sensors_event_t));
   accel->version = 1;
   accel->sensor_id = _sensorid_accel;
@@ -398,7 +395,8 @@ void Adafruit_LSM6DSV::fillAccelEvent(sensors_event_t *accel, uint32_t timestamp
   accel->acceleration.z = accZ;
 }
 
-void Adafruit_LSM6DSV::fillHighGEvent(sensors_event_t *accel, uint32_t timestamp) {
+void Adafruit_LSM6DSV::fillHighGEvent(sensors_event_t *accel,
+                                      uint32_t timestamp) {
   memset(accel, 0, sizeof(sensors_event_t));
   accel->version = 1;
   accel->sensor_id = _sensorid_high_g;
@@ -445,7 +443,8 @@ void Adafruit_LSM6DSV::setAccelDataRate(lsm6dsv_data_rate_t data_rate) {
 /**************************************************************************/
 /*!
     @brief Gets the accelerometer measurement range.
-    @returns The the accelerometer measurement range. (identical for all except DSV32)
+    @returns The the accelerometer measurement range. (identical for all except
+   DSV32)
 */
 lsm6dsv_accel_range_t Adafruit_LSM6DSV::getAccelRange(void) {
 
@@ -486,7 +485,7 @@ void Adafruit_LSM6DSV::setAccelRange(lsm6dsv_accel_range_t new_range) {
 */
 void Adafruit_LSM6DSV::setAccelScale() {
 
-  //magic numbers from the datasheet are milli-gee per LSB
+  // magic numbers from the datasheet are milli-gee per LSB
   switch (accelRangeBuffered) {
   case LSM6DSV_ACCEL_RANGE_16_G:
     accelScale = 0.488 * SENSORS_GRAVITY_STANDARD / 1000;
@@ -524,7 +523,7 @@ lsm6dsv_data_rate_t Adafruit_LSM6DSV::getGyroDataRate(void) {
     @brief Sets the gyro data rate.
     @param  data_rate
             The the gyro data rate. Must be a `lsm6dsv_data_rate_t`.
-			1.875Hz is not allowed for the gyro
+                        1.875Hz is not allowed for the gyro
 */
 void Adafruit_LSM6DSV::setGyroDataRate(lsm6dsv_data_rate_t data_rate) {
 
@@ -583,7 +582,7 @@ void Adafruit_LSM6DSV::setGyroRange(lsm6dsv_gyro_range_t new_range) {
 */
 void Adafruit_LSM6DSV::setGyroScale() {
 
-  //datasheet magic numbers are milli-degrees per second per LSB
+  // datasheet magic numbers are milli-degrees per second per LSB
   switch (gyroRangeBuffered) {
   case LSM6DSV_GYRO_RANGE_4000_DPS:
     gyroScale = 140.0 / 1000.0;
@@ -600,23 +599,22 @@ void Adafruit_LSM6DSV::setGyroScale() {
   case LSM6DSV_GYRO_RANGE_250_DPS:
     gyroScale = 8.75 / 1000.0;
     break;
-  case LSM6DSV_GYRO_RANGE_RESERVED: //Should never see this, but need to cover all of the enum
+  case LSM6DSV_GYRO_RANGE_RESERVED: // Should never see this, but need to cover
+                                    // all of the enum
     gyroScale = 8.75 / 1000.0;
     break;
   }
-
 }
 
 /**************************************************************************/
 /*
  * Note there are no range or rate settings for the high-g accelerometer
  * in the DSV, DSV16, DSV16B, DSV32. They are fixed to the same rate as
- * the main accelerometer and the range is always the maximum of the 
+ * the main accelerometer and the range is always the maximum of the
  * main accelerometer ranges.
-*/
+ */
 /**************************************************************************/
 
-  
 /**************************************************************************/
 /*!
     @brief Gets the internal frequency fine adjustment (read-only).
@@ -628,7 +626,6 @@ int8_t Adafruit_LSM6DSV::getInternalFreqFine(void) {
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_INTERNAL_FREQ);
 
   return (int8_t)internal_freq.read();
-
 }
 
 /**************************************************************************/
@@ -639,7 +636,7 @@ int8_t Adafruit_LSM6DSV::getInternalFreqFine(void) {
 */
 /**************************************************************************/
 void Adafruit_LSM6DSV::accelHighPassFilter(bool filter_enabled,
-                                     lsm6dsv_filter_t filter) {
+                                           lsm6dsv_filter_t filter) {
   Adafruit_BusIO_Register ctrl8 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_CTRL8);
   Adafruit_BusIO_RegisterBits HP_LPF2_XL_BW =
@@ -661,7 +658,7 @@ void Adafruit_LSM6DSV::accelHighPassFilter(bool filter_enabled,
 */
 /**************************************************************************/
 void Adafruit_LSM6DSV::accelLowPassFilter(bool filter_enabled,
-                                     lsm6dsv_filter_t filter) {
+                                          lsm6dsv_filter_t filter) {
   Adafruit_BusIO_Register ctrl8 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_CTRL8);
   Adafruit_BusIO_RegisterBits HP_LPF2_XL_BW =
@@ -675,23 +672,24 @@ void Adafruit_LSM6DSV::accelLowPassFilter(bool filter_enabled,
   Adafruit_BusIO_RegisterBits LPF2_XL_EN =
       Adafruit_BusIO_RegisterBits(&ctrl9, 1, 3);
 
-  if(filter_enabled) {
-	  HP_SLOPE_XL_EN.write(0);
-	  LPF2_XL_EN.write(1);
+  if (filter_enabled) {
+    HP_SLOPE_XL_EN.write(0);
+    LPF2_XL_EN.write(1);
   } else {
-	  LPF2_XL_EN.write(0);
+    LPF2_XL_EN.write(0);
   }
 }
 
 /**************************************************************************/
 /*!
-    @brief Enables the gyro low-pass filter LPF1 (ignored in low-power mode or OIS/EIS mode).
+    @brief Enables the gyro low-pass filter LPF1 (ignored in low-power mode or
+   OIS/EIS mode).
     @param filter_enabled Whether to enable the low-pass filter (see datasheet)
-    @param filter The 3-bit valuethat sets the data rate divisor (doesn't have an eaily-nameable set of values)
+    @param filter The 3-bit valuethat sets the data rate divisor (doesn't have
+   an eaily-nameable set of values)
 */
 /**************************************************************************/
-void Adafruit_LSM6DSV::gyroLowPassFilter(bool filter_enabled,
-                                     uint8_t filter) {
+void Adafruit_LSM6DSV::gyroLowPassFilter(bool filter_enabled, uint8_t filter) {
   Adafruit_BusIO_Register ctrl6 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_CTRL6);
   Adafruit_BusIO_RegisterBits LPF1_G_BW =
@@ -708,63 +706,66 @@ void Adafruit_LSM6DSV::gyroLowPassFilter(bool filter_enabled,
 /**************************************************************************/
 /*!
     @brief Configures the user offset (zero calibration) for accelerometer.
-	       Does not configure USR_OFF_ON_WU to utilize offset within wakeup logic.
-		   Note the offset is set in g, not dependent on the accelerometer range selected.
-		   Datasheet page 72 seems to be incorrect attributing the weight to the high-G accel offsets
-		   as it is contradicted by page 108 which says their weight depends on the high-G scale.
-    @param enabled Whether to enable the offset (if you're turning it off, all other parameters are ignored)
+               Does not configure USR_OFF_ON_WU to utilize offset within wakeup
+   logic. Note the offset is set in g, not dependent on the accelerometer range
+   selected. Datasheet page 72 seems to be incorrect attributing the weight to
+   the high-G accel offsets as it is contradicted by page 108 which says their
+   weight depends on the high-G scale.
+    @param enabled Whether to enable the offset (if you're turning it off, all
+   other parameters are ignored)
     @param weight Multiplier for the offset 0 = 2^-10 g/LSB 1 = 2^-6 g/LSB
     @param offsetX The offset in the X axis (positive or negative)
     @param offsetY The offset in the Y axis (positive or negative)
     @param offsetZ The offset in the Z axis (positive or negative)
 */
 /**************************************************************************/
-void Adafruit_LSM6DSV::accelOffset(bool enabled, bool weight, int8_t offsetX, int8_t offsetY, int8_t offsetZ){
+void Adafruit_LSM6DSV::accelOffset(bool enabled, bool weight, int8_t offsetX,
+                                   int8_t offsetY, int8_t offsetZ) {
   Adafruit_BusIO_Register ctrl9 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_CTRL9);
   Adafruit_BusIO_RegisterBits USR_OFF_ON_OUT =
       Adafruit_BusIO_RegisterBits(&ctrl9, 1, 0);
   USR_OFF_ON_OUT.write(enabled);
 
-  if(enabled) {
-	  Adafruit_BusIO_RegisterBits USR_OFF_W =
-		  Adafruit_BusIO_RegisterBits(&ctrl9, 1, 1);
-	  USR_OFF_W.write(weight);
+  if (enabled) {
+    Adafruit_BusIO_RegisterBits USR_OFF_W =
+        Adafruit_BusIO_RegisterBits(&ctrl9, 1, 1);
+    USR_OFF_W.write(weight);
 
-	  Adafruit_BusIO_Register X_OFS_USR = Adafruit_BusIO_Register(
-		  i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_X_OFS_USR);
-	  X_OFS_USR.write(offsetX);
-	  Adafruit_BusIO_Register Y_OFS_USR = Adafruit_BusIO_Register(
-		  i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_Y_OFS_USR);
-	  Y_OFS_USR.write(offsetY);
-	  Adafruit_BusIO_Register Z_OFS_USR = Adafruit_BusIO_Register(
-		  i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_Z_OFS_USR);
-	  Z_OFS_USR.write(offsetZ);
+    Adafruit_BusIO_Register X_OFS_USR = Adafruit_BusIO_Register(
+        i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_X_OFS_USR);
+    X_OFS_USR.write(offsetX);
+    Adafruit_BusIO_Register Y_OFS_USR = Adafruit_BusIO_Register(
+        i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_Y_OFS_USR);
+    Y_OFS_USR.write(offsetY);
+    Adafruit_BusIO_Register Z_OFS_USR = Adafruit_BusIO_Register(
+        i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_Z_OFS_USR);
+    Z_OFS_USR.write(offsetZ);
   }
 }
 
 /**************************************************************************/
 /*!
-    @brief Configures the user offset (zero calibration) for high-G accelerometer.
-	       Datasheet page 108 says the weight depends on the high-G scale.
-		   Up to 256G, each LSB here represents 0.25g and 0.33g for 320G range.
+    @brief Configures the user offset (zero calibration) for high-G
+   accelerometer. Datasheet page 108 says the weight depends on the high-G
+   scale. Up to 256G, each LSB here represents 0.25g and 0.33g for 320G range.
     @param offsetX The offset in the X axis (positive or negative)
     @param offsetY The offset in the Y axis (positive or negative)
     @param offsetZ The offset in the Z axis (positive or negative)
 */
 /**************************************************************************/
-void Adafruit_LSM6DSV::highGOffset(int8_t offsetX, int8_t offsetY, int8_t offsetZ){
+void Adafruit_LSM6DSV::highGOffset(int8_t offsetX, int8_t offsetY,
+                                   int8_t offsetZ) {
 
   Adafruit_BusIO_Register XL_HG_X_OFS_USR = Adafruit_BusIO_Register(
-	  i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_X_OFS_USR);
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_X_OFS_USR);
   XL_HG_X_OFS_USR.write(offsetX);
   Adafruit_BusIO_Register XL_HG_Y_OFS_USR = Adafruit_BusIO_Register(
-	  i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_Y_OFS_USR);
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_Y_OFS_USR);
   XL_HG_Y_OFS_USR.write(offsetY);
   Adafruit_BusIO_Register XL_HG_Z_OFS_USR = Adafruit_BusIO_Register(
-	  i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_Z_OFS_USR);
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_Z_OFS_USR);
   XL_HG_Z_OFS_USR.write(offsetZ);
-
 }
 
 /******************* Adafruit_Sensor functions *****************/
@@ -773,15 +774,17 @@ void Adafruit_LSM6DSV::highGOffset(int8_t offsetX, int8_t offsetY, int8_t offset
  */
 /**************************************************************************/
 void Adafruit_LSM6DSV::_readFast(void) {
-	_read(); //in this lower class, this is just a placeholder. Will be replaced at higher level if required
+  _read(); // in this lower class, this is just a placeholder. Will be replaced
+           // at higher level if required
 }
 void Adafruit_LSM6DSV::_read(void) {
   // get raw readings
-  Adafruit_BusIO_Register data_reg = Adafruit_BusIO_Register(
-      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_OUT_TEMP_L, _high_g_enabled?26:14);
+  Adafruit_BusIO_Register data_reg =
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD,
+                              LSM6DSV_OUT_TEMP_L, _high_g_enabled ? 26 : 14);
 
   uint8_t buffer[26];
-  data_reg.read(buffer, _high_g_enabled?26:14);
+  data_reg.read(buffer, _high_g_enabled ? 26 : 14);
 
   rawTemp = buffer[1] << 8 | buffer[0];
 
@@ -793,17 +796,17 @@ void Adafruit_LSM6DSV::_read(void) {
   rawAccY = buffer[11] << 8 | buffer[10];
   rawAccZ = buffer[13] << 8 | buffer[12];
 
-  if(_high_g_enabled) {
+  if (_high_g_enabled) {
 
-	  //skip 6 bytes of OIS data that we're not interested in
+    // skip 6 bytes of OIS data that we're not interested in
 
-	  rawHighGX = buffer[21] << 8 | buffer[20];
-	  rawHighGY = buffer[23] << 8 | buffer[22];
-	  rawHighGZ = buffer[25] << 8 | buffer[24];
+    rawHighGX = buffer[21] << 8 | buffer[20];
+    rawHighGY = buffer[23] << 8 | buffer[22];
+    rawHighGZ = buffer[25] << 8 | buffer[24];
 
-	  highGX = rawHighGX * highGScale;
-	  highGY = rawHighGY * highGScale;
-	  highGZ = rawHighGZ * highGScale;
+    highGX = rawHighGX * highGScale;
+    highGY = rawHighGY * highGScale;
+    highGZ = rawHighGZ * highGScale;
   }
 
   temperature = (rawTemp / temperature_sensitivity) + 25.0;
@@ -824,11 +827,12 @@ void Adafruit_LSM6DSV::_read(void) {
    mode to active low
     @param open_drain true to set the pin mode as open-drain, false to set the
    mode to push-pull
-    @param drive_strength set to 3 (default) for VDDIO < 2V (strongest), 
+    @param drive_strength set to 3 (default) for VDDIO < 2V (strongest),
    set to 1 for VDDIO between 2 and 3 volts
    set to 0  for VDDIO >= 3V (weakest)
 */
-void Adafruit_LSM6DSV::configIntOutputs(bool active_low, bool open_drain, uint8_t drive_strength) {
+void Adafruit_LSM6DSV::configIntOutputs(bool active_low, bool open_drain,
+                                        uint8_t drive_strength) {
 
   Adafruit_BusIO_Register ifcfg = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_IF_CFG);
@@ -843,7 +847,6 @@ void Adafruit_LSM6DSV::configIntOutputs(bool active_low, bool open_drain, uint8_
       Adafruit_BusIO_RegisterBits(&pinctrl, 2, 0);
 
   ds_bits.write(drive_strength);
-
 }
 
 /**************************************************************************/
@@ -852,9 +855,9 @@ void Adafruit_LSM6DSV::configIntOutputs(bool active_low, bool open_drain, uint8_
     @param drdy_g true to output the data ready gyro interrupt
     @param drdy_xl true to output the data ready accelerometer interrupt
 
-	The DSV chips don't have an interrupt for temperature
-	and the "dual channel" chips don't have an interrupt for high-g since that's
-	the same data as the main accelerometer
+        The DSV chips don't have an interrupt for temperature
+        and the "dual channel" chips don't have an interrupt for high-g since
+   that's the same data as the main accelerometer
 */
 void Adafruit_LSM6DSV::configInt1(bool drdy_g, bool drdy_xl) {
 
@@ -866,9 +869,9 @@ void Adafruit_LSM6DSV::configInt1(bool drdy_g, bool drdy_xl) {
 
   int1_bits.write((drdy_g << 1) | drdy_xl);
 
-  //step detect is now in EMB_FUNC_INT1 - haven't enabled pedometer module yet
+  // step detect is now in EMB_FUNC_INT1 - haven't enabled pedometer module yet
 
-  //Wakeup INT1 interrupt is on MD1_CFG - routes lots of functions to that pin
+  // Wakeup INT1 interrupt is on MD1_CFG - routes lots of functions to that pin
 }
 
 /**************************************************************************/
@@ -908,7 +911,8 @@ void Adafruit_LSM6DSV::enableHighG(bool enable) {
 
 /**************************************************************************/
 /*!
-    @brief  Gets the sensor_t data for the LSM6DS's gyroscope sensor (radians/sec)
+    @brief  Gets the sensor_t data for the LSM6DS's gyroscope sensor
+   (radians/sec)
 */
 /**************************************************************************/
 void Adafruit_LSM6DSV_Gyro::getSensor(sensor_t *sensor) {
@@ -991,10 +995,11 @@ void Adafruit_LSM6DSV_HighG::getSensor(sensor_t *sensor) {
   sensor->version = 1;
   sensor->sensor_id = _theLSM6DSV->_sensorid_high_g;
   sensor->type = SENSOR_TYPE_ACCELEROMETER;
-  sensor->min_delay = 0; //minimum time between events, can we insert the output dta rate here later?
-  sensor->min_value = -32767 * _theLSM6DSV->highGScale; 
-  sensor->max_value = 32767 * _theLSM6DSV->highGScale; 
-  sensor->resolution = _theLSM6DSV->highGScale; 
+  sensor->min_delay = 0; // minimum time between events, can we insert the
+                         // output dta rate here later?
+  sensor->min_value = -32767 * _theLSM6DSV->highGScale;
+  sensor->max_value = 32767 * _theLSM6DSV->highGScale;
+  sensor->resolution = _theLSM6DSV->highGScale;
 }
 
 /**************************************************************************/
@@ -1029,7 +1034,7 @@ void Adafruit_LSM6DSV_Temp::getSensor(sensor_t *sensor) {
   sensor->min_delay = 0;
   sensor->min_value = -40;
   sensor->max_value = 85;
-  sensor->resolution = 1/_theLSM6DSV->temperature_sensitivity;
+  sensor->resolution = 1 / _theLSM6DSV->temperature_sensitivity;
 }
 
 /**************************************************************************/
@@ -1050,9 +1055,9 @@ bool Adafruit_LSM6DSV_Temp::getEvent(sensors_event_t *event) {
 /*!
     @brief Gets the temperature data rate.
     @returns The data rate in float
-	It's not clear from the datasheet, it says it's fixed at 60Hz
-	but then it also says "if gyro is off and accel is in low-power
-	then temperature rate (TODR) is equal to the accelerometer"
+        It's not clear from the datasheet, it says it's fixed at 60Hz
+        but then it also says "if gyro is off and accel is in low-power
+        then temperature rate (TODR) is equal to the accelerometer"
 */
 float Adafruit_LSM6DSV::temperatureSampleRate(void) {
   return 60;
@@ -1095,28 +1100,29 @@ int Adafruit_LSM6DSV::readTemperature(float &tempC) {
 /**************************************************************************/
 /*!
     @brief Enable or disable access to the overlapping registers
-	       May only turn on one at a time.
-		   Functions using these should set this back to default afterwards
+    May only turn on one at a time.
+    Functions using these should set this back to default afterwards
     @param embFunc enable access to the embedded functions
     @param sHub enable access to the sensor hub configuration
-	@param FSM enable access ot the finite state machine control registers
-	@param globalReset perform a power-on reset
+        @param FSM enable access ot the finite state machine control registers
+        @param globalReset perform a power-on reset
 */
-void Adafruit_LSM6DSV::funcCfgAccess(bool embFunc, bool sHub, bool FSM, bool globalReset) {
+void Adafruit_LSM6DSV::funcCfgAccess(bool embFunc, bool sHub, bool FSM,
+                                     bool globalReset) {
   Adafruit_BusIO_Register funcCFG = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_FUNC_CFG_ACCESS);
 
-  //bit positions
+  // bit positions
   const int EMB_FUNC_REG_ACCESS = 7;
   const int SHUB_REG_ACCESS = 6;
   const int FSM_WR_CTRL_EN = 3;
   const int SW_POR = 2;
 
-  uint32_t val = 0; //only the first 8 bits of this value will be written
-  if(embFunc) bitSet(val, EMB_FUNC_REG_ACCESS);
-  if(sHub) bitSet(val, SHUB_REG_ACCESS);
-  if(FSM) bitSet(val, FSM_WR_CTRL_EN);
-  if(globalReset) bitSet(val, SW_POR);
+  uint32_t val = 0; // only the first 8 bits of this value will be written
+  if (embFunc) bitSet(val, EMB_FUNC_REG_ACCESS);
+  if (sHub) bitSet(val, SHUB_REG_ACCESS);
+  if (FSM) bitSet(val, FSM_WR_CTRL_EN);
+  if (globalReset) bitSet(val, SW_POR);
 
   funcCFG.write(val);
 }
@@ -1124,11 +1130,11 @@ void Adafruit_LSM6DSV::funcCfgAccess(bool embFunc, bool sHub, bool FSM, bool glo
 /**************************************************************************/
 /*!
     @brief Enable or disable sensor fusion low power (SFLP)
-	       You should probably set the accelerometer user offsets for this to work best
+    You should probably set the accelerometer user offsets for this to work best
     @param enable true/false
 */
 void Adafruit_LSM6DSV::enableSFLP(bool enable) {
-  //first tell it that we will be talking to the embedded functions registers
+  // first tell it that we will be talking to the embedded functions registers
   funcCfgAccess(true);
 
   Adafruit_BusIO_Register funcEnA = Adafruit_BusIO_Register(
@@ -1139,10 +1145,9 @@ void Adafruit_LSM6DSV::enableSFLP(bool enable) {
 
   en_bits.write(enable);
 
-  //last, reset the config functions access to default state
+  // last, reset the config functions access to default state
   funcCfgAccess();
 }
-
 
 /**************************************************************************/
 /*!
@@ -1150,7 +1155,7 @@ void Adafruit_LSM6DSV::enableSFLP(bool enable) {
     @returns The the SFLP data rate.
 */
 lsm6dsv_sflp_data_rate_t Adafruit_LSM6DSV::getSFLPDataRate(void) {
-  //first tell it that we will be talking to the embedded functions registers
+  // first tell it that we will be talking to the embedded functions registers
   funcCfgAccess(true);
 
   Adafruit_BusIO_Register ctrl1 = Adafruit_BusIO_Register(
@@ -1161,7 +1166,7 @@ lsm6dsv_sflp_data_rate_t Adafruit_LSM6DSV::getSFLPDataRate(void) {
 
   uint8_t val = sflp_data_rate.read();
 
-  //reset the config functions access to default state
+  // reset the config functions access to default state
   funcCfgAccess();
 
   return (lsm6dsv_sflp_data_rate_t)val;
@@ -1173,7 +1178,7 @@ lsm6dsv_sflp_data_rate_t Adafruit_LSM6DSV::getSFLPDataRate(void) {
     @param  data_rate Must be a `lsm6dsv_sflp_data_rate_t`.
 */
 void Adafruit_LSM6DSV::setSFLPDataRate(lsm6dsv_sflp_data_rate_t data_rate) {
-  //first tell it that we will be talking to the embedded functions registers
+  // first tell it that we will be talking to the embedded functions registers
   funcCfgAccess(true);
 
   Adafruit_BusIO_Register sflp_odr = Adafruit_BusIO_Register(
@@ -1184,22 +1189,25 @@ void Adafruit_LSM6DSV::setSFLPDataRate(lsm6dsv_sflp_data_rate_t data_rate) {
 
   sflp_data_rate.write(data_rate);
 
-  //last, reset the config functions access to default state
+  // last, reset the config functions access to default state
   funcCfgAccess();
 }
 
 /*
 Further inputs to the SFLP algorithm:
-Looks like you can give it a clue for the starting value of the gyro bias (16-bit floating point)
-There's also an "initialization request" bit that may be set - no description on what this does, must be stationary?
-It can use accelerometer offsets if you've calibrated the accelerometer to add up to +/-127 to the raw accel readings
-before applying the SFLP algorithm. Let's see how it goes without that.
+Looks like you can give it a clue for the starting value of the gyro bias
+(16-bit floating point) There's also an "initialization request" bit that may be
+set - no description on what this does, must be stationary? It can use
+accelerometer offsets if you've calibrated the accelerometer to add up to +/-127
+to the raw accel readings before applying the SFLP algorithm. Let's see how it
+goes without that.
 
 Outputs:
 Gyro bias 16 bit integer with 4.375 milli degrees/sec per LSB
 Gravity vector X/Y/Z 16 bit with 0.061 mg/LSB
-Game rotation vector, as a quaternion W/X/Y/Z, (16-bit floating point) SEEEEEFFFFFFFFFF (sign/exponent/fraction)
-use the float16 library to work with that data.
+Game rotation vector, as a quaternion W/X/Y/Z, (16-bit floating point)
+SEEEEEFFFFFFFFFF (sign/exponent/fraction) use the float16 library to work with
+that data.
 
 */
 
@@ -1214,28 +1222,29 @@ use the float16 library to work with that data.
 int Adafruit_LSM6DSV::readSFLPGravity(float &x, float &y, float &z) {
   int16_t data[3];
 
-  //first tell it that we will be talking to the embedded functions registers
+  // first tell it that we will be talking to the embedded functions registers
   funcCfgAccess(true);
 
-  Adafruit_BusIO_Register accel_data = Adafruit_BusIO_Register(
-      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_SFLP_GRAVX_L, sizeof(data));
+  Adafruit_BusIO_Register accel_data =
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD,
+                              LSM6DSV_SFLP_GRAVX_L, sizeof(data));
 
   if (!accel_data.read((uint8_t *)data, sizeof(data))) {
     x = y = z = NAN;
-	funcCfgAccess();
+    funcCfgAccess();
     return 0;
   }
 
-  // scale to metres/sec/sec - note the SFLP is fixed at the "2G" scale for all variants, all the time
-  // and we don't store the calculated value as a side-effect like we do with the main measurements
+  // scale to metres/sec/sec - note the SFLP is fixed at the "2G" scale for all
+  // variants, all the time and we don't store the calculated value as a
+  // side-effect like we do with the main measurements
   x = data[0] * 0.061 * SENSORS_GRAVITY_STANDARD / 1000;
   y = data[1] * 0.061 * SENSORS_GRAVITY_STANDARD / 1000;
   z = data[2] * 0.061 * SENSORS_GRAVITY_STANDARD / 1000;
 
   funcCfgAccess();
-  return 1; //success
+  return 1; // success
 }
-
 
 /**************************************************************************/
 /*!
@@ -1248,54 +1257,59 @@ int Adafruit_LSM6DSV::readSFLPGravity(float &x, float &y, float &z) {
 int Adafruit_LSM6DSV::readSFLPGyroBias(float &x, float &y, float &z) {
   int16_t data[3];
 
-  //first tell it that we will be talking to the embedded functions registers
+  // first tell it that we will be talking to the embedded functions registers
   funcCfgAccess(true);
 
-  Adafruit_BusIO_Register accel_data = Adafruit_BusIO_Register(
-      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_SFLP_GBIASX_L, sizeof(data));
+  Adafruit_BusIO_Register accel_data =
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD,
+                              LSM6DSV_SFLP_GBIASX_L, sizeof(data));
 
   if (!accel_data.read((uint8_t *)data, sizeof(data))) {
     x = y = z = NAN;
-	funcCfgAccess();
+    funcCfgAccess();
     return 0;
   }
 
-  // scale to degrees/sec - note the SFLP has a fixed scale for all variants, all the time
-  // and we don't store the calculated value as a side-effect like we do with the main measurements
+  // scale to degrees/sec - note the SFLP has a fixed scale for all variants,
+  // all the time and we don't store the calculated value as a side-effect like
+  // we do with the main measurements
   x = data[0] * 4.375 / 1000;
   y = data[1] * 4.375 / 1000;
   z = data[2] * 4.375 / 1000;
 
   funcCfgAccess();
-  return 1; //success
+  return 1; // success
 }
-
 
 /**************************************************************************/
 /*!
-    @brief Read SFLP orientation quaternion (float16 or just an int16_t if you don't have <float16.h>)
+    @brief Read SFLP orientation quaternion (float16 or just an int16_t if you
+   don't have <float16.h>)
     @param w reference to w axis
     @param x reference to x axis
     @param y reference to y axis
     @param z reference to z axis
     @returns 1 if success, 0 if not
 */
-int Adafruit_LSM6DSV::readSFLPQuaternion(float16 &w, float16 &x, float16 &y, float16 &z) {
+int Adafruit_LSM6DSV::readSFLPQuaternion(float16 &w, float16 &x, float16 &y,
+                                         float16 &z) {
   int16_t data[4];
 
-  //first tell it that we will be talking to the embedded functions registers
+  // first tell it that we will be talking to the embedded functions registers
   funcCfgAccess(true);
 
-  Adafruit_BusIO_Register accel_data = Adafruit_BusIO_Register(
-      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_SFLP_QUATW_L, sizeof(data));
+  Adafruit_BusIO_Register accel_data =
+      Adafruit_BusIO_Register(i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD,
+                              LSM6DSV_SFLP_QUATW_L, sizeof(data));
 
   if (!accel_data.read((uint8_t *)data, sizeof(data))) {
     w = x = y = z = 0;
-	funcCfgAccess();
+    funcCfgAccess();
     return 0;
   }
 
-  // No scale for quaternion, but if we have float16 support, we'll need to use its conversion function
+  // No scale for quaternion, but if we have float16 support, we'll need to use
+  // its conversion function
 #ifdef FLOAT16_LIB_VERSION
   w.setBinary(data[0]);
   x.setBinary(data[1]);
@@ -1309,9 +1323,8 @@ int Adafruit_LSM6DSV::readSFLPQuaternion(float16 &w, float16 &x, float16 &y, flo
 #endif
 
   funcCfgAccess();
-  return 1; //success
+  return 1; // success
 }
-
 
 /**************************************************************************/
 /*!
@@ -1319,7 +1332,7 @@ int Adafruit_LSM6DSV::readSFLPQuaternion(float16 &w, float16 &x, float16 &y, flo
     @returns The the FSM output data rate.
 */
 lsm6dsv_fsm_data_rate_t Adafruit_LSM6DSV::getFSMDataRate(void) {
-  //first tell it that we will be talking to the embedded functions registers
+  // first tell it that we will be talking to the embedded functions registers
   funcCfgAccess(true);
 
   Adafruit_BusIO_Register fsm_odr = Adafruit_BusIO_Register(
@@ -1330,7 +1343,7 @@ lsm6dsv_fsm_data_rate_t Adafruit_LSM6DSV::getFSMDataRate(void) {
 
   uint8_t val = fsm_data_rate.read();
 
-  //reset the config functions access to default state
+  // reset the config functions access to default state
   funcCfgAccess();
 
   return (lsm6dsv_fsm_data_rate_t)val;
@@ -1342,7 +1355,7 @@ lsm6dsv_fsm_data_rate_t Adafruit_LSM6DSV::getFSMDataRate(void) {
     @param  data_rate Must be a `lsm6dsv_fsm_data_rate_t`.
 */
 void Adafruit_LSM6DSV::setFSMDataRate(lsm6dsv_fsm_data_rate_t data_rate) {
-  //first tell it that we will be talking to the embedded functions registers
+  // first tell it that we will be talking to the embedded functions registers
   funcCfgAccess(true);
 
   Adafruit_BusIO_Register fsm_odr = Adafruit_BusIO_Register(
@@ -1353,7 +1366,7 @@ void Adafruit_LSM6DSV::setFSMDataRate(lsm6dsv_fsm_data_rate_t data_rate) {
 
   fsm_data_rate.write(data_rate);
 
-  //last, reset the config functions access to default state
+  // last, reset the config functions access to default state
   funcCfgAccess();
 }
 
@@ -1459,7 +1472,6 @@ int Adafruit_LSM6DSV::readGyroscope(float &x, float &y, float &z) {
   return 1;
 }
 
-
 /**************************************************************************/
 /*!
     @brief Gets the high-g accelerometer data rate, adjusted by FREQ_FINE.
@@ -1473,11 +1485,12 @@ float Adafruit_LSM6DSV::highGSampleRate(void) {
 
 /**************************************************************************/
 /*!
-    @brief Check for available data from high-G accelerometer (not useful on chips without independent high-G)
-    @returns 1 
+    @brief Check for available data from high-G accelerometer (not useful on
+   chips without independent high-G)
+    @returns 1
 */
 int Adafruit_LSM6DSV::highGAvailable(void) {
-  //return (this->status() & 0b1000) ? 1 : 0;
+  // return (this->status() & 0b1000) ? 1 : 0;
   return 1;
 }
 
@@ -1492,7 +1505,7 @@ int Adafruit_LSM6DSV::highGAvailable(void) {
 int Adafruit_LSM6DSV::readHighG(float &x, float &y, float &z) {
   int16_t data[3];
 
-  if(!_high_g_enabled) {
+  if (!_high_g_enabled) {
     x = y = z = NAN;
     return 0;
   }
@@ -1517,7 +1530,6 @@ int Adafruit_LSM6DSV::readHighG(float &x, float &y, float &z) {
   return 1;
 }
 
-
 /****************************************************************
   F I F O
 ****************************************************************/
@@ -1540,7 +1552,7 @@ uint8_t Adafruit_LSM6DSV::getFifoStatus() {
     @brief Fifo data available
     @returns Number of entries available to read
 */
-int Adafruit_LSM6DSV::getFifoAvailable() { 
+int Adafruit_LSM6DSV::getFifoAvailable() {
 
   Adafruit_BusIO_Register status1 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_FIFO_STATUS1);
@@ -1549,9 +1561,9 @@ int Adafruit_LSM6DSV::getFifoAvailable() {
   Adafruit_BusIO_RegisterBits highBit =
       Adafruit_BusIO_RegisterBits(&status2, 1, 0);
 
-  int out = status1.read(); //get the lower bits
-  if(highBit.read()) out += 256; //8th bit is in status2 register
-  
+  int out = status1.read();       // get the lower bits
+  if (highBit.read()) out += 256; // 8th bit is in status2 register
+
   return out;
 }
 
@@ -1568,7 +1580,6 @@ bool Adafruit_LSM6DSV::getFifo(uint8_t *data) {
   return fifo_data.read(data, 7);
 }
 
-
 /**************************************************************************/
 /*!
     @brief Configure interrupt pin 1 fifo options
@@ -1577,9 +1588,11 @@ bool Adafruit_LSM6DSV::getFifo(uint8_t *data) {
     @param full true if the next data item is going to fill the Fifo
     @param batch true if the counter_BDR threshold reached
 */
-void Adafruit_LSM6DSV::configFifoInt1(bool threshold, bool overflow, bool full, bool batch) {
-	//threshold interrupt when there are M sensor readings in the fifo, 
-	//batch interrupt when there are N readings of one sensor out of accel/gyro/EIS gyro/High-G accel, not counting the other data in the fifo
+void Adafruit_LSM6DSV::configFifoInt1(bool threshold, bool overflow, bool full,
+                                      bool batch) {
+  // threshold interrupt when there are M sensor readings in the fifo,
+  // batch interrupt when there are N readings of one sensor out of
+  // accel/gyro/EIS gyro/High-G accel, not counting the other data in the fifo
   Adafruit_BusIO_Register int1_ctrl = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_INT1_CTRL);
 
@@ -1606,9 +1619,11 @@ void Adafruit_LSM6DSV::configFifoInt1(bool threshold, bool overflow, bool full, 
     @param full true if the next data item is going to fill the Fifo
     @param batch true if the counter_BDR threshold reached
 */
-void Adafruit_LSM6DSV::configFifoInt2(bool threshold, bool overflow, bool full, bool batch) {
-	//threshold interrupt when there are M sensor readings in the fifo, 
-	//batch interrupt when there are N readings of one sensor out of accel/gyro/EIS gyro/High-G accel, not counting the other data in the fifo
+void Adafruit_LSM6DSV::configFifoInt2(bool threshold, bool overflow, bool full,
+                                      bool batch) {
+  // threshold interrupt when there are M sensor readings in the fifo,
+  // batch interrupt when there are N readings of one sensor out of
+  // accel/gyro/EIS gyro/High-G accel, not counting the other data in the fifo
   Adafruit_BusIO_Register int2_ctrl = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_INT2_CTRL);
 
@@ -1643,7 +1658,6 @@ void Adafruit_LSM6DSV::setFifoAccelRate(lsm6dsv_data_rate_t data_rate) {
   accel_data_rate.write(data_rate);
 }
 
-
 /**************************************************************************/
 /*!
     @brief Set the rate of gyro data recorded to the Fifo
@@ -1660,12 +1674,11 @@ void Adafruit_LSM6DSV::setFifoGyroRate(lsm6dsv_data_rate_t data_rate) {
   gyro_data_rate.write(data_rate);
 }
 
-
 /**************************************************************************/
 /*!
     @brief Set the rate of temperature data recorded to the Fifo
-    @param  data_rate
-            The the temperature data rate. Must be one of the first 4 `lsm6dsv_data_rate_t` (0 to 60Hz).
+    @param  data_rate The the temperature data rate. Must be one of the first
+   four `lsm6dsv_data_rate_t` (0 to 60Hz).
 */
 void Adafruit_LSM6DSV::setFifoTempRate(lsm6dsv_data_rate_t data_rate) {
   Adafruit_BusIO_Register fifo_ctrl4 = Adafruit_BusIO_Register(
@@ -1680,8 +1693,8 @@ void Adafruit_LSM6DSV::setFifoTempRate(lsm6dsv_data_rate_t data_rate) {
 /**************************************************************************/
 /*!
     @brief Set the rate of timestamps data recorded to the Fifo
-			Side effect: always sets the timestamp register to running state
-			(each click is 21.7us plus or minus the freq_fine adjustment)
+                        Side effect: always sets the timestamp register to
+   running state (each click is 21.7us plus or minus the freq_fine adjustment)
     @param  dec
             The the decimation factor: 0 (do not record) 1, 8, 32
 */
@@ -1694,7 +1707,7 @@ void Adafruit_LSM6DSV::setFifoTSDec(lsm6_fifo_dec_ts_t dec) {
 
   dec_ts.write(dec);
 
-  //turn on the timestamp counter 
+  // turn on the timestamp counter
 
   Adafruit_BusIO_Register func_en = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_FUNCTIONS_ENABLE);
@@ -1707,9 +1720,9 @@ void Adafruit_LSM6DSV::setFifoTSDec(lsm6_fifo_dec_ts_t dec) {
 
 /**************************************************************************/
 /*!
-    @brief Set the fifo recording of EIS gyro data 
-		(not in use as no other EIS functions available)
-		(only included for complete coverage of this register)
+    @brief Set the fifo recording of EIS gyro data
+                (not in use as no other EIS functions available)
+                (only included for complete coverage of this register)
     @param  en true to enable
 */
 void Adafruit_LSM6DSV::setFifoGyroEISRate(bool en) {
@@ -1724,8 +1737,8 @@ void Adafruit_LSM6DSV::setFifoGyroEISRate(bool en) {
 
 /**************************************************************************/
 /*!
-    @brief Set the fifo recording of high-g accelerometer 
-		(experimental - not sure if this is the real control for this)
+    @brief Set the fifo recording of high-g accelerometer
+                (experimental - not sure if this is the real control for this)
     @param  en true to enable
 */
 void Adafruit_LSM6DSV::setFifoHighGRate(bool en) {
@@ -1737,7 +1750,6 @@ void Adafruit_LSM6DSV::setFifoHighGRate(bool en) {
 
   xl_hg_batch_en.write(en);
 }
-
 
 /**************************************************************************/
 /*!
@@ -1767,14 +1779,14 @@ void Adafruit_LSM6DSV::setFifoWatermark(uint8_t wtm) {
   fifo_ctrl1.write(wtm);
 }
 
-
 /**************************************************************************/
 /*!
     @brief Set the batch data rate for the fifo
     @param  trig The triggering sensor to count for the batch
-	@param threshold The number of batches to raise the interrupt (max 1023)
+        @param threshold The number of batches to raise the interrupt (max 1023)
 */
-void Adafruit_LSM6DSV::setFifoCounterBDR(lsm6_fifo_batch_trig_t trig, uint16_t threshold) {
+void Adafruit_LSM6DSV::setFifoCounterBDR(lsm6_fifo_batch_trig_t trig,
+                                         uint16_t threshold) {
   Adafruit_BusIO_Register reg1 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_COUNTER_BDR_REG1);
   Adafruit_BusIO_Register reg2 = Adafruit_BusIO_Register(
@@ -1790,7 +1802,6 @@ void Adafruit_LSM6DSV::setFifoCounterBDR(lsm6_fifo_batch_trig_t trig, uint16_t t
 
   high_bits.write(threshold >> 8);
   reg2.write(threshold & 0xFF);
-
 }
 
 /**************************************************************************/
@@ -1800,10 +1811,12 @@ void Adafruit_LSM6DSV::setFifoCounterBDR(lsm6_fifo_batch_trig_t trig, uint16_t t
     @param sflpGravity True to record gravity vector
     @param sflpGBias True to record gyro bias
     @param stepCounter True to record pedometer step counter
-	@param mlc True to record Machine Learning Core results
+        @param mlc True to record Machine Learning Core results
 */
-void Adafruit_LSM6DSV::setFifoEmbFunc(bool sflpGame, bool sflpGravity, bool sflpGBias, bool stepCounter, bool mlc) {
-  //first tell it that we will be talking to the embedded functions registers
+void Adafruit_LSM6DSV::setFifoEmbFunc(bool sflpGame, bool sflpGravity,
+                                      bool sflpGBias, bool stepCounter,
+                                      bool mlc) {
+  // first tell it that we will be talking to the embedded functions registers
   funcCfgAccess(true);
 
   Adafruit_BusIO_Register fifo_en_a = Adafruit_BusIO_Register(
@@ -1826,10 +1839,425 @@ void Adafruit_LSM6DSV::setFifoEmbFunc(bool sflpGame, bool sflpGravity, bool sflp
   step_en.write(stepCounter);
   mlc_en.write(mlc);
 
-  //last, reset the config functions access to default state
+  // last, reset the config functions access to default state
   funcCfgAccess();
 }
 
 /****************************************************************
   end  F I F O
+****************************************************************/
+
+/**************************************************************************/
+/*!
+    @brief Polarity of INT2 when used as an input
+    @param activeHigh True for active-high input
+*/
+void Adafruit_LSM6DSV::configInt2InHigh(bool activeHigh) {
+
+  Adafruit_BusIO_Register ctrl4 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_CTRL4);
+
+  Adafruit_BusIO_RegisterBits int2_in_lh =
+      Adafruit_BusIO_RegisterBits(&ctrl4, 1, 0);
+
+  int2_in_lh.write(activeHigh);
+}
+
+/****************************************************************
+  Sensor Hub
+****************************************************************/
+
+/**************************************************************************/
+/*!
+    @brief Check if sensor hub operation completed
+                        Read this first as any read of this register will reset
+   this bit for the next cycle. In fact, that's the only way to reset this bit.
+    @returns True when the "end operation" bit is set in status_master_mainpage
+*/
+bool Adafruit_LSM6DSV::sHubConcluded() {
+  Adafruit_BusIO_Register status_master = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_STATUS_MASTER_MAINPAGE);
+
+  Adafruit_BusIO_RegisterBits shub_endop =
+      Adafruit_BusIO_RegisterBits(&status_master, 1, 0);
+
+  return shub_endop.read();
+}
+
+/**************************************************************************/
+/*!
+    @brief Check if sensor hub write-once is done
+    @returns True when the "wr once done" bit is set in status_master_mainpage
+*/
+bool Adafruit_LSM6DSV::sHubWriteOnceDone() {
+  Adafruit_BusIO_Register status_master = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_STATUS_MASTER_MAINPAGE);
+
+  Adafruit_BusIO_RegisterBits wr_done =
+      Adafruit_BusIO_RegisterBits(&status_master, 1, 7);
+
+  return wr_done.read();
+}
+
+/**************************************************************************/
+/*!
+    @brief Check sensor hub NAKs
+    @returns 4 bits representing slave NAK status (status_master_mainpage)
+*/
+uint8_t Adafruit_LSM6DSV::sHubSlaveNAK() {
+  Adafruit_BusIO_Register status_master = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_STATUS_MASTER);
+
+  Adafruit_BusIO_RegisterBits nak_bits =
+      Adafruit_BusIO_RegisterBits(&status_master, 4, 3);
+
+  return nak_bits.read();
+}
+
+/**************************************************************************/
+/*!
+    @brief Reset the I2C master
+               To perform a reset you must turn this bit on, then off
+    @param resetMaster True to assert the reset master bit
+*/
+void Adafruit_LSM6DSV::sHubConfigResetMaster(bool resetMaster) {
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_MASTER_CONFIG);
+
+  Adafruit_BusIO_RegisterBits reset_master =
+      Adafruit_BusIO_RegisterBits(&master_config, 1, 7);
+
+  reset_master.write(resetMaster);
+
+  // last, reset the register access to default state
+  funcCfgAccess();
+}
+
+/**************************************************************************/
+/*!
+    @brief Set the write-once bit
+               Turns itself off automatically once the wite was written?
+                   Check that write was done with .sHubWriteOnceDone()
+    @param writeOnce True to assert the write-once bit
+*/
+void Adafruit_LSM6DSV::sHubConfigWriteOnce(bool writeOnce) {
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_MASTER_CONFIG);
+
+  Adafruit_BusIO_RegisterBits wr =
+      Adafruit_BusIO_RegisterBits(&master_config, 1, 6);
+
+  wr.write(writeOnce);
+
+  // last, reset the register access to default state
+  funcCfgAccess();
+}
+
+/**************************************************************************/
+/*!
+    @brief Set the start config bit for sensor hub
+    @param startConfig True to select the INT2 pin as the start signal, false
+   for accel/gyro trigger
+*/
+void Adafruit_LSM6DSV::sHubConfigStartConfig(bool startConfig) {
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_MASTER_CONFIG);
+
+  Adafruit_BusIO_RegisterBits sc =
+      Adafruit_BusIO_RegisterBits(&master_config, 1, 5);
+
+  sc.write(startConfig);
+
+  // last, reset the register access to default state
+  funcCfgAccess();
+}
+
+/**************************************************************************/
+/*!
+    @brief Set the sensor hub passthrough mode
+    @param passThrough True to passthrough, false for normal operation
+*/
+void Adafruit_LSM6DSV::sHubConfigPassThrough(bool passThrough) {
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_MASTER_CONFIG);
+
+  Adafruit_BusIO_RegisterBits ptm =
+      Adafruit_BusIO_RegisterBits(&master_config, 1, 4);
+
+  ptm.write(passThrough);
+
+  // last, reset the register access to default state
+  funcCfgAccess();
+}
+
+/**************************************************************************/
+/*!
+    @brief Set the sensor hub I2C pullups
+    @param pullUp True for active pullpus on the second I2C
+*/
+void Adafruit_LSM6DSV::sHubConfigPullUp(bool pullUp) {
+  Adafruit_BusIO_Register if_cfg = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_IF_CFG);
+
+  Adafruit_BusIO_RegisterBits shub_pu =
+      Adafruit_BusIO_RegisterBits(&if_cfg, 1, 3);
+
+  shub_pu.write(pullUp);
+}
+
+/**************************************************************************/
+/*!
+    @brief Turn on the master control for the auxiliary I2C
+   This part gets really weird. Read:
+   https://www.st.com/resource/en/application_note/an5922-lsm6dsv-6axis-imu-with-embedded-sensor-fusion-i3c-oiseis-for-smart-applications-stmicroelectronics.pdf
+   Look at page 73 (also appears on page 80 and 81). In order for the active I2C
+   master to READ data from any sensor, the WRITE_ONCE bit must be set. The
+   sensor's R/W bit is set to 1 to read, so there's no danger of accidentally
+   writing but why set WRITE_ONCE for reading? This little detail doesn't appear
+   in the datasheet for any LSM6 sensor, only in this app note.
+    @param masterOn True to enable
+*/
+void Adafruit_LSM6DSV::sHubConfigMasterOn(bool masterOn) {
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_MASTER_CONFIG);
+
+  Adafruit_BusIO_RegisterBits master_on =
+      Adafruit_BusIO_RegisterBits(&master_config, 1, 2);
+
+  master_on.write(masterOn);
+
+  sHubConfigWriteOnce(masterOn);
+  // ConfigWriteOnce has already reset the register access to default state
+}
+
+/**************************************************************************/
+/*!
+    @brief Set the number of sensors to be read by the sensor hub
+    @param countSensors 0-4
+*/
+void Adafruit_LSM6DSV::sHubConfigCountSensors(int countSensors) {
+  if (countSensors <= 0) {
+    // zero is a special case - need to turn off the master to get this result
+    sHubConfigMasterOn(false);
+
+  } else {
+    // tell it that we will be talking to the sensor hub registers
+    funcCfgAccess(false, true);
+
+    Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
+        i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_MASTER_CONFIG);
+
+    Adafruit_BusIO_RegisterBits aux_sen =
+        Adafruit_BusIO_RegisterBits(&master_config, 2, 0);
+
+    aux_sen.write(countSensors - 1); // register uses 0-3 to represent 1-4
+
+    // reset the register access to default state
+    funcCfgAccess();
+  }
+}
+
+/**************************************************************************/
+/*!
+    @brief Get the number of sensors to be read by the sensor hub
+    @returns Count of sensors 0 - 4
+*/
+int Adafruit_LSM6DSV::sHubGetCountSensors() {
+  // Zero is a special case, when master is off
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_MASTER_CONFIG);
+
+  Adafruit_BusIO_RegisterBits m_o =
+      Adafruit_BusIO_RegisterBits(&master_config, 1, 5);
+
+  bool masterOn = m_o.read();
+
+  Adafruit_BusIO_RegisterBits aux_sen =
+      Adafruit_BusIO_RegisterBits(&master_config, 2, 0);
+
+  int val = aux_sen.read();
+
+  // reset the register access to default state
+  funcCfgAccess();
+
+  if (masterOn) {
+    // stored values 0-3 represent 1-4 sensors
+    return val + 1;
+  } else {
+    // master was off
+    return 0;
+  }
+}
+
+/**************************************************************************/
+/*!
+    @brief Sensor hub settings for one sensor (0-3)
+    @param sensorNumber 0-3 the sensor you wish to configure
+        @param addr I2C address of the sensor chip (the 7-bit address without
+   the read/write bit)
+        @param readBit True to enable reading - you always want this to be true
+   except in special cases of writing to sensor0
+        @param subAddr register address on the sensor
+        @param numReadOperations Number of bytes to read from the sensor
+        @param enableFifo Output routed to Fifo (leave at false if no Fifo)
+        @param sHubODR Output Data Rate - see the datasheet for your chip for
+   valid values, only applied to sensor 0
+*/
+void Adafruit_LSM6DSV::sHubSensor(int sensorNumber, uint8_t addr, bool readBit,
+                                  uint8_t subAddr, int numReadOperations,
+                                  bool enableFifo, uint8_t sHubODR) {
+  const bool debug = false;
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  sensorNumber = constrain(sensorNumber, 0, 3);
+  int offset = 3 * sensorNumber; // register offset to step into the
+                                 // configuration registers for each sensor
+
+  Adafruit_BusIO_Register SLV_ADD = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_SLV0_ADD + offset);
+
+  Adafruit_BusIO_RegisterBits addr_bits =
+      Adafruit_BusIO_RegisterBits(&SLV_ADD, 7, 1);
+
+  addr_bits.write(addr);
+
+  Adafruit_BusIO_RegisterBits rw_bit =
+      Adafruit_BusIO_RegisterBits(&SLV_ADD, 1, 0);
+
+  rw_bit.write(readBit);
+
+  Adafruit_BusIO_Register SLV_SUBADD = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_SLV0_SUBADD + offset);
+
+  SLV_SUBADD.write(subAddr);
+
+  Adafruit_BusIO_Register SLV_CONFIG = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_SLV0_CONFIG + offset);
+
+  Adafruit_BusIO_RegisterBits numOps =
+      Adafruit_BusIO_RegisterBits(&SLV_CONFIG, 3, 0);
+
+  numOps.write(numReadOperations);
+
+  Adafruit_BusIO_RegisterBits fifo_batch =
+      Adafruit_BusIO_RegisterBits(&SLV_CONFIG, 1, 3);
+
+  fifo_batch.write(enableFifo);
+
+  if (debug) {
+    Serial.print("configured sensor ");
+    Serial.print(sensorNumber);
+    Serial.print(" Address 0x");
+    Serial.print(addr_bits.read(), HEX);
+    if (rw_bit.read()) Serial.print(" read");
+    else
+      Serial.print(" write");
+    Serial.print(" register 0x");
+    Serial.print(SLV_SUBADD.read(), HEX);
+    Serial.print(" read operations:");
+    Serial.print(numOps.read());
+    if (fifo_batch.read()) Serial.print(" routed to fifo");
+    else
+      Serial.print(" no fifo");
+    Serial.println();
+  }
+
+  // output data rate is only set on sensor 0
+  if (sensorNumber == 0) {
+    Adafruit_BusIO_RegisterBits odr =
+        Adafruit_BusIO_RegisterBits(&SLV_CONFIG, 3, 5);
+
+    odr.write(sHubODR);
+    if (debug) Serial.print("Sensor 0 set output data rate to ");
+    if (debug) Serial.println(sHubODR);
+  }
+
+  // last, reset the register access to default state
+  funcCfgAccess();
+}
+
+/**************************************************************************/
+/*!
+    @brief Load the data-write register for sending to sensor 0
+               Usually used for write-once to send a byte to the sensor.
+    @param data Single byte to write
+*/
+void Adafruit_LSM6DSV::sHubDataWrite(uint8_t data) {
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  Adafruit_BusIO_Register datawrite = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_DATAWRITE_SLV0);
+
+  datawrite.write(data);
+
+  // last, reset the register access to default state
+  funcCfgAccess();
+}
+
+/**************************************************************************/
+/*!
+    @brief Read bytes from the sensor hub registers (max 18)
+               Since sensor outputs are always stacked starting at position 1
+                   this will always start reading from position 1
+    @param *data Pointer to byte buffer to write data
+        @param numBytes Number of bytes to be read (max 18)
+        @returns true if read was successful
+*/
+bool Adafruit_LSM6DSV::sHubData(uint8_t data[], size_t numBytes) {
+  const bool debug = false;
+  // first tell it that we will be talking to the sensor hub registers
+  funcCfgAccess(false, true);
+
+  Adafruit_BusIO_Register sensor_hub_1 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_SENSOR_HUB_1, 18);
+
+  if (debug) Serial.print("sHubData() fetching from address 0x");
+  if (debug) Serial.print(LSM6DSV_SENSOR_HUB_1, HEX);
+  if (debug) Serial.print(" for ");
+  if (debug) Serial.print(constrain(numBytes, 0, 18));
+  if (debug) Serial.print(" bytes");
+  if (debug) Serial.println();
+
+  bool result = sensor_hub_1.read(
+      data, constrain(numBytes, 0,
+                      18)); // makes no sense to read 0 bytes but we'll allow it
+
+  if (debug) {
+    for (int i = 0; i < numBytes; i++) {
+      Serial.print(" 0x");
+      if (data[i] < 0x10) Serial.print("0");
+      Serial.print(data[i], HEX);
+    }
+    Serial.println();
+  }
+
+  if (debug && !result) Serial.println("data got a false from read");
+
+  // last, reset the register access to default state
+  funcCfgAccess();
+
+  return result;
+}
+/****************************************************************
+  end  Sensor Hub
 ****************************************************************/

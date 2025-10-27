@@ -63,7 +63,7 @@ void Adafruit_LSM6DS3TRC::enablePedometer(bool enable) {
 */
 void Adafruit_LSM6DS3TRC::enableI2CMasterPullups(bool enable_pullups) {
   Adafruit_BusIO_Register master_config = Adafruit_BusIO_Register(
-      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS3TRC_MASTER_CONFIG);
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSL_MASTER_CONFIG);
   Adafruit_BusIO_RegisterBits i2c_master_pu_en =
       Adafruit_BusIO_RegisterBits(&master_config, 1, 3);
 

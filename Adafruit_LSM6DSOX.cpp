@@ -18,6 +18,10 @@
 Adafruit_LSM6DSOX::Adafruit_LSM6DSOX(void) {}
 
 bool Adafruit_LSM6DSOX::_init(int32_t sensor_id) {
+  // Might have been stopped in a strange state, reset the register access to
+  // default state
+  funcCfgAccess();
+
   Adafruit_BusIO_Register chip_id = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_WHOAMI);
 

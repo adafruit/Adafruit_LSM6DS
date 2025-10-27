@@ -18,6 +18,10 @@
 Adafruit_ISM330DHCX::Adafruit_ISM330DHCX(void) {}
 
 bool Adafruit_ISM330DHCX::_init(int32_t sensor_id) {
+  // Might have been stopped in a strange state, reset the register access to
+  // default state
+  funcCfgAccess();
+
   // make sure we're talking to the right chip
   if (chipID() != ISM330DHCX_CHIP_ID) {
     return false;

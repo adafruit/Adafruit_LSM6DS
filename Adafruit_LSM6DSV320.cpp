@@ -1,20 +1,24 @@
 
 /*!
  *  @file Adafruit_LSM6DSV320.cpp
- *  Adafruit LSM6DSV320 9-DoF Accelerometer and Gyroscope and high-G accelerometer library
+ *  Adafruit LSM6DSV320 9-DoF Accelerometer and Gyroscope and high-G
+ * accelerometer library
  *
  *  @section intro_sec Introduction
- *  Sub-class of Adafruit_LSM6DSV that extends the functions for the V320 and V80 chips
+ *  Sub-class of Adafruit_LSM6DSV that extends the functions for the V320 and
+ * V80 chips
  *
  *  Aside: magnetic sensors from ST
- *      This sensor is likely going to be paired with a 3-axis compass to make a 9-dof sensor.
- *      The best ST part for an Earth compass used to be the LIS3MDL but that seems to be discontinued.
- *      The current LIS2MDL is less sensitive but still adequate as a compass. The benefit seems
- *      to be that it can withstand 10x the magnetic field (maybe from a carelessly-handled magnet)
- *      without damage. The disadvantage is the LIS3 had a maximum G-shock rating of 10,000g
- *      [compared to the LSM6 chips rated for 20,000g] but the LIS2 has no maximum G-shock
- *      and the data sheet warns "improper handling may cause permanent damage to the part."
- *      So we want to build a high-G sensor with compass, we may damage the compass.
+ *      This sensor is likely going to be paired with a 3-axis compass to make a
+ * 9-dof sensor. The best ST part for an Earth compass used to be the LIS3MDL
+ * but that seems to be discontinued. The current LIS2MDL is less sensitive but
+ * still adequate as a compass. The benefit seems to be that it can withstand
+ * 10x the magnetic field (maybe from a carelessly-handled magnet) without
+ * damage. The disadvantage is the LIS3 had a maximum G-shock rating of 10,000g
+ *      [compared to the LSM6 chips rated for 20,000g] but the LIS2 has no
+ * maximum G-shock and the data sheet warns "improper handling may cause
+ * permanent damage to the part." So we want to build a high-G sensor with
+ * compass, we may damage the compass.
  *
  *  @section author Author
  *
@@ -30,24 +34,22 @@
 
 #include "Adafruit_LSM6DSV320.h"
 
-//Data rates unique to the high-g accelerometer
+// Data rates unique to the high-g accelerometer
 static const float _V320_data_rate_arr[] = {
-    [LSM6DSV320_HGRATE_SHUTDOWN] = 0.0f,  
-    [LSM6DSV320_HGRATE_NA1] = 0.0f,      
-    [LSM6DSV320_HGRATE_NA2] = 0.0f,     
-    [LSM6DSV320_HGRATE_480_HZ] = 480.0f,   
-    [LSM6DSV320_HGRATE_960_HZ] = 960.0f,    
+    [LSM6DSV320_HGRATE_SHUTDOWN] = 0.0f,
+    [LSM6DSV320_HGRATE_NA1] = 0.0f,
+    [LSM6DSV320_HGRATE_NA2] = 0.0f,
+    [LSM6DSV320_HGRATE_480_HZ] = 480.0f,
+    [LSM6DSV320_HGRATE_960_HZ] = 960.0f,
     [LSM6DSV320_HGRATE_1_92K_HZ] = 1920.0f,
-    [LSM6DSV320_HGRATE_3_84K_HZ] = 3840.0f,    
+    [LSM6DSV320_HGRATE_3_84K_HZ] = 3840.0f,
     [LSM6DSV320_HGRATE_7_68K_HZ] = 7680.0f,
 };
-
 
 /*!
  *    @brief  Instantiates a new LSM6DSV320 class
  */
 Adafruit_LSM6DSV320::Adafruit_LSM6DSV320(void) {}
-
 
 /*!
  *    @brief  Destructor required because base class declares it as virtual
@@ -55,17 +57,20 @@ Adafruit_LSM6DSV320::Adafruit_LSM6DSV320(void) {}
 Adafruit_LSM6DSV320::~Adafruit_LSM6DSV320(void) {}
 
 bool Adafruit_LSM6DSV320::_init(int32_t sensor_id) {
-  // call base class _init() - ignore its return value as it will be looking for the wrong chip ID
+  // call base class _init() - ignore its return value as it will be looking for
+  // the wrong chip ID
   Adafruit_LSM6DSV::_init(sensor_id);
 
-  //now set up the high-g sensor
-  setHighGDataRate(LSM6DSV320_HGRATE_480_HZ);  //doesn't go any slower than this
-  setHighGRange(LSM6DSV320_ACCEL_RANGE_128_G); //Maximum common to both V320 and V80
+  // now set up the high-g sensor
+  setHighGDataRate(LSM6DSV320_HGRATE_480_HZ); // doesn't go any slower than this
+  setHighGRange(
+      LSM6DSV320_ACCEL_RANGE_128_G); // Maximum common to both V320 and V80
 
-  return (chipID() == LSM6DSV320_CHIP_ID); //identical chip ID for both V320 and V80
+  return (chipID() ==
+          LSM6DSV320_CHIP_ID); // identical chip ID for both V320 and V80
 }
 
-/**************************************************************************/ 
+/**************************************************************************/
 /*!
     @brief Gets the high-G data rate.
     @returns The the high-G data rate.
@@ -97,7 +102,9 @@ void Adafruit_LSM6DSV320::setHighGDataRate(lsm6dsv320_high_g_rate_t data_rate) {
 
   accel_data_rate.write(data_rate);
 
-  _high_g_enabled = (data_rate != LSM6DSV320_HGRATE_SHUTDOWN); //don't bother reading the output registers if it's off
+  _high_g_enabled =
+      (data_rate != LSM6DSV320_HGRATE_SHUTDOWN); // don't bother reading the
+                                                 // output registers if it's off
 }
 
 /**************************************************************************/
@@ -143,7 +150,7 @@ void Adafruit_LSM6DSV320::setHighGRange(lsm6dsv320_accel_range_t new_range) {
 */
 void Adafruit_LSM6DSV320::setHighGScale() {
 
-  //magic numbers from the datasheet are milli-gee per LSB, convert to m/s
+  // magic numbers from the datasheet are milli-gee per LSB, convert to m/s
   switch (accelHighGBuffered) {
   case LSM6DSV320_ACCEL_RANGE_32_G:
     highGScale = 0.976 * SENSORS_GRAVITY_STANDARD / 1000;
@@ -163,7 +170,6 @@ void Adafruit_LSM6DSV320::setHighGScale() {
   }
 }
 
-
 /**************************************************************************/
 /*!
     @brief Enables and disables the data ready interrupt on INT 1.
@@ -173,10 +179,10 @@ void Adafruit_LSM6DSV320::setHighGScale() {
 */
 void Adafruit_LSM6DSV320::configInt1(bool drdy_g, bool drdy_xl, bool drdy_hg) {
 
-  //call the base class to do the regular accel and gyro on INT1_CTRL
+  // call the base class to do the regular accel and gyro on INT1_CTRL
   Adafruit_LSM6DSV::configInt1(drdy_g, drdy_xl);
 
-  //high-g interrupt pin control is in CTRL7
+  // high-g interrupt pin control is in CTRL7
   Adafruit_BusIO_Register ctrl7 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_CTRL7);
 
@@ -195,10 +201,10 @@ void Adafruit_LSM6DSV320::configInt1(bool drdy_g, bool drdy_xl, bool drdy_hg) {
 */
 void Adafruit_LSM6DSV320::configInt2(bool drdy_g, bool drdy_xl, bool drdy_hg) {
 
-  //call the base class to do the regular accel and gyro on INT2_CTRL
+  // call the base class to do the regular accel and gyro on INT2_CTRL
   Adafruit_LSM6DSV::configInt2(drdy_g, drdy_xl);
 
-  //high-g interrupt pin control is in CTRL7
+  // high-g interrupt pin control is in CTRL7
   Adafruit_BusIO_Register ctrl7 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSV_CTRL7);
 
@@ -211,8 +217,8 @@ void Adafruit_LSM6DSV320::configInt2(bool drdy_g, bool drdy_xl, bool drdy_hg) {
 /**************************************************************************/
 /*!
     @brief Enables or disable the high-G sensor output registerss.
-	       Note that "power down" for the sensor is set by the data rate 000
-		   this is just directing the output to the OIS registers.
+               Note that "power down" for the sensor is set by the data rate 000
+                   this is just directing the output to the OIS registers.
     @param en True to enable high-G
 */
 void Adafruit_LSM6DSV320::enableHighG(bool en) {
@@ -241,7 +247,7 @@ float Adafruit_LSM6DSV320::highGSampleRate(void) {
 
 /**************************************************************************/
 /*!
-    @brief Check for available data from high-G accelerometer 
+    @brief Check for available data from high-G accelerometer
     @returns 1 if available
 */
 int Adafruit_LSM6DSV320::highGAvailable(void) {
