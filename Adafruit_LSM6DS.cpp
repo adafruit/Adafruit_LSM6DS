@@ -52,7 +52,13 @@ Adafruit_LSM6DS::Adafruit_LSM6DS(void) {}
 /*!
  *    @brief  Cleans up the LSM6DS
  */
-Adafruit_LSM6DS::~Adafruit_LSM6DS(void) { delete temp_sensor; }
+Adafruit_LSM6DS::~Adafruit_LSM6DS(void) {
+  delete temp_sensor;
+  delete accel_sensor;
+  delete gyro_sensor;
+  delete i2c_dev;
+  delete spi_dev;
+}
 
 /*!  @brief  Unique subclass initializer post i2c/spi init
  *   @param sensor_id Optional unique ID for the sensor set
@@ -119,6 +125,8 @@ uint8_t Adafruit_LSM6DS::status(void) {
 boolean Adafruit_LSM6DS::begin_I2C(uint8_t i2c_address, TwoWire *wire,
                                    int32_t sensor_id) {
   delete i2c_dev; // remove old interface
+  delete spi_dev;
+  spi_dev = NULL;
 
   i2c_dev = new Adafruit_I2CDevice(i2c_address, wire);
 
@@ -140,6 +148,7 @@ boolean Adafruit_LSM6DS::begin_I2C(uint8_t i2c_address, TwoWire *wire,
  */
 bool Adafruit_LSM6DS::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
                                 int32_t sensor_id, uint32_t frequency) {
+  delete i2c_dev;
   i2c_dev = NULL;
 
   delete spi_dev; // remove old interface
@@ -170,6 +179,7 @@ bool Adafruit_LSM6DS::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
 bool Adafruit_LSM6DS::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
                                 int8_t mosi_pin, int32_t sensor_id,
                                 uint32_t frequency) {
+  delete i2c_dev;
   i2c_dev = NULL;
 
   delete spi_dev; // remove old interface
