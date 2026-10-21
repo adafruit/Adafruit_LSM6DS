@@ -78,7 +78,8 @@ void Adafruit_LSM6DSO32::_read(void) {
   rawAccY = buffer[11] << 8 | buffer[10];
   rawAccZ = buffer[13] << 8 | buffer[12];
 
-  lsm6ds_gyro_range_t gyro_range = getGyroRange();
+  // use the buffered ranges instead of reading CTRL1_XL/CTRL2_G each time
+  lsm6ds_gyro_range_t gyro_range = gyroRangeBuffered;
   float gyro_scale = 1; // range is in milli-dps per bit!
   if (gyro_range == ISM330DHCX_GYRO_RANGE_4000_DPS)
     gyro_scale = 140.0;
@@ -97,7 +98,9 @@ void Adafruit_LSM6DSO32::_read(void) {
   gyroY = rawGyroY * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
   gyroZ = rawGyroZ * gyro_scale * SENSORS_DPS_TO_RADS / 1000.0;
 
-  lsm6dso32_accel_range_t accel_range = getAccelRange();
+  // accelRangeBuffered holds the raw FS_XL code, which maps to DSO32 ranges
+  lsm6dso32_accel_range_t accel_range =
+      (lsm6dso32_accel_range_t)accelRangeBuffered;
   float accel_scale = 1; // range is in milli-g per bit!
   if (accel_range == LSM6DSO32_ACCEL_RANGE_32_G)
     accel_scale = 0.976;
@@ -141,5 +144,6 @@ void Adafruit_LSM6DSO32::setAccelRange(lsm6dso32_accel_range_t new_range) {
       Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
 
   accel_range.write(new_range);
+  accelRangeBuffered = (lsm6ds_accel_range_t)new_range;
   delay(20);
 }
