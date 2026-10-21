@@ -336,10 +336,11 @@ lsm6ds_accel_range_t Adafruit_LSM6DS::getAccelRange(void) {
   Adafruit_BusIO_Register ctrl1 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL1_XL);
 
-  Adafruit_BusIO_RegisterBits accel_range =
-      Adafruit_BusIO_RegisterBits(&ctrl1, 2, 2);
-
-  accelRangeBuffered = (lsm6ds_accel_range_t)accel_range.read();
+  uint8_t ctrl1_val;
+  // keep the buffered range if the read fails, so _read() still scales right
+  if (ctrl1.read(&ctrl1_val, 1)) {
+    accelRangeBuffered = (lsm6ds_accel_range_t)((ctrl1_val >> 2) & 0x03);
+  }
 
   return accelRangeBuffered;
 }
@@ -404,10 +405,11 @@ lsm6ds_gyro_range_t Adafruit_LSM6DS::getGyroRange(void) {
   Adafruit_BusIO_Register ctrl2 = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_CTRL2_G);
 
-  Adafruit_BusIO_RegisterBits gyro_range =
-      Adafruit_BusIO_RegisterBits(&ctrl2, 4, 0);
-
-  gyroRangeBuffered = (lsm6ds_gyro_range_t)gyro_range.read();
+  uint8_t ctrl2_val;
+  // keep the buffered range if the read fails, so _read() still scales right
+  if (ctrl2.read(&ctrl2_val, 1)) {
+    gyroRangeBuffered = (lsm6ds_gyro_range_t)(ctrl2_val & 0x0F);
+  }
 
   return gyroRangeBuffered;
 }
