@@ -38,5 +38,12 @@ bool Adafruit_ISM330DHCX::_init(int32_t sensor_id) {
   Adafruit_BusIO_RegisterBits bdu = Adafruit_BusIO_RegisterBits(&ctrl3, 1, 6);
   bdu.write(1);
 
+  // set DEVICE_CONF, which the datasheet recommends always setting to 1
+  Adafruit_BusIO_Register ctrl9 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DSOX_CTRL9_XL);
+  Adafruit_BusIO_RegisterBits device_conf =
+      Adafruit_BusIO_RegisterBits(&ctrl9, 1, 1);
+  device_conf.write(1);
+
   return true;
 }
