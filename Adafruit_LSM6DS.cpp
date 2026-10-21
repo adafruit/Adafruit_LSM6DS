@@ -98,12 +98,16 @@ uint8_t Adafruit_LSM6DS::chipID(void) {
 
 /*!
  *    @brief  Read Status register
- *    @returns 8 Bit value from Status register
+ *    @returns 8 Bit value from Status register, or 0 if the read fails
  */
 uint8_t Adafruit_LSM6DS::status(void) {
   Adafruit_BusIO_Register status_reg = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_STATUS_REG);
-  return status_reg.read();
+  uint8_t status_val;
+  if (!status_reg.read(&status_val, 1)) {
+    return 0; // no data-ready flags on a failed read
+  }
+  return status_val;
 }
 
 /*!
@@ -747,32 +751,36 @@ void Adafruit_LSM6DS::enableWakeup(bool enable, uint8_t duration,
 /**************************************************************************/
 /*!
     @brief Checks interrupt register to see if we have a wake signal
-    @returns True if wake event bit is set in WAKEUP_SRC (cleared on read)
+    @returns True if wake event bit is set in WAKEUP_SRC (cleared on read),
+             false if not set or the read fails
 */
 /**************************************************************************/
 bool Adafruit_LSM6DS::awake(void) {
   Adafruit_BusIO_Register wakesrc = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_WAKEUP_SRC);
-  Adafruit_BusIO_RegisterBits wake_evt =
-      Adafruit_BusIO_RegisterBits(&wakesrc, 1, 3);
-  return wake_evt.read();
+  uint8_t wakesrc_val;
+  if (!wakesrc.read(&wakesrc_val, 1)) {
+    return false;
+  }
+  return (wakesrc_val & 0x08) != 0; // WU_IA
 }
 
 /**************************************************************************/
 /*!
     @brief Simple shake detection. Must call enableWakeup() first.
-    @returns True if shake (wake) detected, otherwise false.
+    @returns True if shake (wake) detected, otherwise false (including when
+             the read fails).
 */
 /**************************************************************************/
 bool Adafruit_LSM6DS::shake(void) {
   Adafruit_BusIO_Register tapcfg = Adafruit_BusIO_Register(
       i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LSM6DS_TAP_CFG);
-  Adafruit_BusIO_RegisterBits slope_en =
-      Adafruit_BusIO_RegisterBits(&tapcfg, 1, 4);
-  Adafruit_BusIO_RegisterBits timer_en =
-      Adafruit_BusIO_RegisterBits(&tapcfg, 1, 7);
-  // only check if enabled
-  if (slope_en.read() && timer_en.read()) {
+  uint8_t tapcfg_val;
+  if (!tapcfg.read(&tapcfg_val, 1)) {
+    return false;
+  }
+  // only check if enabled (bits 4 and 7, as set by enableWakeup())
+  if ((tapcfg_val & 0x10) && (tapcfg_val & 0x80)) {
     return awake();
   }
   return false;
